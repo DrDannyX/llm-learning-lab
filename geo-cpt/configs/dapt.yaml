@@ -1,0 +1,47 @@
+# DAPT -- domain-adaptive pretraining on broad geoscience text.
+# USGS Publications Warehouse abstracts + the FULL USGS lexicon (16,684 units).
+# Expect ~15-20M tokens. Run TAPT first: if that moves nothing, this probably
+# will not either, and it costs hours of fetching.
+name: geo-cpt-dapt
+
+corpus:
+  stage: dapt
+  usgs_max_per_query: 1000
+  geolex_max_units: 16684
+  quality_filter: true       # broad corpus DOES need filtering, unlike TAPT
+  min_doc_chars: 300
+  max_doc_chars: 50000
+  dedup_threshold: 0.8
+  replay_fraction: 0.15
+  replay_dataset: Salesforce/wikitext
+  replay_config: wikitext-2-raw-v1
+  val_docs: 400
+  seed: 17
+
+pack:
+  block_size: 1024
+  add_eos_between_docs: true
+  no_cross_document: false
+
+train:
+  base_model: Qwen/Qwen3-1.7B
+  fine_tune_type: full
+  learning_rate: 0.00001
+  lr_schedule: cosine
+  warmup_iters: 200
+  batch_size: 1              # headroom: batch 2 peaks at 41.8 GB (see config.py)
+  grad_accumulation_steps: 16
+  iters: 4000
+  max_grad_norm: 1.0
+  steps_per_report: 20
+  steps_per_eval: 250
+  save_every: 1000
+  keep_last_n: 2
+  grad_checkpoint: true
+  seed: 17
+
+eval:
+  domain_val_docs: 400
+  general_val_docs: 400
+  max_blocks: 200
+  probe_n: 300

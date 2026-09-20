@@ -1,0 +1,44 @@
+# TAPT -- task-adaptive pretraining.
+# CPT on the UNLABELLED TEXT of the downstream task (geo-sft's train passages).
+# Cheap: ~1M tokens, runs in well under an hour. Run this BEFORE building a
+# DAPT corpus: if it moves nothing, the big corpus probably will not either.
+name: geo-cpt-tapt
+
+corpus:
+  stage: tapt
+  quality_filter: false      # the task text IS the target distribution
+  replay_fraction: 0.15
+  replay_dataset: Salesforce/wikitext
+  replay_config: wikitext-2-raw-v1
+  val_docs: 300
+  seed: 17
+
+pack:
+  block_size: 1024
+  add_eos_between_docs: true
+  no_cross_document: false
+
+train:
+  base_model: Qwen/Qwen3-1.7B
+  fine_tune_type: full
+  learning_rate: 0.00001     # 1e-5 -- 10x BELOW the SFT lab's 1e-4
+  lr_schedule: cosine
+  warmup_iters: 60
+  # batch 2 peaked at 48.7 GB on a 48 GB machine and swapped (7.7 -> 9.1 s/iter).
+  # The gradient accumulator holds a full extra gradient tree; see config.py.
+  batch_size: 1
+  grad_accumulation_steps: 16
+  iters: 600
+  max_grad_norm: 1.0
+  steps_per_report: 10
+  steps_per_eval: 75
+  save_every: 300
+  keep_last_n: 2
+  grad_checkpoint: true
+  seed: 17
+
+eval:
+  domain_val_docs: 300
+  general_val_docs: 300
+  max_blocks: 150
+  probe_n: 200

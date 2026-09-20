@@ -1,0 +1,25 @@
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+
+# regenerable from the pipeline
+data/raw/
+data/interim/
+data/corpus/
+data/packed/
+artifacts/models/
+
+# CPT checkpoints are FULL models (~3.4 GB each), not adapters. Exclude the
+# whole directory: without the weights, the leftover index and tokenizer
+# files are 22 MB of nothing.
+runs/**/checkpoint-*/
+*.safetensors
+*.npy
+
+# but keep the evidence
+!runs/**/*.json
+!runs/**/*.jsonl
+!runs/**/*.png
+!runs/**/*.yaml
