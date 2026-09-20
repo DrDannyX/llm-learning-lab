@@ -1,0 +1,7 @@
+{
+  "vocab_size": 8000,
+  "model_type": "bpe",
+  "min_frequency": 2,
+  "extend_top_k": 512,
+  "min_base_tokens": 3
+}

@@ -1,0 +1,3642 @@
+[
+  {
+    "term": "Pennsylvanian",
+    "freq": 873,
+    "base_tokens": 4,
+    "savings": 2619,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Cretaceous",
+    "freq": 1069,
+    "base_tokens": 3,
+    "savings": 2138,
+    "in_gazetteer": true
+  },
+  {
+    "term": "unconformably",
+    "freq": 1030,
+    "base_tokens": 3,
+    "savings": 2060,
+    "in_gazetteer": false
+  },
+  {
+    "term": "stratigraphic",
+    "freq": 726,
+    "base_tokens": 3,
+    "savings": 1452,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Mississippian",
+    "freq": 479,
+    "base_tokens": 4,
+    "savings": 1437,
+    "in_gazetteer": true
+  },
+  {
+    "term": "siltstone",
+    "freq": 633,
+    "base_tokens": 3,
+    "savings": 1266,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Ordovician",
+    "freq": 580,
+    "base_tokens": 3,
+    "savings": 1160,
+    "in_gazetteer": true
+  },
+  {
+    "term": "calcareous",
+    "freq": 552,
+    "base_tokens": 3,
+    "savings": 1104,
+    "in_gazetteer": false
+  },
+  {
+    "term": "gneiss",
+    "freq": 552,
+    "base_tokens": 3,
+    "savings": 1104,
+    "in_gazetteer": true
+  },
+  {
+    "term": "interbedded",
+    "freq": 550,
+    "base_tokens": 3,
+    "savings": 1100,
+    "in_gazetteer": false
+  },
+  {
+    "term": "rhyolite",
+    "freq": 344,
+    "base_tokens": 4,
+    "savings": 1032,
+    "in_gazetteer": true
+  },
+  {
+    "term": "fine-grained",
+    "freq": 506,
+    "base_tokens": 3,
+    "savings": 1012,
+    "in_gazetteer": false
+  },
+  {
+    "term": "fossiliferous",
+    "freq": 473,
+    "base_tokens": 3,
+    "savings": 946,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Pleistocene",
+    "freq": 444,
+    "base_tokens": 3,
+    "savings": 888,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Proterozoic",
+    "freq": 274,
+    "base_tokens": 4,
+    "savings": 822,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Precambrian",
+    "freq": 400,
+    "base_tokens": 3,
+    "savings": 800,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Oligocene",
+    "freq": 398,
+    "base_tokens": 3,
+    "savings": 796,
+    "in_gazetteer": true
+  },
+  {
+    "term": "limestones",
+    "freq": 380,
+    "base_tokens": 3,
+    "savings": 760,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Pliocene",
+    "freq": 325,
+    "base_tokens": 3,
+    "savings": 650,
+    "in_gazetteer": true
+  },
+  {
+    "term": "granodiorite",
+    "freq": 216,
+    "base_tokens": 4,
+    "savings": 648,
+    "in_gazetteer": true
+  },
+  {
+    "term": "biotite",
+    "freq": 307,
+    "base_tokens": 3,
+    "savings": 614,
+    "in_gazetteer": true
+  },
+  {
+    "term": "coarse-grained",
+    "freq": 274,
+    "base_tokens": 3,
+    "savings": 548,
+    "in_gazetteer": false
+  },
+  {
+    "term": "thin-bedded",
+    "freq": 273,
+    "base_tokens": 3,
+    "savings": 546,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Silurian",
+    "freq": 263,
+    "base_tokens": 3,
+    "savings": 526,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Volcanics",
+    "freq": 255,
+    "base_tokens": 3,
+    "savings": 510,
+    "in_gazetteer": false
+  },
+  {
+    "term": "argillaceous",
+    "freq": 254,
+    "base_tokens": 3,
+    "savings": 508,
+    "in_gazetteer": false
+  },
+  {
+    "term": "disconformably",
+    "freq": 160,
+    "base_tokens": 4,
+    "savings": 480,
+    "in_gazetteer": false
+  },
+  {
+    "term": "breccia",
+    "freq": 232,
+    "base_tokens": 3,
+    "savings": 464,
+    "in_gazetteer": true
+  },
+  {
+    "term": "brachiopods",
+    "freq": 154,
+    "base_tokens": 4,
+    "savings": 462,
+    "in_gazetteer": false
+  },
+  {
+    "term": "K-Ar",
+    "freq": 231,
+    "base_tokens": 3,
+    "savings": 462,
+    "in_gazetteer": false
+  },
+  {
+    "term": "medium-grained",
+    "freq": 221,
+    "base_tokens": 3,
+    "savings": 442,
+    "in_gazetteer": false
+  },
+  {
+    "term": "unconformity",
+    "freq": 218,
+    "base_tokens": 3,
+    "savings": 436,
+    "in_gazetteer": false
+  },
+  {
+    "term": "nomenclature",
+    "freq": 215,
+    "base_tokens": 3,
+    "savings": 430,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Basin-and-Range",
+    "freq": 143,
+    "base_tokens": 4,
+    "savings": 429,
+    "in_gazetteer": false
+  },
+  {
+    "term": "outcrops",
+    "freq": 213,
+    "base_tokens": 3,
+    "savings": 426,
+    "in_gazetteer": false
+  },
+  {
+    "term": "glauconitic",
+    "freq": 136,
+    "base_tokens": 4,
+    "savings": 408,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Beekmantown",
+    "freq": 135,
+    "base_tokens": 4,
+    "savings": 405,
+    "in_gazetteer": false
+  },
+  {
+    "term": "thick-bedded",
+    "freq": 199,
+    "base_tokens": 3,
+    "savings": 398,
+    "in_gazetteer": false
+  },
+  {
+    "term": "cross-bedded",
+    "freq": 197,
+    "base_tokens": 3,
+    "savings": 394,
+    "in_gazetteer": false
+  },
+  {
+    "term": "plagioclase",
+    "freq": 129,
+    "base_tokens": 4,
+    "savings": 387,
+    "in_gazetteer": true
+  },
+  {
+    "term": "andesite",
+    "freq": 190,
+    "base_tokens": 3,
+    "savings": 380,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Paleozoic",
+    "freq": 181,
+    "base_tokens": 3,
+    "savings": 362,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Catoctin",
+    "freq": 115,
+    "base_tokens": 4,
+    "savings": 345,
+    "in_gazetteer": false
+  },
+  {
+    "term": "pebbles",
+    "freq": 170,
+    "base_tokens": 3,
+    "savings": 340,
+    "in_gazetteer": false
+  },
+  {
+    "term": "feldspar",
+    "freq": 164,
+    "base_tokens": 3,
+    "savings": 328,
+    "in_gazetteer": true
+  },
+  {
+    "term": "intertongues",
+    "freq": 108,
+    "base_tokens": 4,
+    "savings": 324,
+    "in_gazetteer": false
+  },
+  {
+    "term": "siliceous",
+    "freq": 156,
+    "base_tokens": 3,
+    "savings": 312,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Cenomanian",
+    "freq": 99,
+    "base_tokens": 4,
+    "savings": 297,
+    "in_gazetteer": true
+  },
+  {
+    "term": "monzonite",
+    "freq": 148,
+    "base_tokens": 3,
+    "savings": 296,
+    "in_gazetteer": true
+  },
+  {
+    "term": "tuffaceous",
+    "freq": 147,
+    "base_tokens": 3,
+    "savings": 294,
+    "in_gazetteer": false
+  },
+  {
+    "term": "hornblende",
+    "freq": 141,
+    "base_tokens": 3,
+    "savings": 282,
+    "in_gazetteer": true
+  },
+  {
+    "term": "porphyritic",
+    "freq": 136,
+    "base_tokens": 3,
+    "savings": 272,
+    "in_gazetteer": false
+  },
+  {
+    "term": "concretions",
+    "freq": 127,
+    "base_tokens": 3,
+    "savings": 254,
+    "in_gazetteer": false
+  },
+  {
+    "term": "fanglomerate",
+    "freq": 61,
+    "base_tokens": 5,
+    "savings": 244,
+    "in_gazetteer": false
+  },
+  {
+    "term": "phyllite",
+    "freq": 122,
+    "base_tokens": 3,
+    "savings": 244,
+    "in_gazetteer": true
+  },
+  {
+    "term": "argillite",
+    "freq": 121,
+    "base_tokens": 3,
+    "savings": 242,
+    "in_gazetteer": true
+  },
+  {
+    "term": "phenocrysts",
+    "freq": 120,
+    "base_tokens": 3,
+    "savings": 240,
+    "in_gazetteer": false
+  },
+  {
+    "term": "undivided",
+    "freq": 119,
+    "base_tokens": 3,
+    "savings": 238,
+    "in_gazetteer": false
+  },
+  {
+    "term": "stratigraphically",
+    "freq": 118,
+    "base_tokens": 3,
+    "savings": 236,
+    "in_gazetteer": false
+  },
+  {
+    "term": "amphibolite",
+    "freq": 117,
+    "base_tokens": 3,
+    "savings": 234,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Claiborne",
+    "freq": 112,
+    "base_tokens": 3,
+    "savings": 224,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Mesaverde",
+    "freq": 111,
+    "base_tokens": 3,
+    "savings": 222,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Carboniferous",
+    "freq": 110,
+    "base_tokens": 3,
+    "savings": 220,
+    "in_gazetteer": true
+  },
+  {
+    "term": "dolomitic",
+    "freq": 110,
+    "base_tokens": 3,
+    "savings": 220,
+    "in_gazetteer": false
+  },
+  {
+    "term": "arkosic",
+    "freq": 109,
+    "base_tokens": 3,
+    "savings": 218,
+    "in_gazetteer": false
+  },
+  {
+    "term": "lenticular",
+    "freq": 108,
+    "base_tokens": 3,
+    "savings": 216,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Supergroup",
+    "freq": 107,
+    "base_tokens": 3,
+    "savings": 214,
+    "in_gazetteer": false
+  },
+  {
+    "term": "feldspathic",
+    "freq": 71,
+    "base_tokens": 4,
+    "savings": 213,
+    "in_gazetteer": false
+  },
+  {
+    "term": "diorite",
+    "freq": 104,
+    "base_tokens": 3,
+    "savings": 208,
+    "in_gazetteer": true
+  },
+  {
+    "term": "porphyry",
+    "freq": 104,
+    "base_tokens": 3,
+    "savings": 208,
+    "in_gazetteer": false
+  },
+  {
+    "term": "rock-stratigraphic",
+    "freq": 52,
+    "base_tokens": 5,
+    "savings": 208,
+    "in_gazetteer": false
+  },
+  {
+    "term": "graywacke",
+    "freq": 69,
+    "base_tokens": 4,
+    "savings": 207,
+    "in_gazetteer": true
+  },
+  {
+    "term": "bentonite",
+    "freq": 102,
+    "base_tokens": 3,
+    "savings": 204,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Niobrara",
+    "freq": 66,
+    "base_tokens": 4,
+    "savings": 198,
+    "in_gazetteer": false
+  },
+  {
+    "term": "reddish-brown",
+    "freq": 66,
+    "base_tokens": 4,
+    "savings": 198,
+    "in_gazetteer": false
+  },
+  {
+    "term": "boulders",
+    "freq": 98,
+    "base_tokens": 3,
+    "savings": 196,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Wabaunsee",
+    "freq": 65,
+    "base_tokens": 4,
+    "savings": 195,
+    "in_gazetteer": false
+  },
+  {
+    "term": "interbeds",
+    "freq": 95,
+    "base_tokens": 3,
+    "savings": 190,
+    "in_gazetteer": false
+  },
+  {
+    "term": "rhyolitic",
+    "freq": 63,
+    "base_tokens": 4,
+    "savings": 189,
+    "in_gazetteer": false
+  },
+  {
+    "term": "mafic",
+    "freq": 93,
+    "base_tokens": 3,
+    "savings": 186,
+    "in_gazetteer": true
+  },
+  {
+    "term": "pre-Cambrian",
+    "freq": 62,
+    "base_tokens": 4,
+    "savings": 186,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Rb-Sr",
+    "freq": 62,
+    "base_tokens": 4,
+    "savings": 186,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Campanian",
+    "freq": 92,
+    "base_tokens": 3,
+    "savings": 184,
+    "in_gazetteer": true
+  },
+  {
+    "term": "greenish-gray",
+    "freq": 91,
+    "base_tokens": 3,
+    "savings": 182,
+    "in_gazetteer": false
+  },
+  {
+    "term": "alluvium",
+    "freq": 90,
+    "base_tokens": 3,
+    "savings": 180,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Quaternary",
+    "freq": 86,
+    "base_tokens": 3,
+    "savings": 172,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Mancos",
+    "freq": 85,
+    "base_tokens": 3,
+    "savings": 170,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Arroyo",
+    "freq": 84,
+    "base_tokens": 3,
+    "savings": 168,
+    "in_gazetteer": false
+  },
+  {
+    "term": "assemblage",
+    "freq": 83,
+    "base_tokens": 3,
+    "savings": 166,
+    "in_gazetteer": false
+  },
+  {
+    "term": "metamorphosed",
+    "freq": 83,
+    "base_tokens": 3,
+    "savings": 166,
+    "in_gazetteer": false
+  },
+  {
+    "term": "pebbly",
+    "freq": 83,
+    "base_tokens": 3,
+    "savings": 166,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Caloosahatchee",
+    "freq": 33,
+    "base_tokens": 6,
+    "savings": 165,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Pottsville",
+    "freq": 82,
+    "base_tokens": 3,
+    "savings": 164,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Desmoinesian",
+    "freq": 54,
+    "base_tokens": 4,
+    "savings": 162,
+    "in_gazetteer": true
+  },
+  {
+    "term": "fluvial",
+    "freq": 81,
+    "base_tokens": 3,
+    "savings": 162,
+    "in_gazetteer": false
+  },
+  {
+    "term": "cyclothem",
+    "freq": 80,
+    "base_tokens": 3,
+    "savings": 160,
+    "in_gazetteer": false
+  },
+  {
+    "term": "yellowish-brown",
+    "freq": 53,
+    "base_tokens": 4,
+    "savings": 159,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Plutonic",
+    "freq": 79,
+    "base_tokens": 3,
+    "savings": 158,
+    "in_gazetteer": true
+  },
+  {
+    "term": "U-Pb",
+    "freq": 78,
+    "base_tokens": 3,
+    "savings": 156,
+    "in_gazetteer": false
+  },
+  {
+    "term": "lithostratigraphic",
+    "freq": 31,
+    "base_tokens": 6,
+    "savings": 155,
+    "in_gazetteer": false
+  },
+  {
+    "term": "breccias",
+    "freq": 77,
+    "base_tokens": 3,
+    "savings": 154,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Ammonoosuc",
+    "freq": 51,
+    "base_tokens": 4,
+    "savings": 153,
+    "in_gazetteer": false
+  },
+  {
+    "term": "bryozoans",
+    "freq": 51,
+    "base_tokens": 4,
+    "savings": 153,
+    "in_gazetteer": false
+  },
+  {
+    "term": "trilobites",
+    "freq": 51,
+    "base_tokens": 4,
+    "savings": 153,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Catahoula",
+    "freq": 76,
+    "base_tokens": 3,
+    "savings": 152,
+    "in_gazetteer": false
+  },
+  {
+    "term": "conodonts",
+    "freq": 74,
+    "base_tokens": 3,
+    "savings": 148,
+    "in_gazetteer": false
+  },
+  {
+    "term": "mollusks",
+    "freq": 74,
+    "base_tokens": 3,
+    "savings": 148,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Breckenridge",
+    "freq": 73,
+    "base_tokens": 3,
+    "savings": 146,
+    "in_gazetteer": false
+  },
+  {
+    "term": "intercalated",
+    "freq": 73,
+    "base_tokens": 3,
+    "savings": 146,
+    "in_gazetteer": false
+  },
+  {
+    "term": "andesitic",
+    "freq": 72,
+    "base_tokens": 3,
+    "savings": 144,
+    "in_gazetteer": false
+  },
+  {
+    "term": "fusulinids",
+    "freq": 72,
+    "base_tokens": 3,
+    "savings": 144,
+    "in_gazetteer": false
+  },
+  {
+    "term": "oolitic",
+    "freq": 72,
+    "base_tokens": 3,
+    "savings": 144,
+    "in_gazetteer": false
+  },
+  {
+    "term": "NACSN",
+    "freq": 71,
+    "base_tokens": 3,
+    "savings": 142,
+    "in_gazetteer": false
+  },
+  {
+    "term": "pelecypods",
+    "freq": 47,
+    "base_tokens": 4,
+    "savings": 141,
+    "in_gazetteer": false
+  },
+  {
+    "term": "basaltic",
+    "freq": 70,
+    "base_tokens": 3,
+    "savings": 140,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Mesozoic",
+    "freq": 69,
+    "base_tokens": 3,
+    "savings": 138,
+    "in_gazetteer": true
+  },
+  {
+    "term": "undifferentiated",
+    "freq": 69,
+    "base_tokens": 3,
+    "savings": 138,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Cuyahoga",
+    "freq": 45,
+    "base_tokens": 4,
+    "savings": 135,
+    "in_gazetteer": false
+  },
+  {
+    "term": "gastropods",
+    "freq": 67,
+    "base_tokens": 3,
+    "savings": 134,
+    "in_gazetteer": false
+  },
+  {
+    "term": "disconformity",
+    "freq": 44,
+    "base_tokens": 4,
+    "savings": 132,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Piceance",
+    "freq": 66,
+    "base_tokens": 3,
+    "savings": 132,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Yavapai",
+    "freq": 44,
+    "base_tokens": 4,
+    "savings": 132,
+    "in_gazetteer": false
+  },
+  {
+    "term": "pumice",
+    "freq": 65,
+    "base_tokens": 3,
+    "savings": 130,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Virgilian",
+    "freq": 65,
+    "base_tokens": 3,
+    "savings": 130,
+    "in_gazetteer": true
+  },
+  {
+    "term": "gabbro",
+    "freq": 64,
+    "base_tokens": 3,
+    "savings": 128,
+    "in_gazetteer": true
+  },
+  {
+    "term": "dolostone",
+    "freq": 63,
+    "base_tokens": 3,
+    "savings": 126,
+    "in_gazetteer": true
+  },
+  {
+    "term": "ferruginous",
+    "freq": 63,
+    "base_tokens": 3,
+    "savings": 126,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Maastrichtian",
+    "freq": 31,
+    "base_tokens": 5,
+    "savings": 124,
+    "in_gazetteer": true
+  },
+  {
+    "term": "unconformable",
+    "freq": 62,
+    "base_tokens": 3,
+    "savings": 124,
+    "in_gazetteer": false
+  },
+  {
+    "term": "glauconite",
+    "freq": 41,
+    "base_tokens": 4,
+    "savings": 123,
+    "in_gazetteer": true
+  },
+  {
+    "term": "noncalcareous",
+    "freq": 41,
+    "base_tokens": 4,
+    "savings": 123,
+    "in_gazetteer": false
+  },
+  {
+    "term": "unfossiliferous",
+    "freq": 41,
+    "base_tokens": 4,
+    "savings": 123,
+    "in_gazetteer": false
+  },
+  {
+    "term": "lacustrine",
+    "freq": 61,
+    "base_tokens": 3,
+    "savings": 122,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Magdalena",
+    "freq": 61,
+    "base_tokens": 3,
+    "savings": 122,
+    "in_gazetteer": false
+  },
+  {
+    "term": "mottled",
+    "freq": 61,
+    "base_tokens": 3,
+    "savings": 122,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Archean",
+    "freq": 60,
+    "base_tokens": 3,
+    "savings": 120,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Guadalupe",
+    "freq": 40,
+    "base_tokens": 4,
+    "savings": 120,
+    "in_gazetteer": false
+  },
+  {
+    "term": "interlayered",
+    "freq": 60,
+    "base_tokens": 3,
+    "savings": 120,
+    "in_gazetteer": false
+  },
+  {
+    "term": "trilobite",
+    "freq": 40,
+    "base_tokens": 4,
+    "savings": 120,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Oquirrh",
+    "freq": 59,
+    "base_tokens": 3,
+    "savings": 118,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Chiricahua",
+    "freq": 29,
+    "base_tokens": 5,
+    "savings": 116,
+    "in_gazetteer": false
+  },
+  {
+    "term": "coarsely",
+    "freq": 58,
+    "base_tokens": 3,
+    "savings": 116,
+    "in_gazetteer": false
+  },
+  {
+    "term": "TopoView",
+    "freq": 58,
+    "base_tokens": 3,
+    "savings": 116,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Bighorn",
+    "freq": 57,
+    "base_tokens": 3,
+    "savings": 114,
+    "in_gazetteer": false
+  },
+  {
+    "term": "brachiopod",
+    "freq": 38,
+    "base_tokens": 4,
+    "savings": 114,
+    "in_gazetteer": false
+  },
+  {
+    "term": "gneissic",
+    "freq": 38,
+    "base_tokens": 4,
+    "savings": 114,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Mowry",
+    "freq": 57,
+    "base_tokens": 3,
+    "savings": 114,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Animikie",
+    "freq": 56,
+    "base_tokens": 3,
+    "savings": 112,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Chepultepec",
+    "freq": 28,
+    "base_tokens": 5,
+    "savings": 112,
+    "in_gazetteer": false
+  },
+  {
+    "term": "olivine",
+    "freq": 56,
+    "base_tokens": 3,
+    "savings": 112,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Pedregosa",
+    "freq": 56,
+    "base_tokens": 3,
+    "savings": 112,
+    "in_gazetteer": false
+  },
+  {
+    "term": "anhydrite",
+    "freq": 37,
+    "base_tokens": 4,
+    "savings": 111,
+    "in_gazetteer": true
+  },
+  {
+    "term": "medium-bedded",
+    "freq": 55,
+    "base_tokens": 3,
+    "savings": 110,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Admire",
+    "freq": 54,
+    "base_tokens": 3,
+    "savings": 108,
+    "in_gazetteer": false
+  },
+  {
+    "term": "cobbles",
+    "freq": 54,
+    "base_tokens": 3,
+    "savings": 108,
+    "in_gazetteer": false
+  },
+  {
+    "term": "escarpment",
+    "freq": 54,
+    "base_tokens": 3,
+    "savings": 108,
+    "in_gazetteer": false
+  },
+  {
+    "term": "indurated",
+    "freq": 54,
+    "base_tokens": 3,
+    "savings": 108,
+    "in_gazetteer": false
+  },
+  {
+    "term": "novaculite",
+    "freq": 36,
+    "base_tokens": 4,
+    "savings": 108,
+    "in_gazetteer": true
+  },
+  {
+    "term": "yellowish-gray",
+    "freq": 54,
+    "base_tokens": 3,
+    "savings": 108,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Missourian",
+    "freq": 53,
+    "base_tokens": 3,
+    "savings": 106,
+    "in_gazetteer": true
+  },
+  {
+    "term": "unranked",
+    "freq": 53,
+    "base_tokens": 3,
+    "savings": 106,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Foraminifera",
+    "freq": 35,
+    "base_tokens": 4,
+    "savings": 105,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Meramecian",
+    "freq": 35,
+    "base_tokens": 4,
+    "savings": 105,
+    "in_gazetteer": true
+  },
+  {
+    "term": "metagraywacke",
+    "freq": 21,
+    "base_tokens": 6,
+    "savings": 105,
+    "in_gazetteer": true
+  },
+  {
+    "term": "pyroclastic",
+    "freq": 35,
+    "base_tokens": 4,
+    "savings": 105,
+    "in_gazetteer": false
+  },
+  {
+    "term": "megafossils",
+    "freq": 34,
+    "base_tokens": 4,
+    "savings": 102,
+    "in_gazetteer": false
+  },
+  {
+    "term": "metavolcanic",
+    "freq": 34,
+    "base_tokens": 4,
+    "savings": 102,
+    "in_gazetteer": true
+  },
+  {
+    "term": "biostratigraphic",
+    "freq": 25,
+    "base_tokens": 5,
+    "savings": 100,
+    "in_gazetteer": false
+  },
+  {
+    "term": "muscovite",
+    "freq": 50,
+    "base_tokens": 3,
+    "savings": 100,
+    "in_gazetteer": true
+  },
+  {
+    "term": "felsic",
+    "freq": 49,
+    "base_tokens": 3,
+    "savings": 98,
+    "in_gazetteer": false
+  },
+  {
+    "term": "siltstones",
+    "freq": 49,
+    "base_tokens": 3,
+    "savings": 98,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Bucatunna",
+    "freq": 24,
+    "base_tokens": 5,
+    "savings": 96,
+    "in_gazetteer": false
+  },
+  {
+    "term": "foraminifers",
+    "freq": 48,
+    "base_tokens": 3,
+    "savings": 96,
+    "in_gazetteer": false
+  },
+  {
+    "term": "gneisses",
+    "freq": 48,
+    "base_tokens": 3,
+    "savings": 96,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Michigamme",
+    "freq": 32,
+    "base_tokens": 4,
+    "savings": 96,
+    "in_gazetteer": false
+  },
+  {
+    "term": "foraminiferal",
+    "freq": 31,
+    "base_tokens": 4,
+    "savings": 93,
+    "in_gazetteer": false
+  },
+  {
+    "term": "gypsiferous",
+    "freq": 31,
+    "base_tokens": 4,
+    "savings": 93,
+    "in_gazetteer": false
+  },
+  {
+    "term": "red-brown",
+    "freq": 46,
+    "base_tokens": 3,
+    "savings": 92,
+    "in_gazetteer": false
+  },
+  {
+    "term": "syenite",
+    "freq": 46,
+    "base_tokens": 3,
+    "savings": 92,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Wissahickon",
+    "freq": 23,
+    "base_tokens": 5,
+    "savings": 92,
+    "in_gazetteer": false
+  },
+  {
+    "term": "calcarenite",
+    "freq": 45,
+    "base_tokens": 3,
+    "savings": 90,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Orogrande",
+    "freq": 45,
+    "base_tokens": 3,
+    "savings": 90,
+    "in_gazetteer": false
+  },
+  {
+    "term": "tonalite",
+    "freq": 45,
+    "base_tokens": 3,
+    "savings": 90,
+    "in_gazetteer": true
+  },
+  {
+    "term": "tributary",
+    "freq": 45,
+    "base_tokens": 3,
+    "savings": 90,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Alloformation",
+    "freq": 44,
+    "base_tokens": 3,
+    "savings": 88,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Coconino",
+    "freq": 44,
+    "base_tokens": 3,
+    "savings": 88,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Kinderhookian",
+    "freq": 44,
+    "base_tokens": 3,
+    "savings": 88,
+    "in_gazetteer": true
+  },
+  {
+    "term": "nonfossiliferous",
+    "freq": 22,
+    "base_tokens": 5,
+    "savings": 88,
+    "in_gazetteer": false
+  },
+  {
+    "term": "interstratified",
+    "freq": 29,
+    "base_tokens": 4,
+    "savings": 87,
+    "in_gazetteer": false
+  },
+  {
+    "term": "bluish-gray",
+    "freq": 43,
+    "base_tokens": 3,
+    "savings": 86,
+    "in_gazetteer": false
+  },
+  {
+    "term": "concretionary",
+    "freq": 43,
+    "base_tokens": 3,
+    "savings": 86,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Chaffin",
+    "freq": 42,
+    "base_tokens": 3,
+    "savings": 84,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Cimarron",
+    "freq": 28,
+    "base_tokens": 4,
+    "savings": 84,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Kootenai",
+    "freq": 28,
+    "base_tokens": 4,
+    "savings": 84,
+    "in_gazetteer": false
+  },
+  {
+    "term": "light-brown",
+    "freq": 42,
+    "base_tokens": 3,
+    "savings": 84,
+    "in_gazetteer": false
+  },
+  {
+    "term": "silicified",
+    "freq": 42,
+    "base_tokens": 3,
+    "savings": 84,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Stonewall",
+    "freq": 41,
+    "base_tokens": 3,
+    "savings": 82,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Bonneterre",
+    "freq": 27,
+    "base_tokens": 4,
+    "savings": 81,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Conococheague",
+    "freq": 27,
+    "base_tokens": 4,
+    "savings": 81,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Keweenawan",
+    "freq": 27,
+    "base_tokens": 4,
+    "savings": 81,
+    "in_gazetteer": false
+  },
+  {
+    "term": "laminae",
+    "freq": 40,
+    "base_tokens": 3,
+    "savings": 80,
+    "in_gazetteer": false
+  },
+  {
+    "term": "metasedimentary",
+    "freq": 40,
+    "base_tokens": 3,
+    "savings": 80,
+    "in_gazetteer": true
+  },
+  {
+    "term": "sparsely",
+    "freq": 40,
+    "base_tokens": 3,
+    "savings": 80,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Tintic",
+    "freq": 40,
+    "base_tokens": 3,
+    "savings": 80,
+    "in_gazetteer": false
+  },
+  {
+    "term": "variegated",
+    "freq": 40,
+    "base_tokens": 3,
+    "savings": 80,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Allegheny",
+    "freq": 39,
+    "base_tokens": 3,
+    "savings": 78,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Arapahoe",
+    "freq": 26,
+    "base_tokens": 4,
+    "savings": 78,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Chilhowee",
+    "freq": 26,
+    "base_tokens": 4,
+    "savings": 78,
+    "in_gazetteer": false
+  },
+  {
+    "term": "palynomorphs",
+    "freq": 26,
+    "base_tokens": 4,
+    "savings": 78,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Potomac",
+    "freq": 39,
+    "base_tokens": 3,
+    "savings": 78,
+    "in_gazetteer": false
+  },
+  {
+    "term": "molluscan",
+    "freq": 38,
+    "base_tokens": 3,
+    "savings": 76,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Pioche",
+    "freq": 38,
+    "base_tokens": 3,
+    "savings": 76,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Hatchetigbee",
+    "freq": 25,
+    "base_tokens": 4,
+    "savings": 75,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Artesia",
+    "freq": 37,
+    "base_tokens": 3,
+    "savings": 74,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Bannock",
+    "freq": 37,
+    "base_tokens": 3,
+    "savings": 74,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Chugwater",
+    "freq": 37,
+    "base_tokens": 3,
+    "savings": 74,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Moenkopi",
+    "freq": 37,
+    "base_tokens": 3,
+    "savings": 74,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Aleinikoff",
+    "freq": 24,
+    "base_tokens": 4,
+    "savings": 72,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Barstovian",
+    "freq": 24,
+    "base_tokens": 4,
+    "savings": 72,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Bluestone",
+    "freq": 36,
+    "base_tokens": 3,
+    "savings": 72,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Chisholm",
+    "freq": 24,
+    "base_tokens": 4,
+    "savings": 72,
+    "in_gazetteer": false
+  },
+  {
+    "term": "cliff-forming",
+    "freq": 36,
+    "base_tokens": 3,
+    "savings": 72,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Maestrichtian",
+    "freq": 24,
+    "base_tokens": 4,
+    "savings": 72,
+    "in_gazetteer": false
+  },
+  {
+    "term": "NALMA",
+    "freq": 36,
+    "base_tokens": 3,
+    "savings": 72,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Wolfcampian",
+    "freq": 36,
+    "base_tokens": 3,
+    "savings": 72,
+    "in_gazetteer": true
+  },
+  {
+    "term": "bentonitic",
+    "freq": 35,
+    "base_tokens": 3,
+    "savings": 70,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Caddo",
+    "freq": 35,
+    "base_tokens": 3,
+    "savings": 70,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Conasauga",
+    "freq": 35,
+    "base_tokens": 3,
+    "savings": 70,
+    "in_gazetteer": false
+  },
+  {
+    "term": "diabase",
+    "freq": 35,
+    "base_tokens": 3,
+    "savings": 70,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Hidalgo",
+    "freq": 35,
+    "base_tokens": 3,
+    "savings": 70,
+    "in_gazetteer": false
+  },
+  {
+    "term": "lithofacies",
+    "freq": 35,
+    "base_tokens": 3,
+    "savings": 70,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Westphalian",
+    "freq": 35,
+    "base_tokens": 3,
+    "savings": 70,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Canajoharie",
+    "freq": 23,
+    "base_tokens": 4,
+    "savings": 69,
+    "in_gazetteer": false
+  },
+  {
+    "term": "heretofore",
+    "freq": 23,
+    "base_tokens": 4,
+    "savings": 69,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Pocatello",
+    "freq": 23,
+    "base_tokens": 4,
+    "savings": 69,
+    "in_gazetteer": false
+  },
+  {
+    "term": "unconsolidated",
+    "freq": 23,
+    "base_tokens": 4,
+    "savings": 69,
+    "in_gazetteer": false
+  },
+  {
+    "term": "crinoidal",
+    "freq": 34,
+    "base_tokens": 3,
+    "savings": 68,
+    "in_gazetteer": false
+  },
+  {
+    "term": "dolomites",
+    "freq": 34,
+    "base_tokens": 3,
+    "savings": 68,
+    "in_gazetteer": false
+  },
+  {
+    "term": "iron-formation",
+    "freq": 34,
+    "base_tokens": 3,
+    "savings": 68,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Kanawha",
+    "freq": 34,
+    "base_tokens": 3,
+    "savings": 68,
+    "in_gazetteer": false
+  },
+  {
+    "term": "rhyodacite",
+    "freq": 17,
+    "base_tokens": 5,
+    "savings": 68,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Stearns",
+    "freq": 34,
+    "base_tokens": 3,
+    "savings": 68,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Vicksburg",
+    "freq": 34,
+    "base_tokens": 3,
+    "savings": 68,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Amsden",
+    "freq": 33,
+    "base_tokens": 3,
+    "savings": 66,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Arikaree",
+    "freq": 22,
+    "base_tokens": 4,
+    "savings": 66,
+    "in_gazetteer": false
+  },
+  {
+    "term": "brownish-gray",
+    "freq": 33,
+    "base_tokens": 3,
+    "savings": 66,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Cenozoic",
+    "freq": 22,
+    "base_tokens": 4,
+    "savings": 66,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Chautauqua",
+    "freq": 22,
+    "base_tokens": 4,
+    "savings": 66,
+    "in_gazetteer": false
+  },
+  {
+    "term": "cross-bedding",
+    "freq": 33,
+    "base_tokens": 3,
+    "savings": 66,
+    "in_gazetteer": false
+  },
+  {
+    "term": "depth-interval",
+    "freq": 33,
+    "base_tokens": 3,
+    "savings": 66,
+    "in_gazetteer": false
+  },
+  {
+    "term": "graptolites",
+    "freq": 22,
+    "base_tokens": 4,
+    "savings": 66,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Ignimbrite",
+    "freq": 33,
+    "base_tokens": 3,
+    "savings": 66,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Kaibab",
+    "freq": 33,
+    "base_tokens": 3,
+    "savings": 66,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Ouachita",
+    "freq": 33,
+    "base_tokens": 3,
+    "savings": 66,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Ankareh",
+    "freq": 32,
+    "base_tokens": 3,
+    "savings": 64,
+    "in_gazetteer": false
+  },
+  {
+    "term": "aphanitic",
+    "freq": 32,
+    "base_tokens": 3,
+    "savings": 64,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Atokan",
+    "freq": 32,
+    "base_tokens": 3,
+    "savings": 64,
+    "in_gazetteer": true
+  },
+  {
+    "term": "metarhyolite",
+    "freq": 16,
+    "base_tokens": 5,
+    "savings": 64,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Wilmarth",
+    "freq": 32,
+    "base_tokens": 3,
+    "savings": 64,
+    "in_gazetteer": false
+  },
+  {
+    "term": "brown-weathering",
+    "freq": 21,
+    "base_tokens": 4,
+    "savings": 63,
+    "in_gazetteer": false
+  },
+  {
+    "term": "McLeansboro",
+    "freq": 21,
+    "base_tokens": 4,
+    "savings": 63,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Cosumnes",
+    "freq": 31,
+    "base_tokens": 3,
+    "savings": 62,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Gdbk",
+    "freq": 31,
+    "base_tokens": 3,
+    "savings": 62,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Sandoval",
+    "freq": 31,
+    "base_tokens": 3,
+    "savings": 62,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Tallahatta",
+    "freq": 31,
+    "base_tokens": 3,
+    "savings": 62,
+    "in_gazetteer": false
+  },
+  {
+    "term": "tectonic",
+    "freq": 31,
+    "base_tokens": 3,
+    "savings": 62,
+    "in_gazetteer": false
+  },
+  {
+    "term": "well-sorted",
+    "freq": 31,
+    "base_tokens": 3,
+    "savings": 62,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Chattahoochee",
+    "freq": 20,
+    "base_tokens": 4,
+    "savings": 60,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Cheyenne",
+    "freq": 30,
+    "base_tokens": 3,
+    "savings": 60,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Choptank",
+    "freq": 30,
+    "base_tokens": 3,
+    "savings": 60,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Congaree",
+    "freq": 30,
+    "base_tokens": 3,
+    "savings": 60,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Escabrosa",
+    "freq": 20,
+    "base_tokens": 4,
+    "savings": 60,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Laramie",
+    "freq": 30,
+    "base_tokens": 3,
+    "savings": 60,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Marmaton",
+    "freq": 30,
+    "base_tokens": 3,
+    "savings": 60,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Menominee",
+    "freq": 30,
+    "base_tokens": 3,
+    "savings": 60,
+    "in_gazetteer": false
+  },
+  {
+    "term": "metaconglomerate",
+    "freq": 20,
+    "base_tokens": 4,
+    "savings": 60,
+    "in_gazetteer": true
+  },
+  {
+    "term": "microfossils",
+    "freq": 20,
+    "base_tokens": 4,
+    "savings": 60,
+    "in_gazetteer": false
+  },
+  {
+    "term": "nannofossil",
+    "freq": 20,
+    "base_tokens": 4,
+    "savings": 60,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Osagean",
+    "freq": 30,
+    "base_tokens": 3,
+    "savings": 60,
+    "in_gazetteer": true
+  },
+  {
+    "term": "TRITICITES",
+    "freq": 20,
+    "base_tokens": 4,
+    "savings": 60,
+    "in_gazetteer": false
+  },
+  {
+    "term": "alluvial",
+    "freq": 29,
+    "base_tokens": 3,
+    "savings": 58,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Altamont",
+    "freq": 29,
+    "base_tokens": 3,
+    "savings": 58,
+    "in_gazetteer": false
+  },
+  {
+    "term": "apatite",
+    "freq": 29,
+    "base_tokens": 3,
+    "savings": 58,
+    "in_gazetteer": true
+  },
+  {
+    "term": "assemblages",
+    "freq": 29,
+    "base_tokens": 3,
+    "savings": 58,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Chaffee",
+    "freq": 29,
+    "base_tokens": 3,
+    "savings": 58,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Jemez",
+    "freq": 29,
+    "base_tokens": 3,
+    "savings": 58,
+    "in_gazetteer": false
+  },
+  {
+    "term": "paleosol",
+    "freq": 29,
+    "base_tokens": 3,
+    "savings": 58,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Reklaw",
+    "freq": 29,
+    "base_tokens": 3,
+    "savings": 58,
+    "in_gazetteer": false
+  },
+  {
+    "term": "agglomerate",
+    "freq": 28,
+    "base_tokens": 3,
+    "savings": 56,
+    "in_gazetteer": true
+  },
+  {
+    "term": "schistose",
+    "freq": 28,
+    "base_tokens": 3,
+    "savings": 56,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Yegua",
+    "freq": 28,
+    "base_tokens": 3,
+    "savings": 56,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Annona",
+    "freq": 27,
+    "base_tokens": 3,
+    "savings": 54,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Bellefonte",
+    "freq": 27,
+    "base_tokens": 3,
+    "savings": 54,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Bonneville",
+    "freq": 27,
+    "base_tokens": 3,
+    "savings": 54,
+    "in_gazetteer": false
+  },
+  {
+    "term": "brecciated",
+    "freq": 27,
+    "base_tokens": 3,
+    "savings": 54,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Cincinnatian",
+    "freq": 18,
+    "base_tokens": 4,
+    "savings": 54,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Coniacian",
+    "freq": 27,
+    "base_tokens": 3,
+    "savings": 54,
+    "in_gazetteer": true
+  },
+  {
+    "term": "crinoid",
+    "freq": 27,
+    "base_tokens": 3,
+    "savings": 54,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Genevieve",
+    "freq": 27,
+    "base_tokens": 3,
+    "savings": 54,
+    "in_gazetteer": false
+  },
+  {
+    "term": "intrusives",
+    "freq": 27,
+    "base_tokens": 3,
+    "savings": 54,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Presidio",
+    "freq": 27,
+    "base_tokens": 3,
+    "savings": 54,
+    "in_gazetteer": false
+  },
+  {
+    "term": "varicolored",
+    "freq": 27,
+    "base_tokens": 3,
+    "savings": 54,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Whetstone",
+    "freq": 27,
+    "base_tokens": 3,
+    "savings": 54,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Abiquiu",
+    "freq": 26,
+    "base_tokens": 3,
+    "savings": 52,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Absaroka",
+    "freq": 26,
+    "base_tokens": 3,
+    "savings": 52,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Joachim",
+    "freq": 26,
+    "base_tokens": 3,
+    "savings": 52,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Marcellus",
+    "freq": 26,
+    "base_tokens": 3,
+    "savings": 52,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Mariposa",
+    "freq": 26,
+    "base_tokens": 3,
+    "savings": 52,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Maynardville",
+    "freq": 26,
+    "base_tokens": 3,
+    "savings": 52,
+    "in_gazetteer": false
+  },
+  {
+    "term": "metabasalt",
+    "freq": 26,
+    "base_tokens": 3,
+    "savings": 52,
+    "in_gazetteer": true
+  },
+  {
+    "term": "pegmatite",
+    "freq": 26,
+    "base_tokens": 3,
+    "savings": 52,
+    "in_gazetteer": true
+  },
+  {
+    "term": "unconformities",
+    "freq": 26,
+    "base_tokens": 3,
+    "savings": 52,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Vegas-Raton",
+    "freq": 26,
+    "base_tokens": 3,
+    "savings": 52,
+    "in_gazetteer": false
+  },
+  {
+    "term": "vitrophyre",
+    "freq": 26,
+    "base_tokens": 3,
+    "savings": 52,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Zartman",
+    "freq": 26,
+    "base_tokens": 3,
+    "savings": 52,
+    "in_gazetteer": false
+  },
+  {
+    "term": "calcilutite",
+    "freq": 17,
+    "base_tokens": 4,
+    "savings": 51,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Alamogordo",
+    "freq": 25,
+    "base_tokens": 3,
+    "savings": 50,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Arvonia",
+    "freq": 25,
+    "base_tokens": 3,
+    "savings": 50,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Avenal",
+    "freq": 25,
+    "base_tokens": 3,
+    "savings": 50,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Bozeman",
+    "freq": 25,
+    "base_tokens": 3,
+    "savings": 50,
+    "in_gazetteer": false
+  },
+  {
+    "term": "canyons",
+    "freq": 25,
+    "base_tokens": 3,
+    "savings": 50,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Conemaugh",
+    "freq": 25,
+    "base_tokens": 3,
+    "savings": 50,
+    "in_gazetteer": false
+  },
+  {
+    "term": "felsite",
+    "freq": 25,
+    "base_tokens": 3,
+    "savings": 50,
+    "in_gazetteer": true
+  },
+  {
+    "term": "fission-track",
+    "freq": 25,
+    "base_tokens": 3,
+    "savings": 50,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Lecompton",
+    "freq": 25,
+    "base_tokens": 3,
+    "savings": 50,
+    "in_gazetteer": false
+  },
+  {
+    "term": "purplish",
+    "freq": 25,
+    "base_tokens": 3,
+    "savings": 50,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Appekunny",
+    "freq": 24,
+    "base_tokens": 3,
+    "savings": 48,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Arapien",
+    "freq": 24,
+    "base_tokens": 3,
+    "savings": 48,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Burlingame",
+    "freq": 24,
+    "base_tokens": 3,
+    "savings": 48,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Calhoun",
+    "freq": 24,
+    "base_tokens": 3,
+    "savings": 48,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Chickamauga",
+    "freq": 24,
+    "base_tokens": 3,
+    "savings": 48,
+    "in_gazetteer": false
+  },
+  {
+    "term": "dark-brown",
+    "freq": 24,
+    "base_tokens": 3,
+    "savings": 48,
+    "in_gazetteer": false
+  },
+  {
+    "term": "monzogranite",
+    "freq": 12,
+    "base_tokens": 5,
+    "savings": 48,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Pamphlet",
+    "freq": 24,
+    "base_tokens": 3,
+    "savings": 48,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Thaynes",
+    "freq": 24,
+    "base_tokens": 3,
+    "savings": 48,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Tooele",
+    "freq": 24,
+    "base_tokens": 3,
+    "savings": 48,
+    "in_gazetteer": false
+  },
+  {
+    "term": "trachyte",
+    "freq": 24,
+    "base_tokens": 3,
+    "savings": 48,
+    "in_gazetteer": true
+  },
+  {
+    "term": "zircons",
+    "freq": 24,
+    "base_tokens": 3,
+    "savings": 48,
+    "in_gazetteer": false
+  },
+  {
+    "term": "bioclastic",
+    "freq": 23,
+    "base_tokens": 3,
+    "savings": 46,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Cannelton",
+    "freq": 23,
+    "base_tokens": 3,
+    "savings": 46,
+    "in_gazetteer": false
+  },
+  {
+    "term": "crinoids",
+    "freq": 23,
+    "base_tokens": 3,
+    "savings": 46,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Temblor",
+    "freq": 23,
+    "base_tokens": 3,
+    "savings": 46,
+    "in_gazetteer": false
+  },
+  {
+    "term": "metasiltstone",
+    "freq": 15,
+    "base_tokens": 4,
+    "savings": 45,
+    "in_gazetteer": true
+  },
+  {
+    "term": "bentonites",
+    "freq": 22,
+    "base_tokens": 3,
+    "savings": 44,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Canelo",
+    "freq": 22,
+    "base_tokens": 3,
+    "savings": 44,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Catheys",
+    "freq": 22,
+    "base_tokens": 3,
+    "savings": 44,
+    "in_gazetteer": false
+  },
+  {
+    "term": "diatomite",
+    "freq": 22,
+    "base_tokens": 3,
+    "savings": 44,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Irvingtonian",
+    "freq": 22,
+    "base_tokens": 3,
+    "savings": 44,
+    "in_gazetteer": true
+  },
+  {
+    "term": "McCulloch",
+    "freq": 22,
+    "base_tokens": 3,
+    "savings": 44,
+    "in_gazetteer": false
+  },
+  {
+    "term": "ostracodes",
+    "freq": 22,
+    "base_tokens": 3,
+    "savings": 44,
+    "in_gazetteer": false
+  },
+  {
+    "term": "vitreous",
+    "freq": 22,
+    "base_tokens": 3,
+    "savings": 44,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Aliamanu",
+    "freq": 21,
+    "base_tokens": 3,
+    "savings": 42,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Arnoldsburg",
+    "freq": 21,
+    "base_tokens": 3,
+    "savings": 42,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Blakely",
+    "freq": 21,
+    "base_tokens": 3,
+    "savings": 42,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Caballero",
+    "freq": 21,
+    "base_tokens": 3,
+    "savings": 42,
+    "in_gazetteer": false
+  },
+  {
+    "term": "calcisiltite",
+    "freq": 14,
+    "base_tokens": 4,
+    "savings": 42,
+    "in_gazetteer": true
+  },
+  {
+    "term": "downdip",
+    "freq": 21,
+    "base_tokens": 3,
+    "savings": 42,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Menefee",
+    "freq": 21,
+    "base_tokens": 3,
+    "savings": 42,
+    "in_gazetteer": false
+  },
+  {
+    "term": "oolite",
+    "freq": 21,
+    "base_tokens": 3,
+    "savings": 42,
+    "in_gazetteer": true
+  },
+  {
+    "term": "orthoclase",
+    "freq": 21,
+    "base_tokens": 3,
+    "savings": 42,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Pennington",
+    "freq": 21,
+    "base_tokens": 3,
+    "savings": 42,
+    "in_gazetteer": false
+  },
+  {
+    "term": "pinkish-gray",
+    "freq": 21,
+    "base_tokens": 3,
+    "savings": 42,
+    "in_gazetteer": false
+  },
+  {
+    "term": "sericite",
+    "freq": 21,
+    "base_tokens": 3,
+    "savings": 42,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Tesuque",
+    "freq": 21,
+    "base_tokens": 3,
+    "savings": 42,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Alcova",
+    "freq": 20,
+    "base_tokens": 3,
+    "savings": 40,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Aspinwall",
+    "freq": 20,
+    "base_tokens": 3,
+    "savings": 40,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Boquillas",
+    "freq": 20,
+    "base_tokens": 3,
+    "savings": 40,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Elkhorn",
+    "freq": 20,
+    "base_tokens": 3,
+    "savings": 40,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Fredericksburg",
+    "freq": 20,
+    "base_tokens": 3,
+    "savings": 40,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Ogallala",
+    "freq": 20,
+    "base_tokens": 3,
+    "savings": 40,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Onondaga",
+    "freq": 20,
+    "base_tokens": 3,
+    "savings": 40,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Panoche",
+    "freq": 20,
+    "base_tokens": 3,
+    "savings": 40,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Pinedale",
+    "freq": 20,
+    "base_tokens": 3,
+    "savings": 40,
+    "in_gazetteer": false
+  },
+  {
+    "term": "redbeds",
+    "freq": 20,
+    "base_tokens": 3,
+    "savings": 40,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Ruedemann",
+    "freq": 20,
+    "base_tokens": 3,
+    "savings": 40,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Texas-Austin",
+    "freq": 20,
+    "base_tokens": 3,
+    "savings": 40,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Toroweap",
+    "freq": 20,
+    "base_tokens": 3,
+    "savings": 40,
+    "in_gazetteer": false
+  },
+  {
+    "term": "trachyandesite",
+    "freq": 10,
+    "base_tokens": 5,
+    "savings": 40,
+    "in_gazetteer": true
+  },
+  {
+    "term": "well-bedded",
+    "freq": 20,
+    "base_tokens": 3,
+    "savings": 40,
+    "in_gazetteer": false
+  },
+  {
+    "term": "Clarendonian",
+    "freq": 19,
+    "base_tokens": 3,
+    "savings": 38,
+    "in_gazetteer": true
+  },
+  {
+    "term": "wacke",
+    "freq": 19,
+    "base_tokens": 3,
+    "savings": 38,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Mohawkian",
+    "freq": 18,
+    "base_tokens": 3,
+    "savings": 36,
+    "in_gazetteer": true
+  },
+  {
+    "term": "pyroxene",
+    "freq": 18,
+    "base_tokens": 3,
+    "savings": 36,
+    "in_gazetteer": true
+  },
+  {
+    "term": "trondhjemite",
+    "freq": 9,
+    "base_tokens": 5,
+    "savings": 36,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Chautauquan",
+    "freq": 11,
+    "base_tokens": 4,
+    "savings": 33,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Hemingfordian",
+    "freq": 11,
+    "base_tokens": 4,
+    "savings": 33,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Famennian",
+    "freq": 16,
+    "base_tokens": 3,
+    "savings": 32,
+    "in_gazetteer": true
+  },
+  {
+    "term": "oligoclase",
+    "freq": 16,
+    "base_tokens": 3,
+    "savings": 32,
+    "in_gazetteer": true
+  },
+  {
+    "term": "tephra",
+    "freq": 16,
+    "base_tokens": 3,
+    "savings": 32,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Chazyan",
+    "freq": 15,
+    "base_tokens": 3,
+    "savings": 30,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Guadalupian",
+    "freq": 10,
+    "base_tokens": 4,
+    "savings": 30,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Sulphur",
+    "freq": 15,
+    "base_tokens": 3,
+    "savings": 30,
+    "in_gazetteer": true
+  },
+  {
+    "term": "wackestone",
+    "freq": 15,
+    "base_tokens": 3,
+    "savings": 30,
+    "in_gazetteer": true
+  },
+  {
+    "term": "colluvium",
+    "freq": 14,
+    "base_tokens": 3,
+    "savings": 28,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Franconian",
+    "freq": 14,
+    "base_tokens": 3,
+    "savings": 28,
+    "in_gazetteer": true
+  },
+  {
+    "term": "kyanite",
+    "freq": 14,
+    "base_tokens": 3,
+    "savings": 28,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Trempealeauan",
+    "freq": 7,
+    "base_tokens": 5,
+    "savings": 28,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Bajocian",
+    "freq": 9,
+    "base_tokens": 4,
+    "savings": 27,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Callovian",
+    "freq": 13,
+    "base_tokens": 3,
+    "savings": 26,
+    "in_gazetteer": true
+  },
+  {
+    "term": "hornfels",
+    "freq": 13,
+    "base_tokens": 3,
+    "savings": 26,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Ypresian",
+    "freq": 13,
+    "base_tokens": 3,
+    "savings": 26,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Arikareean",
+    "freq": 8,
+    "base_tokens": 4,
+    "savings": 24,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Bridgerian",
+    "freq": 12,
+    "base_tokens": 3,
+    "savings": 24,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Helderbergian",
+    "freq": 8,
+    "base_tokens": 4,
+    "savings": 24,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Hemphillian",
+    "freq": 12,
+    "base_tokens": 3,
+    "savings": 24,
+    "in_gazetteer": true
+  },
+  {
+    "term": "metagabbro",
+    "freq": 8,
+    "base_tokens": 4,
+    "savings": 24,
+    "in_gazetteer": true
+  },
+  {
+    "term": "staurolite",
+    "freq": 8,
+    "base_tokens": 4,
+    "savings": 24,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Chadronian",
+    "freq": 11,
+    "base_tokens": 3,
+    "savings": 22,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Tournaisian",
+    "freq": 7,
+    "base_tokens": 4,
+    "savings": 21,
+    "in_gazetteer": true
+  },
+  {
+    "term": "diamictite",
+    "freq": 10,
+    "base_tokens": 3,
+    "savings": 20,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Frasnian",
+    "freq": 10,
+    "base_tokens": 3,
+    "savings": 20,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Givetian",
+    "freq": 10,
+    "base_tokens": 3,
+    "savings": 20,
+    "in_gazetteer": true
+  },
+  {
+    "term": "limonite",
+    "freq": 10,
+    "base_tokens": 3,
+    "savings": 20,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Niagaran",
+    "freq": 10,
+    "base_tokens": 3,
+    "savings": 20,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Rupelian",
+    "freq": 10,
+    "base_tokens": 3,
+    "savings": 20,
+    "in_gazetteer": true
+  },
+  {
+    "term": "alaskite",
+    "freq": 9,
+    "base_tokens": 3,
+    "savings": 18,
+    "in_gazetteer": true
+  },
+  {
+    "term": "andesine",
+    "freq": 9,
+    "base_tokens": 3,
+    "savings": 18,
+    "in_gazetteer": true
+  },
+  {
+    "term": "anorthosite",
+    "freq": 9,
+    "base_tokens": 3,
+    "savings": 18,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Caradocian",
+    "freq": 6,
+    "base_tokens": 4,
+    "savings": 18,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Maysvillian",
+    "freq": 6,
+    "base_tokens": 4,
+    "savings": 18,
+    "in_gazetteer": true
+  },
+  {
+    "term": "migmatite",
+    "freq": 9,
+    "base_tokens": 3,
+    "savings": 18,
+    "in_gazetteer": true
+  },
+  {
+    "term": "peridotite",
+    "freq": 9,
+    "base_tokens": 3,
+    "savings": 18,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Barremian",
+    "freq": 8,
+    "base_tokens": 3,
+    "savings": 16,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Eifelian",
+    "freq": 8,
+    "base_tokens": 3,
+    "savings": 16,
+    "in_gazetteer": true
+  },
+  {
+    "term": "hypersthene",
+    "freq": 8,
+    "base_tokens": 3,
+    "savings": 16,
+    "in_gazetteer": true
+  },
+  {
+    "term": "leucogranite",
+    "freq": 4,
+    "base_tokens": 5,
+    "savings": 16,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Puercan",
+    "freq": 8,
+    "base_tokens": 3,
+    "savings": 16,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Thanetian",
+    "freq": 8,
+    "base_tokens": 3,
+    "savings": 16,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Dresbachian",
+    "freq": 5,
+    "base_tokens": 4,
+    "savings": 15,
+    "in_gazetteer": true
+  },
+  {
+    "term": "pyroxenite",
+    "freq": 5,
+    "base_tokens": 4,
+    "savings": 15,
+    "in_gazetteer": true
+  },
+  {
+    "term": "siliciclastic",
+    "freq": 5,
+    "base_tokens": 4,
+    "savings": 15,
+    "in_gazetteer": true
+  },
+  {
+    "term": "diamicton",
+    "freq": 7,
+    "base_tokens": 3,
+    "savings": 14,
+    "in_gazetteer": true
+  },
+  {
+    "term": "granulite",
+    "freq": 7,
+    "base_tokens": 3,
+    "savings": 14,
+    "in_gazetteer": true
+  },
+  {
+    "term": "greenschist",
+    "freq": 7,
+    "base_tokens": 3,
+    "savings": 14,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Llandovery",
+    "freq": 7,
+    "base_tokens": 3,
+    "savings": 14,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Namurian",
+    "freq": 7,
+    "base_tokens": 3,
+    "savings": 14,
+    "in_gazetteer": true
+  },
+  {
+    "term": "phonolite",
+    "freq": 7,
+    "base_tokens": 3,
+    "savings": 14,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Priabonian",
+    "freq": 7,
+    "base_tokens": 3,
+    "savings": 14,
+    "in_gazetteer": true
+  },
+  {
+    "term": "spilite",
+    "freq": 7,
+    "base_tokens": 3,
+    "savings": 14,
+    "in_gazetteer": true
+  },
+  {
+    "term": "anorthoclase",
+    "freq": 4,
+    "base_tokens": 4,
+    "savings": 12,
+    "in_gazetteer": true
+  },
+  {
+    "term": "bauxite",
+    "freq": 6,
+    "base_tokens": 3,
+    "savings": 12,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Cinnabar",
+    "freq": 6,
+    "base_tokens": 3,
+    "savings": 12,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Emsian",
+    "freq": 6,
+    "base_tokens": 3,
+    "savings": 12,
+    "in_gazetteer": true
+  },
+  {
+    "term": "ilmenite",
+    "freq": 6,
+    "base_tokens": 3,
+    "savings": 12,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Kimmeridgian",
+    "freq": 3,
+    "base_tokens": 5,
+    "savings": 12,
+    "in_gazetteer": true
+  },
+  {
+    "term": "monazite",
+    "freq": 6,
+    "base_tokens": 3,
+    "savings": 12,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Orthogneiss",
+    "freq": 6,
+    "base_tokens": 3,
+    "savings": 12,
+    "in_gazetteer": true
+  },
+  {
+    "term": "paragneiss",
+    "freq": 6,
+    "base_tokens": 3,
+    "savings": 12,
+    "in_gazetteer": true
+  },
+  {
+    "term": "porcellanite",
+    "freq": 4,
+    "base_tokens": 4,
+    "savings": 12,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Rancholabrean",
+    "freq": 3,
+    "base_tokens": 5,
+    "savings": 12,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Senecan",
+    "freq": 6,
+    "base_tokens": 3,
+    "savings": 12,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Serravallian",
+    "freq": 3,
+    "base_tokens": 5,
+    "savings": 12,
+    "in_gazetteer": true
+  },
+  {
+    "term": "subarkose",
+    "freq": 6,
+    "base_tokens": 3,
+    "savings": 12,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Visean",
+    "freq": 6,
+    "base_tokens": 3,
+    "savings": 12,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Wasatchian",
+    "freq": 6,
+    "base_tokens": 3,
+    "savings": 12,
+    "in_gazetteer": true
+  },
+  {
+    "term": "biomicrite",
+    "freq": 5,
+    "base_tokens": 3,
+    "savings": 10,
+    "in_gazetteer": true
+  },
+  {
+    "term": "cordierite",
+    "freq": 5,
+    "base_tokens": 3,
+    "savings": 10,
+    "in_gazetteer": true
+  },
+  {
+    "term": "labradorite",
+    "freq": 5,
+    "base_tokens": 3,
+    "savings": 10,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Neocomian",
+    "freq": 5,
+    "base_tokens": 3,
+    "savings": 10,
+    "in_gazetteer": true
+  },
+  {
+    "term": "phosphorite",
+    "freq": 5,
+    "base_tokens": 3,
+    "savings": 10,
+    "in_gazetteer": true
+  },
+  {
+    "term": "sillimanite",
+    "freq": 5,
+    "base_tokens": 3,
+    "savings": 10,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Sylvanite",
+    "freq": 5,
+    "base_tokens": 3,
+    "savings": 10,
+    "in_gazetteer": true
+  },
+  {
+    "term": "actinolite",
+    "freq": 3,
+    "base_tokens": 4,
+    "savings": 9,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Darriwilian",
+    "freq": 3,
+    "base_tokens": 4,
+    "savings": 9,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Duchesnean",
+    "freq": 3,
+    "base_tokens": 4,
+    "savings": 9,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Hauterivian",
+    "freq": 3,
+    "base_tokens": 4,
+    "savings": 9,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Lutetian",
+    "freq": 3,
+    "base_tokens": 4,
+    "savings": 9,
+    "in_gazetteer": true
+  },
+  {
+    "term": "riebeckite",
+    "freq": 3,
+    "base_tokens": 4,
+    "savings": 9,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Torrejonian",
+    "freq": 3,
+    "base_tokens": 4,
+    "savings": 9,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Tremadocian",
+    "freq": 3,
+    "base_tokens": 4,
+    "savings": 9,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Valanginian",
+    "freq": 3,
+    "base_tokens": 4,
+    "savings": 9,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Aquitanian",
+    "freq": 4,
+    "base_tokens": 3,
+    "savings": 8,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Arenigian",
+    "freq": 4,
+    "base_tokens": 3,
+    "savings": 8,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Cayugan",
+    "freq": 4,
+    "base_tokens": 3,
+    "savings": 8,
+    "in_gazetteer": true
+  },
+  {
+    "term": "hornblendite",
+    "freq": 4,
+    "base_tokens": 3,
+    "savings": 8,
+    "in_gazetteer": true
+  },
+  {
+    "term": "hyaloclastite",
+    "freq": 2,
+    "base_tokens": 5,
+    "savings": 8,
+    "in_gazetteer": true
+  },
+  {
+    "term": "kaolinite",
+    "freq": 4,
+    "base_tokens": 3,
+    "savings": 8,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Ladinian",
+    "freq": 4,
+    "base_tokens": 3,
+    "savings": 8,
+    "in_gazetteer": true
+  },
+  {
+    "term": "marcasite",
+    "freq": 4,
+    "base_tokens": 3,
+    "savings": 8,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Marjuman",
+    "freq": 4,
+    "base_tokens": 3,
+    "savings": 8,
+    "in_gazetteer": true
+  },
+  {
+    "term": "metapelite",
+    "freq": 4,
+    "base_tokens": 3,
+    "savings": 8,
+    "in_gazetteer": true
+  },
+  {
+    "term": "mylonite",
+    "freq": 4,
+    "base_tokens": 3,
+    "savings": 8,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Neoproterozoic",
+    "freq": 2,
+    "base_tokens": 5,
+    "savings": 8,
+    "in_gazetteer": true
+  },
+  {
+    "term": "palygorskite",
+    "freq": 2,
+    "base_tokens": 5,
+    "savings": 8,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Pliensbachian",
+    "freq": 2,
+    "base_tokens": 5,
+    "savings": 8,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Rocklandian",
+    "freq": 4,
+    "base_tokens": 3,
+    "savings": 8,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Tithonian",
+    "freq": 4,
+    "base_tokens": 3,
+    "savings": 8,
+    "in_gazetteer": true
+  },
+  {
+    "term": "allanite",
+    "freq": 3,
+    "base_tokens": 3,
+    "savings": 6,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Altonian",
+    "freq": 3,
+    "base_tokens": 3,
+    "savings": 6,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Anisian",
+    "freq": 3,
+    "base_tokens": 3,
+    "savings": 6,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Anthracite",
+    "freq": 3,
+    "base_tokens": 3,
+    "savings": 6,
+    "in_gazetteer": true
+  },
+  {
+    "term": "charnockite",
+    "freq": 3,
+    "base_tokens": 3,
+    "savings": 6,
+    "in_gazetteer": true
+  },
+  {
+    "term": "diopside",
+    "freq": 3,
+    "base_tokens": 3,
+    "savings": 6,
+    "in_gazetteer": true
+  },
+  {
+    "term": "montmorillonite",
+    "freq": 2,
+    "base_tokens": 4,
+    "savings": 6,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Orellan",
+    "freq": 3,
+    "base_tokens": 3,
+    "savings": 6,
+    "in_gazetteer": true
+  },
+  {
+    "term": "phlogopite",
+    "freq": 2,
+    "base_tokens": 4,
+    "savings": 6,
+    "in_gazetteer": true
+  },
+  {
+    "term": "prehnite",
+    "freq": 3,
+    "base_tokens": 3,
+    "savings": 6,
+    "in_gazetteer": true
+  },
+  {
+    "term": "smectite",
+    "freq": 3,
+    "base_tokens": 3,
+    "savings": 6,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Steptoean",
+    "freq": 2,
+    "base_tokens": 4,
+    "savings": 6,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Tortonian",
+    "freq": 3,
+    "base_tokens": 3,
+    "savings": 6,
+    "in_gazetteer": true
+  },
+  {
+    "term": "travertine",
+    "freq": 3,
+    "base_tokens": 3,
+    "savings": 6,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Valmeyeran",
+    "freq": 2,
+    "base_tokens": 4,
+    "savings": 6,
+    "in_gazetteer": true
+  },
+  {
+    "term": "analcime",
+    "freq": 2,
+    "base_tokens": 3,
+    "savings": 4,
+    "in_gazetteer": true
+  },
+  {
+    "term": "andalusite",
+    "freq": 2,
+    "base_tokens": 3,
+    "savings": 4,
+    "in_gazetteer": true
+  },
+  {
+    "term": "biosparite",
+    "freq": 2,
+    "base_tokens": 3,
+    "savings": 4,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Bolsovian",
+    "freq": 2,
+    "base_tokens": 3,
+    "savings": 4,
+    "in_gazetteer": true
+  },
+  {
+    "term": "chloritoid",
+    "freq": 2,
+    "base_tokens": 3,
+    "savings": 4,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Clarkforkian",
+    "freq": 2,
+    "base_tokens": 3,
+    "savings": 4,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Duckmantian",
+    "freq": 2,
+    "base_tokens": 3,
+    "savings": 4,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Fayalite",
+    "freq": 2,
+    "base_tokens": 3,
+    "savings": 4,
+    "in_gazetteer": true
+  },
+  {
+    "term": "granophyre",
+    "freq": 2,
+    "base_tokens": 3,
+    "savings": 4,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Gzhelian",
+    "freq": 2,
+    "base_tokens": 3,
+    "savings": 4,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Ibexian",
+    "freq": 2,
+    "base_tokens": 3,
+    "savings": 4,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Langsettian",
+    "freq": 2,
+    "base_tokens": 3,
+    "savings": 4,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Lochkovian",
+    "freq": 2,
+    "base_tokens": 3,
+    "savings": 4,
+    "in_gazetteer": true
+  },
+  {
+    "term": "magnesite",
+    "freq": 2,
+    "base_tokens": 3,
+    "savings": 4,
+    "in_gazetteer": true
+  },
+  {
+    "term": "Tiffanian",
+    "freq": 2,
+    "base_tokens": 3,
+    "savings": 4,
+    "in_gazetteer": true
+  },
+  {
+    "term": "tourmaline",
+    "freq": 2,
+    "base_tokens": 3,
+    "savings": 4,
+    "in_gazetteer": true
+  },
+  {
+    "term": "tremolite",
+    "freq": 2,
+    "base_tokens": 3,
+    "savings": 4,
+    "in_gazetteer": true
+  },
+  {
+    "term": "tufa",
+    "freq": 2,
+    "base_tokens": 3,
+    "savings": 4,
+    "in_gazetteer": true
+  }
+]

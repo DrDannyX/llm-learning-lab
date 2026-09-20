@@ -1,0 +1,29 @@
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+
+# --- regenerable from the pipeline (and large) ---
+data/raw/
+data/interim/
+data/processed/
+artifacts/hf-cache/
+artifacts/models/
+
+# --- model weights: too large for git, rebuildable by re-running ---
+*.safetensors
+*.gguf
+*.npz
+
+# --- but DO commit the evidence: metrics, reports, curves, configs ---
+# runs/<name>/{summary,eval_report,adapter_config}.json, metrics.jsonl,
+# loss_curve.png, config.yaml, predictions_*.jsonl are all small and are the
+# record of what actually happened.
+!runs/**/*.json
+!runs/**/*.jsonl
+!runs/**/*.png
+!runs/**/*.yaml
+
+# the trained geoscience tokenizer is small and worth keeping
+!artifacts/tokenizers/**
