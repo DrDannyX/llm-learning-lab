@@ -9,13 +9,8 @@ training, live monitoring, and honest evaluation — every stage is a separate
 command that writes inspectable files to disk, and every non-obvious decision is
 explained where it is made.
 
-### ▶ Start here: **[docs/LEARNING.md](docs/LEARNING.md)**
-
-A guide to SFT as a subject, grounded in numbers this repo actually produced:
-what SFT can and cannot teach, what LoRA/QLoRA physically do, the anatomy of a
-training example, why loss is not your metric, how to read a training curve,
-how to evaluate honestly, and a guided two-hour first session. It ends with a
-failure-mode table and a glossary.
+### ▶ Start here: **[docs/LEARNING.md](docs/LEARNING.md)**, then follow the
+[learning path](#how-to-learn-from-this-repo) below.
 
 ```
 messy USGS lexicon prose  ──►  strict JSON
@@ -46,11 +41,96 @@ an LLM judge and guessing.
 make setup          # uv venv + all dependencies
 make doctor         # hardware, libraries, disk, data
 make smoke          # tiny end-to-end run (Qwen3-1.7B, 60 iters, a few minutes)
-make all            # the real run  (Qwen3-4B, 600 iters, ~1 hour)
+make all            # the real run  (Qwen3-4B, 900 iters, ~2 hours)
 ```
 
 Run `make smoke` first. It exercises every stage on a small model so a typo
-costs you three minutes instead of an hour.
+costs you three minutes instead of two hours.
+
+## How to learn from this repo
+
+**Do not read the docs front to back.** Most of the material is reference, and
+reading about a loss curve teaches you far less than watching one. Interleave
+reading with running — four sessions, most of the time unattended.
+
+### Session 1 — concepts, and prove the wiring (~1 h, mostly waiting)
+
+Read **[LEARNING.md](docs/LEARNING.md) §1–5**. This is the conceptual core and
+the only part worth reading carefully before you touch anything:
+
+| § | topic |
+|---|---|
+| 1 | what SFT can and cannot teach (vs prompting, RAG, RLHF, pretraining) |
+| 2–3 | what LoRA and QLoRA physically do |
+| **4** | **the anatomy of a training example — the most important section here** |
+| 5 | why loss is a diagnostic, not a metric |
+
+Then skim this README for the shape of the project, and run:
+
+```bash
+make doctor
+make smoke                 # ~5 min, every stage on a 1.7B model
+geosft inspect --index 3
+```
+
+Sit with that `inspect` output next to §4 until the masked/trained split
+clicks. That one screen is where most fine-tuning failures live.
+
+### Session 2 — hyperparameters and the real run (~2 h, unattended)
+
+Read **§6–8** (steps vs iterations vs epochs vs optimizer steps; what each knob
+physically does; how to read a curve). Then start the run and *watch the live
+panel* for the first few minutes — you want to see the steep phase, the model
+learning JSON shape, happen in real time.
+
+```bash
+make train
+```
+
+While it runs, read **[RESULTS.md](docs/RESULTS.md) §1–5** and compare its
+curve against yours.
+
+### Session 3 — evaluation (~30 min)
+
+Read **§9** (five rules for honest evaluation), then:
+
+```bash
+geosft eval --adapter runs/<name>
+```
+
+Read the **delta** column, not the tuned column. Then **RESULTS.md §6–7**.
+
+Now do the step most people skip: open `runs/<name>/predictions_tuned.jsonl`,
+find a case where the model and the gold label disagree, and decide which is
+right. **Sometimes the model is.** That is generalisation past the rules, and
+it is the most encouraging thing you will see.
+
+### Session 4 — your own experiment
+
+Read **[EXPERIMENTS.md](docs/EXPERIMENTS.md) #1** (prompt masking) and run it.
+It is the most instructive hour available: the unmasked run reaches *lower*
+training loss and *worse* task scores, which makes §5 permanent.
+
+### Read differently
+
+| document | how to read it |
+|---|---|
+| [ARCHITECTURE.md](docs/ARCHITECTURE.md) | **Lookup, not cover to cover.** Go when you want a specific stage, or before changing code. |
+| LEARNING.md §10–11 | Data/weak supervision and tokenizers — read when you reach those stages, not upfront. |
+| LEARNING.md §13–14 | Failure-mode table and glossary. Bookmarks. Go to §13 the moment something looks wrong. |
+| [RESULTS.md](docs/RESULTS.md) §9 | "What these numbers do *not* establish." Read early — it is the antidote to believing the 0.831. |
+
+LEARNING.md §12 is the same journey as sessions 1–3 but command-by-command
+rather than reading-first. Use it as the detailed companion, not a second path.
+
+### If you would rather read code than prose
+
+Four files, in this order:
+
+1. `src/geosft/schema.py` — the contract everything else points at (~130 lines)
+2. `src/geosft/data/label.py` — where data quality is won or lost
+3. `src/geosft/train/mlx_train.py` — the training loop and its two documented traps
+4. `src/geosft/eval/metrics.py` — what "good" actually means here
 
 ## The workflow
 
@@ -311,7 +391,8 @@ against rules. **Read the gold numbers, not the rule-matched numbers.**
 
 ## Documentation
 
-Read them in this order:
+See [How to learn from this repo](#how-to-learn-from-this-repo) for the
+recommended path through these. In brief:
 
 | # | document | contents |
 |---|---|---|

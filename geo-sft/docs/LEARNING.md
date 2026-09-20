@@ -4,7 +4,10 @@ A guide to supervised fine-tuning as a *subject*, using this project as the
 worked example. Everything here is grounded in numbers this repo actually
 produced, so you can reproduce each claim.
 
-Read this first. [ARCHITECTURE.md](ARCHITECTURE.md) is the code tour,
+Read this first — sections 1–5 before you run anything. The README has a
+[four-session learning path](../README.md#how-to-learn-from-this-repo) that
+interleaves these sections with actually running the pipeline, which is the
+recommended way through. [ARCHITECTURE.md](ARCHITECTURE.md) is the code tour,
 [RESULTS.md](RESULTS.md) the outcomes, [EXPERIMENTS.md](EXPERIMENTS.md) what to
 run next.
 
@@ -460,6 +463,11 @@ and learning to tell "cheaper" from "better" is the point.
 ## 12. A guided first session
 
 About two hours, most of it unattended. Do these in order.
+
+> This is the **command-by-command** version of the reading path in
+> [the README](../README.md#how-to-learn-from-this-repo). That path tells you
+> which sections to read alongside each step; this one is just the doing. Use
+> them together rather than picking one.
 
 **1. Check the machine (1 min).**
 ```bash
