@@ -1,0 +1,16 @@
+{
+  "run": "sft-after-tapt-v1",
+  "iters_done": 900,
+  "final_train_loss": 0.06089324951171875,
+  "final_val_loss": 0.055612482130527496,
+  "best_val_loss": 0.05401960760354996,
+  "best_val_iter": 749,
+  "wall_minutes": 57.14,
+  "alerts": [
+    "iter 674: val loss has not improved for 3 evals (best 0.063 @ 449). Overfitting -- stop here and use the best checkpoint."
+  ],
+  "test_loss": 0.05732487514615059,
+  "test_perplexity": 1.05899977684021,
+  "adapter_path": "/Users/daniel/git/llm-scratchpad/geo-sft/runs/sft-after-tapt-v1",
+  "model_path": "/Users/daniel/git/llm-scratchpad/geo-cpt/artifacts/models/tapt-v1-4bit"
+}
