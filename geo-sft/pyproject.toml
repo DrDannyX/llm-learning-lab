@@ -3,6 +3,9 @@ name = "geo-sft"
 version = "0.1.0"
 description = "End-to-end supervised fine-tuning lab for geoscience structured extraction on Apple Silicon"
 requires-python = ">=3.11,<3.13"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "Daniel Bongiorno" }]
 dependencies = [
     # --- Apple-native training (primary path) ---
     "mlx>=0.29",
