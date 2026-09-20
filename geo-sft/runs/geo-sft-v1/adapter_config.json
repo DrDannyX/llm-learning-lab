@@ -1,0 +1,10 @@
+{
+  "fine_tune_type": "lora",
+  "num_layers": 16,
+  "lora_parameters": {
+    "rank": 16,
+    "scale": 2.0,
+    "dropout": 0.05
+  },
+  "model": "mlx-community/Qwen3-4B-Instruct-2507-4bit"
+}

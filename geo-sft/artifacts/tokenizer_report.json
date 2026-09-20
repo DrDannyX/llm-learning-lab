@@ -1,0 +1,244 @@
+{
+  "base_model": "Qwen/Qwen3-4B-Instruct-2507",
+  "geo_vocab": 8000,
+  "base_vocab": 151643,
+  "fertility_geo_text": {
+    "base": 1.701,
+    "geo": 1.527
+  },
+  "fertility_general_text": {
+    "base": 1.123,
+    "geo": 1.938
+  },
+  "n_terms_ge3_tokens": 1918,
+  "n_terms_checked": 2223,
+  "worst_fragmented_raw": [
+    {
+      "term": "Clino-ferro-ferri-fluoro-holmquistite",
+      "base_tokens": 16,
+      "corpus_freq": 0
+    },
+    {
+      "term": "Cyprine (of Panikorovskii et al)",
+      "base_tokens": 14,
+      "corpus_freq": 0
+    },
+    {
+      "term": "Cobalt-nickel-pyrite (of Vernadsky)",
+      "base_tokens": 14,
+      "corpus_freq": 0
+    },
+    {
+      "term": "Chloro-potassic-ferri-magnesiotaramite",
+      "base_tokens": 14,
+      "corpus_freq": 0
+    },
+    {
+      "term": "Barium-Anorthite (of Nockolds and Zies)",
+      "base_tokens": 14,
+      "corpus_freq": 0
+    },
+    {
+      "term": "Clino-ferro-fluoro-holmquistite",
+      "base_tokens": 13,
+      "corpus_freq": 0
+    },
+    {
+      "term": "Clino-ferro-ferri-holmquistite",
+      "base_tokens": 13,
+      "corpus_freq": 0
+    },
+    {
+      "term": "Clino-ferri-fluoro-holmquistite",
+      "base_tokens": 13,
+      "corpus_freq": 0
+    },
+    {
+      "term": "Clino-sodic-fluoro-holmquistite",
+      "base_tokens": 12,
+      "corpus_freq": 0
+    },
+    {
+      "term": "Arsenic Sulphide Glass No. 1",
+      "base_tokens": 11,
+      "corpus_freq": 0
+    },
+    {
+      "term": "Alumino-magnesio-hornblende",
+      "base_tokens": 11,
+      "corpus_freq": 0
+    },
+    {
+      "term": "Cobaltoan Bismuthian Tennantite",
+      "base_tokens": 10,
+      "corpus_freq": 0
+    },
+    {
+      "term": "Clino-fluoro-holmquistite",
+      "base_tokens": 10,
+      "corpus_freq": 0
+    },
+    {
+      "term": "Clino-ferri-holmquistite",
+      "base_tokens": 10,
+      "corpus_freq": 0
+    },
+    {
+      "term": "Chromo-alumino-povondraite",
+      "base_tokens": 10,
+      "corpus_freq": 0
+    }
+  ],
+  "worst_fragmented_weighted": [
+    {
+      "term": "Pennsylvanian",
+      "base_tokens": 4,
+      "corpus_freq": 340,
+      "tokens_wasted": 1020
+    },
+    {
+      "term": "Cretaceous",
+      "base_tokens": 3,
+      "corpus_freq": 451,
+      "tokens_wasted": 902
+    },
+    {
+      "term": "Ordovician",
+      "base_tokens": 3,
+      "corpus_freq": 318,
+      "tokens_wasted": 636
+    },
+    {
+      "term": "Mississippian",
+      "base_tokens": 4,
+      "corpus_freq": 203,
+      "tokens_wasted": 609
+    },
+    {
+      "term": "gneiss",
+      "base_tokens": 3,
+      "corpus_freq": 248,
+      "tokens_wasted": 496
+    },
+    {
+      "term": "rhyolite",
+      "base_tokens": 4,
+      "corpus_freq": 158,
+      "tokens_wasted": 474
+    },
+    {
+      "term": "siltstone",
+      "base_tokens": 3,
+      "corpus_freq": 217,
+      "tokens_wasted": 434
+    },
+    {
+      "term": "Pleistocene",
+      "base_tokens": 3,
+      "corpus_freq": 209,
+      "tokens_wasted": 418
+    },
+    {
+      "term": "Oligocene",
+      "base_tokens": 3,
+      "corpus_freq": 151,
+      "tokens_wasted": 302
+    },
+    {
+      "term": "Proterozoic",
+      "base_tokens": 4,
+      "corpus_freq": 100,
+      "tokens_wasted": 300
+    },
+    {
+      "term": "Pliocene",
+      "base_tokens": 3,
+      "corpus_freq": 143,
+      "tokens_wasted": 286
+    },
+    {
+      "term": "Silurian",
+      "base_tokens": 3,
+      "corpus_freq": 135,
+      "tokens_wasted": 270
+    },
+    {
+      "term": "Biotite",
+      "base_tokens": 3,
+      "corpus_freq": 123,
+      "tokens_wasted": 246
+    },
+    {
+      "term": "breccia",
+      "base_tokens": 3,
+      "corpus_freq": 94,
+      "tokens_wasted": 188
+    },
+    {
+      "term": "granodiorite",
+      "base_tokens": 4,
+      "corpus_freq": 62,
+      "tokens_wasted": 186
+    },
+    {
+      "term": "andesite",
+      "base_tokens": 3,
+      "corpus_freq": 84,
+      "tokens_wasted": 168
+    },
+    {
+      "term": "Paleozoic",
+      "base_tokens": 3,
+      "corpus_freq": 73,
+      "tokens_wasted": 146
+    },
+    {
+      "term": "diorite",
+      "base_tokens": 3,
+      "corpus_freq": 62,
+      "tokens_wasted": 124
+    },
+    {
+      "term": "Cenomanian",
+      "base_tokens": 4,
+      "corpus_freq": 35,
+      "tokens_wasted": 105
+    },
+    {
+      "term": "argillite",
+      "base_tokens": 3,
+      "corpus_freq": 52,
+      "tokens_wasted": 104
+    },
+    {
+      "term": "Carboniferous",
+      "base_tokens": 3,
+      "corpus_freq": 51,
+      "tokens_wasted": 102
+    },
+    {
+      "term": "Desmoinesian",
+      "base_tokens": 4,
+      "corpus_freq": 32,
+      "tokens_wasted": 96
+    },
+    {
+      "term": "amphibolite",
+      "base_tokens": 3,
+      "corpus_freq": 48,
+      "tokens_wasted": 96
+    },
+    {
+      "term": "graywacke",
+      "base_tokens": 4,
+      "corpus_freq": 29,
+      "tokens_wasted": 87
+    },
+    {
+      "term": "pumice",
+      "base_tokens": 3,
+      "corpus_freq": 43,
+      "tokens_wasted": 86
+    }
+  ]
+}

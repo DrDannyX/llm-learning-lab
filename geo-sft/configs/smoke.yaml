@@ -1,0 +1,56 @@
+# Tiny end-to-end run to prove the wiring before you commit an hour.
+# ~300 units, 60 iterations, 20 eval examples: a few minutes total.
+name: geo-sft-smoke
+
+data:
+  max_units: 300
+  min_passage_chars: 200
+  max_passage_chars: 3000
+  min_filled_fields: 2
+  val_frac: 0.12
+  test_frac: 0.12
+  gold_n: 25
+  seed: 17
+
+tokenizer:
+  vocab_size: 4000
+  model_type: bpe
+  min_frequency: 2
+  extend_top_k: 128
+  min_base_tokens: 3
+
+train:
+  base_model: mlx-community/Qwen3-1.7B-4bit
+  hf_base_model: Qwen/Qwen3-1.7B
+  backend: mlx
+  fine_tune_type: lora
+  num_layers: 8
+  lora_rank: 8
+  lora_alpha: 16.0
+  lora_dropout: 0.05
+  batch_size: 2
+  grad_accumulation_steps: 4
+  iters: 60
+  learning_rate: 0.0002
+  lr_schedule: cosine
+  warmup_steps: 10
+  max_seq_length: 1536
+  steps_per_report: 5
+  steps_per_eval: 20
+  save_every: 30
+  val_batches: 8
+  grad_checkpoint: true
+  mask_prompt: true
+  align_loss_to_answer: true
+  seed: 17
+
+eval:
+  # Qwen3-1.7B is a REASONING model: it spends tokens on a <think> block before
+  # answering. The tuned model learns to keep that block empty, but the untuned
+  # base needs real headroom or it runs out mid-thought and scores 0 on parse
+  # rate for the wrong reason. The default config's Qwen3-4B-Instruct-2507 is a
+  # non-thinking model and does not need this.
+  max_new_tokens: 1200
+  temperature: 0.0
+  n_examples: 20
+  compare_base: true

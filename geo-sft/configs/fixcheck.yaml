@@ -1,0 +1,55 @@
+# Full run. ~12k training pairs, ~45-70 min on an M4 Pro.
+name: geo-sft-v2-fixcheck
+
+data:
+  max_units: 4000          # Geolex units to pull (16,684 exist)
+  min_passage_chars: 200
+  max_passage_chars: 4000
+  min_filled_fields: 2     # drop passages the labeller found almost nothing in
+  val_frac: 0.10
+  test_frac: 0.10
+  gold_n: 150
+  seed: 17
+  group_split: true        # split on unit_id -- never split near-duplicates
+
+tokenizer:
+  vocab_size: 8000
+  model_type: bpe
+  min_frequency: 2
+  extend_top_k: 512        # domain tokens grafted onto the base vocabulary
+  min_base_tokens: 3       # only graft terms the base splits into 3+ pieces
+
+train:
+  base_model: mlx-community/Qwen3-4B-Instruct-2507-4bit
+  hf_base_model: Qwen/Qwen3-4B-Instruct-2507
+  backend: mlx
+  fine_tune_type: lora
+  num_layers: 16
+  lora_rank: 16
+  lora_alpha: 32.0
+  lora_dropout: 0.05
+  batch_size: 4
+  grad_accumulation_steps: 4    # effective batch = 16
+  # NOTE: iters counts MICRO-batches. 900 x batch 4 = 3,600 examples seen of
+  # 6,635 (~0.54 epoch), which is 225 optimizer steps. All schedule values
+  # below are in ITERATIONS and converted to optimizer steps internally --
+  # see the gradient-accumulation trap in train/mlx_train.py.
+  iters: 300
+  learning_rate: 0.0001
+  lr_schedule: cosine
+  warmup_steps: 40
+  max_seq_length: 2048
+  steps_per_report: 10
+  steps_per_eval: 50
+  save_every: 100
+  val_batches: 20
+  grad_checkpoint: true
+  mask_prompt: true             # loss on the JSON only
+  align_loss_to_answer: true    # skip template-injected <think></think> scaffolding
+  seed: 17
+
+eval:
+  max_new_tokens: 512
+  temperature: 0.0
+  n_examples: 120
+  compare_base: true
