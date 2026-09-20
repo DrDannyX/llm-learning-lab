@@ -13,6 +13,8 @@ from typing import Optional
 
 import typer
 from rich.console import Console
+from rich.markup import escape
+from rich.panel import Panel
 from rich.table import Table
 
 from . import paths
@@ -168,6 +170,67 @@ def review(n: int = typer.Option(20, help="How many gold rows to show."),
         console.rule(f"[{i}] {row.get('unit_name')}  {'✓' if row.get('reviewed') else ''}")
         console.print(row["passage"])
         console.print_json(json.dumps(row["target"]))
+
+
+@app.command()
+def inspect(index: int = typer.Option(0, help="Which training row to inspect."),
+            config: Optional[str] = ConfigOpt,
+            model: Optional[str] = typer.Option(None, help="Base model path.")) -> None:
+    """Show exactly what the model is trained on: prompt vs loss region.
+
+    This is the single most useful thing to look at before starting a run, and
+    the check that catches the whole family of silent prompt/masking bugs.
+    You should see:
+
+      * the PROMPT (grey) carrying no loss -- system, passage, and the
+        assistant turn marker,
+      * the LOSS REGION (green) containing the JSON answer AND the EOS token
+        (without EOS the model never learns to stop),
+      * and the prompt matching what inference will send, byte for byte.
+    """
+    cfg = _cfg(config)
+    from mlx_lm import load
+
+    from .schema import build_messages
+    from .train.mlx_train import PromptCompletionDataset
+
+    rows = [json.loads(l) for l in (paths.PROCESSED / "train.jsonl").open()]
+    row = rows[index]
+    _, tok = load(model or cfg.train.base_model)
+
+    tokens, offset = PromptCompletionDataset([row], tok).process(row)
+    prompt_txt = tok.decode(tokens[:offset])
+    answer_txt = tok.decode(tokens[offset:])
+
+    # escape(): the schema hint contains "[string]", which rich would parse as
+    # console markup and silently delete -- making the prompt look malformed.
+    console.print(Panel(escape(prompt_txt),
+                        title=f"PROMPT — masked, no loss ({offset} tokens)",
+                        border_style="bright_black"))
+    console.print(Panel(escape(answer_txt),
+                        title=f"LOSS REGION — trained ({len(tokens) - offset} tokens)",
+                        border_style="green"))
+
+    passage = json.loads((paths.PROCESSED / "train.meta.jsonl").read_text()
+                         .splitlines()[index])["passage"]
+    infer_prompt = tok.apply_chat_template(
+        build_messages(passage), tokenize=False, add_generation_prompt=True
+    )
+    match = infer_prompt == prompt_txt
+    pct = 100 * offset / max(len(tokens), 1)
+
+    t = Table(show_header=False, box=None)
+    t.add_row("total tokens", str(len(tokens)))
+    t.add_row("masked (prompt)", f"{offset}  ({pct:.0f}%)")
+    t.add_row("trained (answer)", f"{len(tokens) - offset}  ({100 - pct:.0f}%)")
+    t.add_row("ends with EOS",
+              "[green]yes[/green]" if tokens[-1] == tok.eos_token_id
+              else "[red]NO — model will not learn to stop[/red]")
+    t.add_row("train prompt == inference prompt",
+              "[green]yes[/green]" if match else "[red]NO — silent failure ahead[/red]")
+    console.print(t)
+    if not match:
+        console.print("[red]Prompt mismatch. See docs/LEARNING.md section 4.[/red]")
 
 
 @app.command()

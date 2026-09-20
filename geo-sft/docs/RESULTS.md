@@ -12,7 +12,7 @@ mean something. All figures are reproducible via `make all`.
 | Hardware | Apple M4 Pro, 48 GB unified memory (40.2 GB MLX working set) |
 | Base model | `mlx-community/Qwen3-4B-Instruct-2507-4bit` |
 | Method | QLoRA — frozen 4-bit base, rank-16 LoRA on the top 16 layers |
-| Trainable | 1.25 M of 1.72 B parameters (0.072%) |
+| Trainable | 14.68 M of 4,022 M parameters (**0.365%**), 16 of 36 layers adapted |
 | Framework | mlx 0.32.2 / mlx-lm 0.31.3 |
 | Effective batch | 16 (batch 4 × accumulation 4) |
 | LR | 1e-4 peak, linear warmup then cosine to 1e-5 |

@@ -3,9 +3,19 @@
 A complete, runnable supervised fine-tuning (SFT) workflow for a **geoscience
 structured-extraction** task, built to run end to end on an Apple Silicon Mac.
 
-The point of this repo is learning the *process*: corpus acquisition, training-pair
-extraction, tokenizer work, QLoRA training, live monitoring, and honest evaluation.
-Every stage is a separate command that writes inspectable files to disk.
+**This repo exists to teach the process of supervised fine-tuning**, not to ship a
+model. Corpus acquisition, training-pair extraction, tokenizer work, QLoRA
+training, live monitoring, and honest evaluation — every stage is a separate
+command that writes inspectable files to disk, and every non-obvious decision is
+explained where it is made.
+
+### ▶ Start here: **[docs/LEARNING.md](docs/LEARNING.md)**
+
+A guide to SFT as a subject, grounded in numbers this repo actually produced:
+what SFT can and cannot teach, what LoRA/QLoRA physically do, the anatomy of a
+training example, why loss is not your metric, how to read a training curve,
+how to evaluate honestly, and a guided two-hour first session. It ends with a
+failure-mode table and a glossary.
 
 ```
 messy USGS lexicon prose  ──►  strict JSON
@@ -52,6 +62,12 @@ costs you three minutes instead of an hour.
 | 4 | Vocabulary extension | `geosft extend` | `artifacts/models/*-geo-ext`, `*-mlx-4bit` |
 | 5 | QLoRA training | `geosft train` | `runs/<name>/adapters.safetensors`, `loss_curve.png` |
 | 6 | Evaluation | `geosft eval --adapter runs/<name>` | `eval_report.json`, `predictions_*.jsonl` |
+
+Between steps 2 and 5, run **`geosft inspect`**. It prints the prompt (masked)
+against the loss region (trained) for one example and asserts the two
+invariants that silently wreck fine-tunes: the completion ends with EOS, and
+the training prompt is byte-identical to the inference prompt. It takes a
+second and catches a whole family of bugs.
 
 ### 1. Corpus
 
@@ -295,11 +311,28 @@ against rules. **Read the gold numbers, not the rule-matched numbers.**
 
 ## Documentation
 
-| document | contents |
+Read them in this order:
+
+| # | document | contents |
+|---|---|---|
+| 1 | **[docs/LEARNING.md](docs/LEARNING.md)** | **SFT as a subject** — concepts, mental models, the anatomy of a training example, reading a loss curve, honest evaluation, guided first session, failure-mode table, glossary |
+| 2 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | how every stage works in code, the design decisions, module reference |
+| 3 | [docs/RESULTS.md](docs/RESULTS.md) | full training outcomes, evaluation tables, the four bugs and their fixes |
+| 4 | [docs/EXPERIMENTS.md](docs/EXPERIMENTS.md) | eight experiments worth running, and what to expect from each |
+
+### The four bugs are teaching material
+
+Building this hit four bugs that each produced a **plausible-looking loss curve
+and no error message** — which is the normal failure mode in this field. Each is
+documented where it lives, carries a regression test, and is written up in
+LEARNING.md and RESULTS.md:
+
+| bug | symptom |
 |---|---|
-| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | how every stage works, the design decisions, module reference |
-| [docs/RESULTS.md](docs/RESULTS.md) | full training outcomes, evaluation tables, the four bugs and their fixes |
-| [docs/EXPERIMENTS.md](docs/EXPERIMENTS.md) | eight experiments worth running, and what to expect from each |
+| `re.IGNORECASE` defeating `[A-Z]` | relation names swallowed clauses |
+| gradient-accumulation LR trap | loss flat at 2.26 for 40 iters; 0.52 after the fix |
+| lowercase vocabulary grafting | added tokens existed but never fired |
+| template scaffolding inside the loss region | strict JSON rate 1.000 → 0.000 **while macro F1 rose** |
 
 ## Layout
 
