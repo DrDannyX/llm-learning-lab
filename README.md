@@ -262,6 +262,13 @@ measure it against. If 20M tokens moves the needle further than 1.5M did, you
 have located the scaling curve for yourself — which is worth more than any
 single number in this repo.
 
+## Add to the repo
+I would love if you want to contribute and add in a lesson of your own on something related to geoscience and AI. To do this follow these rough steps:
+1. Create a new branch
+2. Add a new folder
+3. In your folder add a README.md explaining what you have done
+4. Commit and raise a PR
+
 ## Requirements
 
 Apple Silicon with 32 GB+ (48 GB for CPT full fine-tuning), Python 3.12,
