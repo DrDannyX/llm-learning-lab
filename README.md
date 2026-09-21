@@ -182,6 +182,86 @@ message.** Three were caught only by running control arms, and one was masked
 by a regression test that grepped source instead of executing the code — it
 passed while the function was completely broken.
 
+## Where to go next
+
+Ordered by return on effort. The first group closes out claims this repo has
+already made; everything after it is new ground.
+
+### 1. Finish what is started (hours, not days)
+
+| | why | cost |
+|---|---|---|
+| **Three seeds on the vocab-extension arm** | the −0.084 result is one seed. TAPT's +0.025 only became a claim at n=3; this deserves the same. | ~3 h unattended |
+| **Geologist spot-check of ~20 gold rows** | the review was a *machine* review. Twenty rows tells you how much to trust the other 130. | an hour of your time |
+| **Run DAPT** | only TAPT ran (1.5M tokens). The ~20M-token DAPT corpus is already configured in `geo-cpt/configs/dapt.yaml`, and `dapt_tapt` runs both in sequence. Does 13× more domain text help further? | ~4 h |
+| **Experiment #1, prompt masking** | the most instructive hour in either lab: the unmasked run reaches *lower* training loss and *worse* task scores. | ~2 h |
+
+### 2. The next technique: preference optimisation
+
+SFT is **imitation** — it can never exceed the quality of your labels. That is
+the 0.705 ceiling. Preference methods learn from *comparisons*, which are both
+cheaper to collect and able to surpass the demonstrations.
+
+- **DPO for calibrated abstention.** Teach the model to prefer `null` over a
+  plausible guess. This directly addresses the biggest production gap: the
+  model currently has no way to say "I'm not sure", and a confident wrong
+  formation name is worse than a blank field.
+- **GRPO against your own F1 metric.** Structured extraction is unusually
+  well-suited to RL with verifiable rewards, because `eval/metrics.py` already
+  *is* a computable reward function — no human labelling, no reward model.
+
+`trl` ships `DPOTrainer`, `GRPOTrainer`, `KTOTrainer`. Note mlx-lm has none of
+these, so this is the HF/MPS path: slower, and no real 4-bit.
+
+### 3. Differently-shaped skills
+
+- **A domain embedding model.** Contrastive learning on (query, passage) pairs
+  is a completely different objective from anything here, and it is the other
+  half of a real system: semantic search over a report archive. Pairs
+  naturally with extraction — retrieve, then extract.
+- **Constrained decoding** (`outlines`, grammar-constrained generation). A
+  weekend. It guarantees schema-valid JSON at *decode* time, making the
+  0.833 → 1.000 schema-validity win obsolete by construction. The lesson is
+  knowing when **not** to train.
+- **Distillation.** Train a small model on a large one's outputs and reasoning
+  traces — how you get 1.7B behaving like something far larger.
+- **A quantisation study.** Everything here is 4-bit. What does 8-bit or bf16
+  actually buy on this task, and at what memory cost?
+
+### 4. Production-shaped work
+
+- **Span-grounded extraction.** The model outputs `"lithologies": ["chalk"]`
+  but not *where it saw it*. For any geoscience QA workflow a reviewer needs
+  the supporting span. This means a schema change (character offsets) and
+  relabelling — the largest single gap between this and something deployable.
+- **Calibration.** Logprob-based confidence to route uncertain records to a
+  human review queue.
+- **The data flywheel.** Deploy → geologist corrects → corrections become new
+  SFT data. Unglamorous, and almost always the highest-return move: it is the
+  only thing that escapes the rule-label ceiling with certainty.
+- **Serving.** `mlx_lm.server --adapter-path` runs on a Mac; `mlx_lm.fuse`
+  merges the adapter into one artifact. For Linux/GPU (vLLM) you would retrain
+  on the HF path — MLX adapters do not transfer.
+
+### 5. Staying in geoscience
+
+- **A harder, messier corpus.** Open-file exploration reports (WAMEX, state
+  surveys) and well completion reports are PDFs, not clean API text. Ingest
+  becomes the work, which is realistic.
+- **Multimodal.** Core photographs, well logs, scanned maps. A large jump —
+  vision encoders — but it is where the domain actually lives.
+- **A different task on the same corpus.** Lithology-description
+  classification, or summarisation, to see how much of the pipeline transfers
+  when only the schema changes.
+
+### If you only do one thing
+
+**Run DAPT.** It is already configured, it answers the question the CPT lab
+was built for at 13× the scale, and you now have a three-seed baseline to
+measure it against. If 20M tokens moves the needle further than 1.5M did, you
+have located the scaling curve for yourself — which is worth more than any
+single number in this repo.
+
 ## Requirements
 
 Apple Silicon with 32 GB+ (48 GB for CPT full fine-tuning), Python 3.12,
