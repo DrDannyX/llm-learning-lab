@@ -118,9 +118,21 @@ metric" permanent.
 
 ## Results
 
+**Against hand-corrected gold labels** — the defensible numbers:
+
+| arm | macro F1 |
+|---|---|
+| 4B zero-shot, no training | 0.393 |
+| **4B + SFT** | **0.705** |
+
+Against the *rule-derived* labels the same model scores 0.831. That gap is
+finding 3 below, and it is the single most useful result here.
+
+The arm comparisons were run against rule labels throughout, so they are
+internally consistent but share that ~40% inflation. Read them as *relative*:
+
 | arm | macro F1 (rule labels) |
 |---|---|
-| 4B zero-shot, no training | 0.314 |
 | 1.7B + SFT | 0.823 |
 | 4B + SFT | 0.831 |
 | **1.7B + TAPT + SFT** | **0.842** |
