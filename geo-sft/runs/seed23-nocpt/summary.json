@@ -1,0 +1,16 @@
+{
+  "run": "seed23-nocpt",
+  "iters_done": 900,
+  "final_train_loss": 0.06435295343399047,
+  "final_val_loss": 0.07067739963531494,
+  "best_val_loss": 0.06882625073194504,
+  "best_val_iter": 674,
+  "wall_minutes": 57.36,
+  "alerts": [
+    "iter 899: val loss has not improved for 3 evals (best 0.069 @ 674). Overfitting -- stop here and use the best checkpoint."
+  ],
+  "test_loss": 0.06632764637470245,
+  "test_perplexity": 1.0685768127441406,
+  "adapter_path": "/Users/daniel/git/llm-scratchpad/geo-sft/runs/seed23-nocpt",
+  "model_path": "mlx-community/Qwen3-1.7B-4bit"
+}

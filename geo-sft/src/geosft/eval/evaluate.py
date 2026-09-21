@@ -98,8 +98,15 @@ def run(cfg: Config, adapter_path: str | Path | None, model_path: str | None = N
     rows = load_eval_rows(split, cfg.eval.n_examples, use_gold=use_gold)
     out_dir = Path(out_dir or (Path(adapter_path) if adapter_path else paths.RUNS / "base-only"))
     out_dir.mkdir(parents=True, exist_ok=True)
-    console.print(f"evaluating on [cyan]{len(rows)}[/cyan] examples "
-                  f"({'gold' if use_gold else split})")
+    # Name outputs by eval set. Gold and test runs previously both wrote
+    # eval_report.json, so scoring against gold silently DESTROYED the test
+    # results for that run -- and the two are not comparable, so conflating
+    # them is worse than losing one.
+    # NOTE: this must be defined BEFORE the first prediction file is written.
+    # Defining it lower down (next to `report`) raised UnboundLocalError and
+    # took out five completed training runs' evaluations.
+    tag = "gold" if use_gold else split
+    console.print(f"evaluating on [cyan]{len(rows)}[/cyan] examples ({tag})")
 
     results: dict[str, dict] = {}
     t0 = time.perf_counter()
@@ -108,14 +115,14 @@ def run(cfg: Config, adapter_path: str | Path | None, model_path: str | None = N
         base_out = generate_mlx(model_path, None, rows, cfg.eval.max_new_tokens,
                                 cfg.eval.temperature, "base")
         results["base"], base_preds = score(rows, base_out)
-        (out_dir / "predictions_base.jsonl").write_text(
+        (out_dir / f"predictions_base{'' if tag == 'test' else '_' + tag}.jsonl").write_text(
             "\n".join(json.dumps(p, ensure_ascii=False) for p in base_preds))
 
     if adapter_path:
         tuned_out = generate_mlx(model_path, str(adapter_path), rows,
                                  cfg.eval.max_new_tokens, cfg.eval.temperature, "tuned")
         results["tuned"], tuned_preds = score(rows, tuned_out)
-        (out_dir / "predictions_tuned.jsonl").write_text(
+        (out_dir / f"predictions_tuned{'' if tag == 'test' else '_' + tag}.jsonl").write_text(
             "\n".join(json.dumps(p, ensure_ascii=False) for p in tuned_preds))
 
     report = {
@@ -126,9 +133,10 @@ def run(cfg: Config, adapter_path: str | Path | None, model_path: str | None = N
         "minutes": round((time.perf_counter() - t0) / 60, 2),
         "results": results,
     }
-    (out_dir / "eval_report.json").write_text(json.dumps(report, indent=2))
+    name = "eval_report.json" if tag == "test" else f"eval_report_{tag}.json"
+    (out_dir / name).write_text(json.dumps(report, indent=2))
     _print_table(results)
-    console.print(f"-> {out_dir / 'eval_report.json'}")
+    console.print(f"-> {out_dir / name}")
     return report
 
 

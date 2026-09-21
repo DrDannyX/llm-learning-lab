@@ -154,7 +154,7 @@ def run(cfg: Config, run_name: str | None = None) -> dict:
     cfg.dump(run_dir / "config.yaml")
     mx.random.seed(tcfg.seed)
 
-    stage_dir = paths.PACKED / cfg.corpus.stage
+    stage_dir = paths.PACKED / cfg.corpus.stage_dir
     train_blocks = load_packed(stage_dir / "train.npy")
     domain_val = load_packed(stage_dir / "val.npy")
     general_val_p = stage_dir / "val_general.npy"
@@ -275,7 +275,7 @@ def run(cfg: Config, run_name: str | None = None) -> dict:
                             tcfg.keep_last_n, tcfg.base_model, model_config)
     d_end, g_end = forgetting[-1][1], forgetting[-1][2]
     summary.update({
-        "stage": cfg.corpus.stage,
+        "stage": cfg.corpus.stage_dir,
         "base_model": tcfg.base_model,
         "fine_tune_type": tcfg.fine_tune_type,
         "checkpoint": str(final),

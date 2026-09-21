@@ -216,3 +216,35 @@ def test_training_sequence_matches_inference_prompt_exactly():
     )
     assert tok.decode(tokens[:offset]) == eval_prompt
     assert tokens[-1] == tok.eos_token_id, "must learn to stop"
+
+
+def test_gold_and_test_evals_write_to_different_files(tmp_path, monkeypatch):
+    """Two bugs guarded here, and the second is why this test EXECUTES the
+    function instead of grepping its source:
+
+    1. gold and test runs both wrote eval_report.json, so scoring against the
+       hand-reviewed gold set silently destroyed the test-set results.
+    2. the fix defined `tag` AFTER its first use, raising UnboundLocalError on
+       every eval. The original version of this test only checked that the
+       source contained the right strings, so it passed while the code was
+       completely broken. A test that greps source is not a test.
+    """
+    from geosft.config import Config
+    from geosft.eval import evaluate
+
+    rows = [{"passage": "X chalk.", "unit_name": "X",
+             "target": GeoExtraction(unit_name="X").model_dump(mode="json")}]
+    monkeypatch.setattr(evaluate, "load_eval_rows", lambda *a, **k: rows)
+    monkeypatch.setattr(evaluate, "generate_mlx",
+                        lambda *a, **k: ['{"unit_name": "X"}'])
+
+    cfg = Config()
+    cfg.eval.compare_base = True
+    for use_gold, expected in ((False, "eval_report.json"),
+                               (True, "eval_report_gold.json")):
+        out = tmp_path / ("gold" if use_gold else "test")
+        evaluate.run(cfg, adapter_path=None, model_path="m",
+                     use_gold=use_gold, out_dir=out)
+        assert (out / expected).exists(), f"{expected} not written"
+    assert not (tmp_path / "gold" / "eval_report.json").exists(), \
+        "a gold run must never write the test report file"

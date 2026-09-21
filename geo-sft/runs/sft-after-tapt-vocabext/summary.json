@@ -1,0 +1,14 @@
+{
+  "run": "sft-after-tapt-vocabext",
+  "iters_done": 900,
+  "final_train_loss": 0.08419528007507324,
+  "final_val_loss": 0.10833433270454407,
+  "best_val_loss": 0.08483404666185379,
+  "best_val_iter": 824,
+  "wall_minutes": 54.76,
+  "alerts": [],
+  "test_loss": 0.0978361964225769,
+  "test_perplexity": 1.102782130241394,
+  "adapter_path": "/Users/daniel/git/llm-scratchpad/geo-sft/runs/sft-after-tapt-vocabext",
+  "model_path": "/Users/daniel/git/llm-scratchpad/geo-cpt/artifacts/models/tapt-vocabext-4bit"
+}

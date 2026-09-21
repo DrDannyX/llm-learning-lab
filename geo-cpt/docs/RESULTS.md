@@ -115,12 +115,60 @@ Per field, the gains land on the hardest, most domain-dependent ones:
 The two weakest fields improved most; the near-saturated ones barely moved.
 A coherent pattern rather than scattered noise.
 
-> **Be sceptical of +0.019.** One seed, 200 examples, no confidence interval.
-> Suggestive, not established. A real claim needs several seeds.
+### Replicated across three seeds
 
-This was mildly **better than predicted** — the README warned to expect no
-downstream gain at this scale. The technique is slightly more useful at 1.5M
-tokens than the literature's scale guidance implies.
+The single-seed result was later repeated at seeds 23 and 41, retraining both
+arms from scratch each time:
+
+| seed | no CPT | + TAPT | delta |
+|---|---|---|---|
+| 17 | 0.823 | 0.842 | +0.019 |
+| 23 | 0.819 | 0.847 | +0.029 |
+| 41 | 0.816 | 0.844 | +0.028 |
+
+**mean +0.025, sd 0.005, 95% CI [+0.012, +0.039]** — excludes zero. The two
+arms do not overlap at all: no-CPT spans 0.816-0.823, TAPT spans 0.842-0.847.
+
+This is **better than this project predicted.** The README originally warned to
+expect no downstream gain at 1.5M tokens, citing the literature's scale
+guidance. That was too pessimistic: TAPT delivers a small but real and
+reproducible gain well below the scale at which CPT is usually considered
+worthwhile.
+
+## 5a. Experiment 8 — vocabulary extension + CPT
+
+The question [geo-sft](../../geo-sft/docs/RESULTS.md) left open. It grafted 512
+geoscience tokens onto the base vocabulary for a 4.89% context saving, but MLX
+LoRA never touches embeddings, so those rows kept their mean-of-subwords
+initialisation for ever. **CPT is the only stage that can train them**, because
+a full fine-tune updates the embedding matrix.
+
+Qwen3-1.7B was vocabulary-extended with the same 512 tokens, then put through
+the identical TAPT + SFT pipeline.
+
+| arm | macro F1 |
+|---|---|
+| stock vocabulary + TAPT + SFT | **0.842** |
+| **vocabulary-extended + TAPT + SFT** | **0.758** |
+
+**Extension made it worse by 0.084** — three times the size of TAPT's gain, in
+the opposite direction.
+
+That is not the null result predicted, and the mechanism is instructive.
+Fragmentation is not pure loss: `Penn|s|ylv|anian` uses four embeddings trained
+on trillions of tokens, with compositional structure the model exploits. The
+grafted `Pennsylvanian` is one embedding starting at their mean and trained on
+1.2M tokens. At this scale that trade destroys more information than it saves.
+
+**Conclusion: the 4.89% context saving is not free. It costs real quality here,
+and vocabulary extension is not worth it at this scale.** One seed, so treat it
+as strong evidence rather than settled — but the effect is large and the
+direction is unambiguous.
+
+> Note the CPT perplexities are NOT comparable between the two arms (50.02 ->
+> 18.05 extended, 33.27 -> 13.87 stock). Different tokenizers mean different
+> tokens, so per-token perplexity measures different things. Only the
+> downstream macro F1 is a valid comparison.
 
 ## 6. Methodology errors, and what they taught
 
@@ -178,11 +226,10 @@ the pretraining objective over instruction tuning is not the textbook recipe;
 **DAPT was never run.** Only TAPT (1.57M tokens). The ~20M-token DAPT corpus
 and the `dapt_tapt` sequence remain open.
 
-**Vocabulary extension was never A/B'd** — [experiment 8](LEARNING.md#11-the-experiment-grid),
-the question geo-sft left open, and the one CPT is uniquely able to answer
-because full fine-tuning trains the embedding matrix.
+**Vocabulary extension was tested at one seed only** (§5a). The effect is
+large and negative, but a three-seed replication would settle it.
 
-**Single seed throughout.**
+**Seeds:** the headline TAPT result is three seeds; everything else is one.
 
 ## 8. Run summary
 
@@ -196,6 +243,7 @@ because full fine-tuning trains the embedding matrix.
 
 | bug | symptom | cost |
 |---|---|---|
+| gold/test evals shared a filename, then `tag` defined after first use | `UnboundLocalError` on every eval | **5 completed training runs' evaluations lost** |
 | `mx.utils` does not exist | `AttributeError` on first parameter count | caught pre-run |
 | `save_weights` does not exist | `ImportError` at the first checkpoint | **48-min run lost** |
 | `mlx_lm.utils.save()` needs a complete HF snapshot | `IncompleteSnapshotError` on `.gitattributes` | caught by the new test |

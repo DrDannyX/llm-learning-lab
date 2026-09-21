@@ -66,6 +66,17 @@ class CorpusCfg(BaseModel):
     val_docs: int = 400
     seed: int = 17
 
+    #: Suffix appended to the stage directory, so runs that tokenise
+    #: DIFFERENTLY do not overwrite each other's packed blocks. Required when
+    #: comparing a stock base against a vocabulary-extended one: same corpus,
+    #: different tokenizer, therefore different blocks.
+    variant: str = ""
+
+    @property
+    def stage_dir(self) -> str:
+        """Directory name for this stage, including any variant suffix."""
+        return f"{self.stage}-{self.variant}" if self.variant else self.stage
+
 
 class PackCfg(BaseModel):
     #: CPT packs documents end-to-end into fixed-length blocks rather than
@@ -135,6 +146,8 @@ class EvalCfg(BaseModel):
 
 
 class Config(BaseModel):
+    """A CPT run. `corpus.stage_dir` names the on-disk directory."""
+
     name: str = "geo-cpt-tapt"
     corpus: CorpusCfg = Field(default_factory=CorpusCfg)
     pack: PackCfg = Field(default_factory=PackCfg)

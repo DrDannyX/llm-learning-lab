@@ -89,10 +89,10 @@ def pack(config: Optional[str] = ConfigOpt) -> None:
     from .pack import pack_documents, pack_stats_table, save
 
     _, tok = load_model(cfg.train.base_model)
-    out_dir = paths.PACKED / cfg.corpus.stage
+    out_dir = paths.PACKED / cfg.corpus.stage_dir
     for split in ("train", "val", "val_general"):
         try:
-            texts = load_split(cfg.corpus.stage, split)
+            texts = load_split(cfg.corpus.stage_dir, split)
         except FileNotFoundError:
             console.print(f"[dim]no {split} split — skipping[/dim]")
             continue
@@ -121,7 +121,7 @@ def eval_cmd(config: Optional[str] = ConfigOpt,
     """Domain vs general perplexity: did it learn, and what did it forget?"""
     cfg = _cfg(config)
     from .eval.perplexity import compare, save
-    rep = compare(cfg.train.base_model, checkpoint, cfg.corpus.stage,
+    rep = compare(cfg.train.base_model, checkpoint, cfg.corpus.stage_dir,
                   cfg.train.batch_size, cfg.eval.max_blocks)
     save(rep, Path(checkpoint).parent / "ppl_report.json")
 
@@ -132,7 +132,7 @@ def probe(config: Optional[str] = ConfigOpt,
     """Cloze probes: does the model recover geoscience terms better?"""
     cfg = _cfg(config)
     from .eval.probe import compare
-    rep = compare(cfg.train.base_model, checkpoint, cfg.corpus.stage, cfg.eval.probe_n)
+    rep = compare(cfg.train.base_model, checkpoint, cfg.corpus.stage_dir, cfg.eval.probe_n)
     (Path(checkpoint).parent / "probe_report.json").write_text(json.dumps(rep, indent=2))
 
 
@@ -198,11 +198,11 @@ def run_all(config: Optional[str] = ConfigOpt) -> None:
     console.rule("[bold]2/5 pack"); pack(config)
     console.rule("[bold]3/5 train"); s = train_run(cfg)
     console.rule("[bold]4/5 perplexity")
-    rep = compare(cfg.train.base_model, s["checkpoint"], cfg.corpus.stage,
+    rep = compare(cfg.train.base_model, s["checkpoint"], cfg.corpus.stage_dir,
                   cfg.train.batch_size, cfg.eval.max_blocks)
     save(rep, Path(s["checkpoint"]).parent / "ppl_report.json")
     console.rule("[bold]5/5 probes")
-    probe_compare(cfg.train.base_model, s["checkpoint"], cfg.corpus.stage, cfg.eval.probe_n)
+    probe_compare(cfg.train.base_model, s["checkpoint"], cfg.corpus.stage_dir, cfg.eval.probe_n)
     console.print("\n[bold green]done[/bold green]  next: `geocpt transfer "
                   f"--checkpoint {s['checkpoint']}`")
 

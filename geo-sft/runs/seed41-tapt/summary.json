@@ -1,0 +1,16 @@
+{
+  "run": "seed41-tapt",
+  "iters_done": 900,
+  "final_train_loss": 0.06248770952224732,
+  "final_val_loss": 0.06227095052599907,
+  "best_val_loss": 0.057140592485666275,
+  "best_val_iter": 674,
+  "wall_minutes": 56.95,
+  "alerts": [
+    "iter 899: val loss has not improved for 3 evals (best 0.057 @ 674). Overfitting -- stop here and use the best checkpoint."
+  ],
+  "test_loss": 0.05690615624189377,
+  "test_perplexity": 1.0585564374923706,
+  "adapter_path": "/Users/daniel/git/llm-scratchpad/geo-sft/runs/seed41-tapt",
+  "model_path": "/Users/daniel/git/llm-scratchpad/geo-cpt/artifacts/models/tapt-v1-4bit"
+}

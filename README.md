@@ -118,37 +118,57 @@ metric" permanent.
 
 ## Results
 
-| arm | macro F1 |
+| arm | macro F1 (rule labels) |
 |---|---|
 | 4B zero-shot, no training | 0.314 |
 | 1.7B + SFT | 0.823 |
-| 4B + SFT | **0.831** |
-| 1.7B + TAPT + SFT | **0.842** |
+| 4B + SFT | 0.831 |
+| **1.7B + TAPT + SFT** | **0.842** |
+| 1.7B + *vocab-extended* TAPT + SFT | 0.758 |
 
 Domain perplexity under CPT: 33.27 → 13.87 (−58%).
 
-Two things worth noticing. **The task is not capacity-limited** — a 1.7B model
-matched a 4B one, so the ceiling is label quality, not model size. And **TAPT's
-gains land on the hardest fields** (`minerals` +0.037, `relations` +0.030)
-while near-saturated ones barely move.
+### Three findings worth the compute
+
+**1. TAPT helps, and it replicates.** Three seeds, both arms retrained each
+time: **+0.025 mean, sd 0.005, 95% CI [+0.012, +0.039]**. The arms do not
+overlap (no-CPT 0.816–0.823, TAPT 0.842–0.847). This is *better* than the CPT
+lab predicted — it warned to expect nothing at 1.5M tokens.
+
+**2. Vocabulary extension makes things worse.** −0.084, three times TAPT's
+gain in the opposite direction. Fragmentation is not pure loss:
+`Penn|s|ylv|anian` uses four embeddings trained on trillions of tokens; the
+grafted `Pennsylvanian` is one row starting at their mean and trained on 1.2M.
+The 4.89% context saving costs real quality at this scale.
+
+**3. The rule labels were inflating everything by ~40%.** All 150 gold rows
+were hand-reviewed; **125 (83%) had wrong labels**. Scored against corrected
+gold, the SFT result is **0.705, not 0.831**, and the delta over base falls
+from +0.516 to **+0.312**.
+
+Also: **the task is not capacity-limited** — a 1.7B model matched a 4B one, so
+the ceiling is label quality, not model size.
 
 ## The honest caveats
 
-Both labs state these in their own docs; they belong up front too.
+**0.705 is the defensible SFT headline**, not 0.831. The gold review was a
+*machine* review, not a geologist's, with one row flagged for expert eyes.
 
-**Every score is against rule-derived labels.** A model trained on regex output
-learns to imitate regexes, so scoring it against those same rules partly
-measures itself. A 150-row gold set is included for hand-correction and is
-still unreviewed. Read the gold numbers, not these.
+`states` fell hardest under review (0.946 → 0.664) because the model had
+faithfully learned the labeller's blind spot — it never extracted postal
+abbreviations, because it was never taught to. It scored 0.946 for reproducing
+an error. Meanwhile the **base model improved** against gold (0.314 → 0.393):
+it was being penalised for extracting things the rules had missed.
 
-**Single seed, 200 examples.** The +0.019 from TAPT is suggestive, not
-established.
+**Seeds:** the TAPT result is three seeds; everything else is one.
 
-**Seven bugs are documented rather than hidden**, across
+**Nine bugs are documented rather than hidden**, across
 [SFT RESULTS §10](geo-sft/docs/RESULTS.md) and
 [CPT RESULTS §6/§9](geo-cpt/docs/RESULTS.md). The common thread is worth more
 than any result here: **every one produced a plausible loss curve and no error
-message.** Three were caught only by running control arms.
+message.** Three were caught only by running control arms, and one was masked
+by a regression test that grepped source instead of executing the code — it
+passed while the function was completely broken.
 
 ## Requirements
 

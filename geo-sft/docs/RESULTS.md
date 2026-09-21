@@ -292,6 +292,8 @@ All four are documented in the code and carry regression tests.
 | gradient-accumulation LR trap | loss flat at 2.26 for 40 iters; 0.52 after the fix | looks exactly like "LoRA doesn't work on my data" |
 | lowercase vocab grafting | context saving halved, 4.89% → 2.54% | the tokens exist and simply never fire |
 | template-prefix trap | strict JSON 1.000 → 0.000 **while macro F1 rose** | nothing errors; the loss curve looks perfect |
+| gold and test evals shared `eval_report.json` | scoring gold **destroyed** the test results | silent overwrite, no warning |
+| the fix defined `tag` after first use | `UnboundLocalError` on every eval | **the regression test grepped source instead of executing — it passed while the code was broken** |
 
 The common thread: **every one of them fails silently and produces a
 plausible-looking loss curve.** That is the real lesson of the project.

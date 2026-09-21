@@ -51,7 +51,7 @@ def gather(cfg: CorpusCfg) -> list[dict]:
 
 def run(cfg: CorpusCfg, force: bool = False) -> dict:
     paths.ensure()
-    out_dir = paths.CORPUS / cfg.stage
+    out_dir = paths.CORPUS / cfg.stage_dir
     train_p, val_p = out_dir / "train.jsonl", out_dir / "val.jsonl"
     gen_val_p = out_dir / "val_general.jsonl"
     if train_p.exists() and not force:
@@ -106,6 +106,7 @@ def run(cfg: CorpusCfg, force: bool = False) -> dict:
 
     card = {
         "stage": cfg.stage,
+        "variant": cfg.variant,
         "raw_documents": len(raw),
         "quality": qstats,
         "dedup": dstats.as_dict(),

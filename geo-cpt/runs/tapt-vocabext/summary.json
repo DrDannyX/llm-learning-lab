@@ -1,0 +1,71 @@
+{
+  "run": "tapt-vocabext",
+  "iters_done": 600,
+  "final_train_loss": 3.1688172817230225,
+  "final_val_loss": 2.8933190211005835,
+  "best_val_loss": 2.8933190211005835,
+  "best_val_iter": 600,
+  "wall_minutes": 66.4,
+  "alerts": [
+    "iter 75: val exceeds train by 0.60 -- memorising.",
+    "iter 375: val exceeds train by 0.72 -- memorising."
+  ],
+  "stage": "tapt-vocabext",
+  "base_model": "/Users/daniel/git/llm-scratchpad/geo-sft/artifacts/models/Qwen3-1.7B-geo-ext",
+  "fine_tune_type": "full",
+  "checkpoint": "/Users/daniel/git/llm-scratchpad/geo-cpt/runs/tapt-vocabext/checkpoint-000600",
+  "domain_ppl_before": 50.02196757352923,
+  "domain_ppl_after": 18.053128991782696,
+  "domain_ppl_improvement_pct": 63.909598387457066,
+  "general_ppl_before": 40.06573511793068,
+  "general_ppl_after": 27.27877553882029,
+  "forgetting_pct": -31.91495062170423,
+  "tokens_seen": 613800,
+  "curve": [
+    {
+      "iter": 0,
+      "domain_ppl": 50.02196757352923,
+      "general_ppl": 40.06573511793068
+    },
+    {
+      "iter": 75,
+      "domain_ppl": 32.47313816460315,
+      "general_ppl": 25.70142292290781
+    },
+    {
+      "iter": 150,
+      "domain_ppl": 23.3162845676695,
+      "general_ppl": 25.560118037110183
+    },
+    {
+      "iter": 225,
+      "domain_ppl": 20.435329094648566,
+      "general_ppl": 26.971228169667402
+    },
+    {
+      "iter": 300,
+      "domain_ppl": 19.26154662653549,
+      "general_ppl": 27.299542720449733
+    },
+    {
+      "iter": 375,
+      "domain_ppl": 18.50056335427353,
+      "general_ppl": 27.24390142408923
+    },
+    {
+      "iter": 450,
+      "domain_ppl": 18.182401184231402,
+      "general_ppl": 27.22751220537739
+    },
+    {
+      "iter": 525,
+      "domain_ppl": 18.095215423211563,
+      "general_ppl": 27.263315945557
+    },
+    {
+      "iter": 600,
+      "domain_ppl": 18.053128991782696,
+      "general_ppl": 27.27877553882029
+    }
+  ]
+}

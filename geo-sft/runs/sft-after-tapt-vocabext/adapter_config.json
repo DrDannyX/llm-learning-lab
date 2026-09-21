@@ -1,0 +1,10 @@
+{
+  "fine_tune_type": "lora",
+  "num_layers": 16,
+  "lora_parameters": {
+    "rank": 16,
+    "scale": 2.0,
+    "dropout": 0.05
+  },
+  "model": "/Users/daniel/git/llm-scratchpad/geo-cpt/artifacts/models/tapt-vocabext-4bit"
+}

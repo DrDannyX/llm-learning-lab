@@ -1,0 +1,14 @@
+{
+  "run": "seed41-nocpt",
+  "iters_done": 900,
+  "final_train_loss": 0.07595207691192626,
+  "final_val_loss": 0.06850000470876694,
+  "best_val_loss": 0.06783206015825272,
+  "best_val_iter": 749,
+  "wall_minutes": 57.71,
+  "alerts": [],
+  "test_loss": 0.06711609661579132,
+  "test_perplexity": 1.0694196224212646,
+  "adapter_path": "/Users/daniel/git/llm-scratchpad/geo-sft/runs/seed41-nocpt",
+  "model_path": "mlx-community/Qwen3-1.7B-4bit"
+}

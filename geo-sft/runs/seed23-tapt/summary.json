@@ -1,0 +1,14 @@
+{
+  "run": "seed23-tapt",
+  "iters_done": 900,
+  "final_train_loss": 0.059915685653686525,
+  "final_val_loss": 0.05528239160776138,
+  "best_val_loss": 0.05528239160776138,
+  "best_val_iter": 899,
+  "wall_minutes": 57.46,
+  "alerts": [],
+  "test_loss": 0.05747782811522484,
+  "test_perplexity": 1.0591617822647095,
+  "adapter_path": "/Users/daniel/git/llm-scratchpad/geo-sft/runs/seed23-tapt",
+  "model_path": "/Users/daniel/git/llm-scratchpad/geo-cpt/artifacts/models/tapt-v1-4bit"
+}

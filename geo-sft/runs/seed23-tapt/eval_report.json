@@ -1,0 +1,154 @@
+{
+  "model": "/Users/daniel/git/llm-scratchpad/geo-cpt/artifacts/models/tapt-v1-4bit",
+  "adapter": "runs/seed23-tapt",
+  "eval_set": "test",
+  "n": 200,
+  "minutes": 8.31,
+  "results": {
+    "base": {
+      "n": 200,
+      "gates": {
+        "parse_rate": 0.015,
+        "strict_json_rate": 0.0,
+        "schema_valid_rate": 0.01,
+        "empty_output_rate": 0.485
+      },
+      "scalar_fields": {
+        "unit_name_accuracy": 0.0,
+        "unit_name_n": 168,
+        "rank_accuracy": 0.325,
+        "thickness_accuracy": 0.57
+      },
+      "set_fields": {
+        "lithologies": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "tp": 0,
+          "fp": 0,
+          "fn": 511
+        },
+        "chronostrat": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "tp": 0,
+          "fp": 0,
+          "fn": 288
+        },
+        "minerals": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "tp": 0,
+          "fp": 0,
+          "fn": 71
+        },
+        "states": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "tp": 0,
+          "fp": 0,
+          "fn": 137
+        },
+        "relations": {
+          "precision": 0.3333,
+          "recall": 0.0053,
+          "f1": 0.0105,
+          "tp": 1,
+          "fp": 2,
+          "fn": 186
+        }
+      },
+      "macro_f1": 0.0021,
+      "macro_f1_fields": [
+        "chronostrat",
+        "lithologies",
+        "minerals",
+        "relations",
+        "states"
+      ],
+      "rank_confusion_top": {
+        "Formation->Unknown": 98,
+        "Member->Unknown": 22,
+        "Group->Unknown": 12,
+        "Bed->Unknown": 2,
+        "Tongue->Unknown": 1
+      }
+    },
+    "tuned": {
+      "n": 200,
+      "gates": {
+        "parse_rate": 0.995,
+        "strict_json_rate": 0.995,
+        "schema_valid_rate": 0.995,
+        "empty_output_rate": 0.0
+      },
+      "scalar_fields": {
+        "unit_name_accuracy": 0.9286,
+        "unit_name_n": 168,
+        "rank_accuracy": 0.855,
+        "thickness_accuracy": 0.92
+      },
+      "set_fields": {
+        "lithologies": {
+          "precision": 0.9297,
+          "recall": 0.9315,
+          "f1": 0.9306,
+          "tp": 476,
+          "fp": 36,
+          "fn": 35
+        },
+        "chronostrat": {
+          "precision": 0.9303,
+          "recall": 0.9271,
+          "f1": 0.9287,
+          "tp": 267,
+          "fp": 20,
+          "fn": 21
+        },
+        "minerals": {
+          "precision": 0.7273,
+          "recall": 0.6761,
+          "f1": 0.7007,
+          "tp": 48,
+          "fp": 18,
+          "fn": 23
+        },
+        "states": {
+          "precision": 0.9489,
+          "recall": 0.9489,
+          "f1": 0.9489,
+          "tp": 130,
+          "fp": 7,
+          "fn": 7
+        },
+        "relations": {
+          "precision": 0.7337,
+          "recall": 0.7219,
+          "f1": 0.7278,
+          "tp": 135,
+          "fp": 49,
+          "fn": 52
+        }
+      },
+      "macro_f1": 0.8473,
+      "macro_f1_fields": [
+        "chronostrat",
+        "lithologies",
+        "minerals",
+        "relations",
+        "states"
+      ],
+      "rank_confusion_top": {
+        "Formation->Unknown": 10,
+        "Unknown->Formation": 8,
+        "Unknown->Member": 4,
+        "Unknown->Group": 3,
+        "Group->Formation": 2,
+        "Formation->Member": 1
+      }
+    }
+  }
+}

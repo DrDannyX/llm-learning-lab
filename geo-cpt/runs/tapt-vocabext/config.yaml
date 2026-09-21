@@ -1,0 +1,70 @@
+name: geo-cpt-tapt-vocabext
+corpus:
+  stage: tapt
+  usgs_queries:
+  - stratigraphy
+  - lithology
+  - sedimentology
+  - petrology
+  - geochronology
+  - mineral deposits
+  - structural geology
+  - volcanology
+  - geomorphology
+  - hydrogeology
+  - paleontology
+  - igneous
+  - metamorphic
+  - basin analysis
+  - formation
+  - sandstone
+  - limestone
+  - shale
+  - fault
+  - ore deposit
+  usgs_max_per_query: 1000
+  geolex_max_units: 16684
+  min_doc_chars: 300
+  max_doc_chars: 50000
+  quality_filter: false
+  dedup_threshold: 0.8
+  dedup_num_perm: 128
+  dedup_shingle: 5
+  replay_fraction: 0.15
+  replay_dataset: Salesforce/wikitext
+  replay_config: wikitext-2-raw-v1
+  forgetting_dataset: fancyzhx/ag_news
+  forgetting_config: null
+  forgetting_split: test
+  val_docs: 300
+  seed: 17
+  variant: vocabext
+pack:
+  block_size: 1024
+  add_eos_between_docs: true
+  no_cross_document: false
+train:
+  base_model: /Users/daniel/git/llm-scratchpad/geo-sft/artifacts/models/Qwen3-1.7B-geo-ext
+  fine_tune_type: full
+  lora_rank: 64
+  lora_layers: -1
+  learning_rate: 1.0e-05
+  lr_schedule: cosine
+  warmup_iters: 60
+  min_lr_fraction: 0.1
+  batch_size: 1
+  grad_accumulation_steps: 16
+  iters: 600
+  max_grad_norm: 1.0
+  weight_decay: 0.01
+  steps_per_report: 10
+  steps_per_eval: 75
+  save_every: 300
+  keep_last_n: 2
+  grad_checkpoint: true
+  seed: 17
+eval:
+  domain_val_docs: 300
+  general_val_docs: 300
+  max_blocks: 150
+  probe_n: 200
