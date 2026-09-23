@@ -1,4 +1,4 @@
-# llm-scratchpad
+# llm-learning-lab
 
 Two hands-on labs for learning how to **modify LLMs for a domain**, worked
 end to end on a single Apple Silicon Mac, using geoscience as the domain.
