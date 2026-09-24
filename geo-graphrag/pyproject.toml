@@ -1,0 +1,52 @@
+[project]
+name = "geo-graphrag"
+version = "0.1.0"
+description = "Knowledge graphs vs RAG vs GraphRAG over a geoscience corpus, with a local LLM"
+requires-python = ">=3.11,<3.13"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "Daniel Bongiorno" }]
+dependencies = [
+    # --- LLM integration: agents over an OpenAI-compatible local server ---
+    "strands-agents[openai]>=1.0",
+    "mcp>=1.10",
+    # --- graph + vector store ---
+    "neo4j>=5.20",
+    # --- web UI ---
+    "starlette>=0.40",
+    "uvicorn>=0.30",
+    # --- plumbing ---
+    "httpx>=0.27",
+    "pydantic>=2.9",
+    "pyyaml>=6.0",
+    "typer>=0.15",
+    "rich>=13.9",
+    "numpy>=1.26",
+    # the SFT project next door: its corpus, gazetteers and rule labeller are
+    # reused to extract the graph, so "what did the labeller see" is shared
+    "geo-sft",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.3", "ruff>=0.8"]
+
+[tool.uv.sources]
+geo-sft = { path = "../geo-sft", editable = true }
+
+[project.scripts]
+georag = "georag.cli:app"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/georag"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = ["live: needs Neo4j and LM Studio running"]
