@@ -1,11 +1,12 @@
 # llm-scratchpad
 
-Two hands-on labs for learning how to **modify LLMs for a domain**, worked
+Three hands-on labs for learning how to **adapt LLMs to a domain**, worked
 end to end on a single Apple Silicon Mac, using geoscience as the domain.
 
-They are meant to be read and run in order. Together they cover the two
-techniques that do most of the work in practice — and, just as importantly,
-they show what each one *cannot* do.
+The first two **change the model's weights**. Together they cover the two
+training techniques that do most of the work in practice, and, just as
+importantly, they show what each one *cannot* do. The third changes **what the
+model is shown**: knowledge graphs, RAG and GraphRAG, compared side by side.
 
 | | [geo-sft](geo-sft/) | [geo-cpt](geo-cpt/) |
 |---|---|---|
@@ -18,9 +19,17 @@ they show what each one *cannot* do.
 | The hard part | label quality | corpus hygiene |
 | Result | macro F1 **0.314 → 0.831** | TAPT contributes **+0.019** |
 
+| | [geo-graphrag](geo-graphrag/) |
+|---|---|
+| Technique | **Retrieval**: knowledge graph vs vector RAG vs GraphRAG |
+| Changes | the context, not the weights |
+| Stack | Neo4j (graph + vectors), Strands agents, MCP, local LLM via LM Studio |
+| The hard part | extraction and entity resolution (graph); recall over many passages (RAG) |
+| Result | each system wins the question types its design predicts; see [RESULTS](geo-graphrag/docs/RESULTS.md) |
+
 ## The task
 
-Both labs point at one problem: turning messy geological prose into a
+The two training labs point at one problem: turning messy geological prose into a
 structured database record.
 
 > *"Austin chalk. The present generally accepted definition applies to the
@@ -61,6 +70,16 @@ must be followed by SFT.
 monitoring and — for the transfer experiment — its trainer and scorer, so
 "did CPT help?" is measured through identical machinery.
 
+### And where retrieval fits
+
+Training puts knowledge *in* the weights, where it is compressed, hard to
+update and impossible to cite. Retrieval leaves it *outside*, where it can be
+queried, updated and shown as evidence. `geo-graphrag` imports geo-sft too: its
+rule labeller extracts the knowledge graph's relations, so geo-sft's finding
+that 83% of rule-labelled rows were wrong reappears as a graph-quality problem.
+And the SFT model is a natural next extractor for that graph
+([experiment #1](geo-graphrag/docs/EXPERIMENTS.md)).
+
 ---
 
 ## Learning path
@@ -97,7 +116,20 @@ byte-identical to the inference prompt.
 | 7 | §10 — the three evaluation questions | `geocpt eval`, `geocpt probe` |
 | 8 | — | `geocpt transfer`, compare against 0.831 |
 
-### Stage 3 — your own experiment
+### Stage 3 — knowledge graphs, RAG and GraphRAG
+
+Independent of stages 1–2 except for the corpus: needs geo-sft's `make fetch`,
+Docker and LM Studio. Follow the
+[six-session path](geo-graphrag/README.md#how-to-learn-from-this-repo). In outline:
+
+| session | read | run |
+|---|---|---|
+| 9 | [LEARNING.md](geo-graphrag/docs/LEARNING.md) §1–3: what a KG is, extraction, entity resolution | `make ingest`, the Neo4j browser |
+| 10 | §4–6: Cypher and text-to-Cypher, embeddings, GraphRAG | `georag inspect`, `georag ask` |
+| 11 | §7–9: measuring retrieval, context recall, LLM judges | `make bench` |
+| 12 | §10: MCP and agents | `make agent` |
+
+### Stage 4 — your own experiment
 
 Both labs ship an experiment grid ([SFT](geo-sft/docs/EXPERIMENTS.md),
 [CPT](geo-cpt/docs/LEARNING.md#11-the-experiment-grid)). The most instructive
@@ -270,6 +302,7 @@ Apple Silicon with 32 GB+ (48 GB for CPT full fine-tuning), Python 3.12,
 ```bash
 cd geo-sft && make setup && make doctor && make smoke
 cd ../geo-cpt && make setup && make doctor && make smoke
+cd ../geo-graphrag && make setup && make up && make doctor && make ingest   # + Docker, LM Studio
 ```
 
 Budget ~40 GB of disk for model weights; `make clean-models` / `make clean-ckpt`

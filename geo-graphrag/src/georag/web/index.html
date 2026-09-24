@@ -1,0 +1,366 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>geo-graphrag</title>
+<style>
+  :root {
+    --bg: #f6f7f9; --panel: #ffffff; --ink: #1c2024; --muted: #60646c; --line: #e0e2e6;
+    --accent: #2f6fdb; --accent-ink: #ffffff; --code: #f0f2f5; --err: #c4321f;
+    --rag: #2f6fdb; --kg: #1f8a5b; --graphrag: #8a4fd6;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #111315; --panel: #1a1d20; --ink: #e6e8ea; --muted: #9ba1a8; --line: #2c3035;
+      --accent: #5b93f0; --accent-ink: #0b0d0f; --code: #22262a; --err: #f07a67;
+      --rag: #5b93f0; --kg: #45b884; --graphrag: #a97ff0;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink);
+         font: 15px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+  main { max-width: 1320px; margin: 0 auto; padding: 24px 16px 48px; }
+  header h1 { font-size: 20px; margin: 0; }
+  header p { margin: 4px 0 20px; color: var(--muted); }
+  form { display: flex; gap: 8px; }
+  textarea { flex: 1; resize: vertical; min-height: 46px; padding: 11px 12px; border-radius: 8px;
+             border: 1px solid var(--line); background: var(--panel); color: var(--ink); font: inherit; }
+  textarea:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+  button { border: 0; border-radius: 8px; padding: 0 20px; background: var(--accent);
+           color: var(--accent-ink); font: 600 15px/1 inherit; cursor: pointer; }
+  button:disabled { opacity: .5; cursor: default; }
+  .examples { margin: 12px 0 22px; }
+  .examples > summary { font-size: 14px; color: var(--ink); font-weight: 600; }
+  .groups { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 10px; }
+  @media (max-width: 900px) { .groups { grid-template-columns: 1fr; } }
+  .group { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; }
+  .group h3 { font-size: 14px; margin: 0; }
+  .group p { color: var(--muted); font-size: 13px; margin: 2px 0 8px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tip { color: var(--muted); font-size: 13px; margin: 10px 0 0; }
+  .chip { background: var(--bg); border: 1px solid var(--line); color: var(--ink);
+          font: 13px/1.3 inherit; padding: 6px 10px; border-radius: 999px; text-align: left; }
+  .chip:hover { border-color: var(--accent); }
+  .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+  @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } form { flex-direction: column; }
+                              button { padding: 12px; } }
+  .col { background: var(--panel); border: 1px solid var(--line); border-radius: 10px;
+         border-top: 4px solid var(--c); padding: 14px 16px; min-height: 180px;
+         display: flex; flex-direction: column; }
+  .col h2 { font-size: 16px; margin: 0; color: var(--c); }
+  .col .what { color: var(--muted); font-size: 13px; margin: 2px 0 12px; }
+  .status { font-size: 13px; color: var(--muted); margin-bottom: 8px; min-height: 18px; }
+  .answer { overflow-wrap: anywhere; }
+  .answer p { margin: 0 0 8px; }
+  .answer ul { margin: 0 0 8px; padding-left: 20px; }
+  .answer.abstain { color: var(--muted); font-style: italic; }
+  .error { color: var(--err); }
+  details { margin-top: auto; padding-top: 12px; border-top: 1px solid var(--line); font-size: 13px; }
+  summary { cursor: pointer; color: var(--muted); }
+  details h3 { font-size: 12px; text-transform: uppercase; letter-spacing: .04em;
+               color: var(--muted); margin: 12px 0 4px; }
+  pre { background: var(--code); border-radius: 6px; padding: 8px 10px; margin: 0;
+        white-space: pre-wrap; overflow-wrap: anywhere; max-height: 320px; overflow: auto;
+        font: 12px/1.45 ui-monospace, SFMono-Regular, Menlo, monospace; }
+  .spinner { display: inline-block; width: 12px; height: 12px; border: 2px solid var(--line);
+             border-top-color: var(--c); border-radius: 50%; animation: spin .8s linear infinite;
+             vertical-align: -2px; margin-right: 6px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  footer { color: var(--muted); font-size: 12px; margin-top: 20px; }
+  .about { margin-top: 28px; background: var(--panel); border: 1px solid var(--line);
+           border-radius: 10px; padding: 12px 16px; font-size: 14px; }
+  .about > summary { font-weight: 600; font-size: 14px; color: var(--ink); }
+  .about h3 { font-size: 13px; text-transform: uppercase; letter-spacing: .04em;
+              color: var(--muted); margin: 20px 0 8px; }
+  .about p, .about li { max-width: 80ch; }
+  .about ul { padding-left: 20px; margin: 0; }
+  .about li { margin-bottom: 6px; }
+  .about a { color: var(--accent); }
+  .tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 8px; }
+  .tile { background: var(--bg); border-radius: 8px; padding: 10px 12px; }
+  .tile b { display: block; font-size: 20px; font-variant-numeric: tabular-nums; }
+  .tile span { color: var(--muted); font-size: 12px; }
+  .warn { border-left: 3px solid var(--err); padding: 4px 0 4px 10px; margin: 0 0 12px; }
+  .table-wrap { overflow-x: auto; }
+  table { border-collapse: collapse; width: 100%; font-size: 13px; }
+  th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { color: var(--muted); font-weight: 600; }
+  td.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  code { font: 12px ui-monospace, SFMono-Regular, Menlo, monospace; background: var(--code);
+         padding: 1px 4px; border-radius: 4px; }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>geo-graphrag</h1>
+    <p>One question, three retrieval systems, same answer model. Compare what each one finds.</p>
+  </header>
+
+  <form id="form">
+    <textarea id="q" rows="1" placeholder="Ask about a US geologic unit, e.g. What unit overlies the Aarde Shale Member?"></textarea>
+    <button id="go" type="submit">Ask all three</button>
+  </form>
+  <details class="examples" id="examples" open>
+    <summary>Example questions: click one to run it</summary>
+    <div class="groups" id="groups"></div>
+    <p class="tip">Writing your own? Name units the way the USGS lexicon does ("Aarde Shale Member",
+      "Chickamauga Group") and use US state names and geologic periods (Cretaceous, Pennsylvanian).
+      The corpus covers US geologic units only.</p>
+  </details>
+
+  <section class="grid" id="grid"></section>
+
+  <details class="about" id="about">
+    <summary>About the data: where it comes from, how much there is, and its limits</summary>
+
+    <h3>Where the text comes from</h3>
+    <p>Every answer is built from the <a href="https://ngmdb.usgs.gov/Geolex/search" target="_blank"
+      rel="noopener">USGS Geologic Names Lexicon (Geolex)</a>, the US Geological Survey's register of
+      named rock units. For each unit, Geolex holds short summaries of the published references that
+      defined or revised it, plus curated metadata: its age, the states it occurs in, its geologic
+      province, and how it nests inside larger units. The rock-type and timescale vocabularies come
+      from <a href="https://macrostrat.org" target="_blank" rel="noopener">Macrostrat</a>.
+      The corpus was downloaded by the first lab in this repo (geo-sft) and is reused unchanged.</p>
+
+    <h3>How much data</h3>
+    <p class="warn" id="coverage">Loading…</p>
+    <div class="tiles" id="tiles"></div>
+
+    <h3>How the graph was built</h3>
+    <p>Facts come from two sources of very different reliability, and every relationship records
+      which one it came from. The knowledge graph and GraphRAG read these; vector RAG reads only
+      the passages.</p>
+    <div class="table-wrap"><table id="rels"><thead><tr>
+      <th>relationship</th><th>meaning</th><th>source</th><th class="num">edges</th>
+    </tr></thead><tbody></tbody></table></div>
+    <p style="color: var(--muted); font-size: 12px">An edge asserted by both sources is counted
+      under each. <b>geolex</b>: curated by the USGS. <b>text</b>: extracted from passages by
+      pattern-matching rules. <b>derived</b>: computed (filing, mentions, the timescale).</p>
+
+    <h3>Limitations</h3>
+    <ul>
+      <li><b>Units A to C only.</b> The corpus holds the first alphabetical slice of Geolex (see
+        above). A question about the Eagle Ford, the Morrison or the Navajo Sandstone will find
+        little or nothing, and every count is a count of A–C units, not of all US units.</li>
+      <li><b>US units only.</b> Geolex covers the United States and its territories.</li>
+      <li><b>Summaries, not papers.</b> Passages are lexicon summaries of references written
+        between <span data-k="year_min">…</span> and <span data-k="year_max">…</span> (median
+        <span data-k="year_median">…</span>). Much is archaic, and older passages can contradict
+        newer ones: names, ranks and ages were revised over time.</li>
+      <li><b>Rule-extracted relationships are noisy.</b> "Overlies", "equivalent to" and
+        text-derived rock types come from pattern-matching rules. When the first lab reviewed 150
+        rows labelled by those rules (a machine review, not a geologist's), 83% had at least one error.</li>
+      <li><b>Name matching is imperfect.</b> The same name can belong to more than one unit (there
+        are two Adas). Units mentioned in the text but outside the corpus appear as
+        <span data-k="placeholders">…</span> placeholder units with no curated age, rock type or
+        state.</li>
+      <li><b>Ages come only from curated metadata</b>, so a unit whose Geolex entry has no parseable
+        age will not match an age query in the graph, even if its passages mention one.</li>
+      <li><b>No maps, figures or tables</b>: text and metadata only.</li>
+    </ul>
+    <p style="color: var(--muted); font-size: 12px">Geolex is a US Government work in the public
+      domain. Macrostrat vocabularies are CC-BY 4.0. Counts are measured from the loaded database;
+      the Geolex total (16,684) is from when geo-sft fetched the corpus, and the 83% is from geo-sft's
+      gold review.</p>
+  </details>
+
+  <footer id="footer">The three systems run in parallel, so timings include contention on the local model.</footer>
+</main>
+
+<script>
+const SYSTEMS = [
+  { id: "rag", name: "Vector RAG", what: "The 8 passages most similar to the question." },
+  { id: "kg", name: "Knowledge graph", what: "The model writes Cypher; answers from the rows. No prose." },
+  { id: "graphrag", name: "GraphRAG", what: "Similar passages plus graph facts about the units involved." },
+];
+const ABSTAIN = "i don't know based on the retrieved context";
+const $ = (id) => document.getElementById(id);
+
+function el(tag, attrs = {}, ...kids) {
+  const n = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)) {
+    if (k === "text") n.textContent = v; else n.setAttribute(k, v);
+  }
+  for (const k of kids) if (k != null) n.append(k);
+  return n;
+}
+
+// Tiny, safe markdown: paragraphs, "-"/"*"/"1." lists, **bold**. Text only, never innerHTML.
+function inline(text) {
+  const frag = document.createDocumentFragment();
+  text.split(/(\*\*[^*]+\*\*)/g).forEach((part) => {
+    if (/^\*\*[^*]+\*\*$/.test(part)) frag.append(el("strong", { text: part.slice(2, -2) }));
+    else if (part) frag.append(document.createTextNode(part));
+  });
+  return frag;
+}
+function renderMarkdown(text) {
+  const out = document.createDocumentFragment();
+  let list = null;
+  for (const raw of text.split("\n")) {
+    const line = raw.trim();
+    const item = line.match(/^(?:[-*•]|\d+\.)\s+(.*)$/);
+    if (item) {
+      if (!list) { list = el("ul"); out.append(list); }
+      list.append(el("li", {}, inline(item[1])));
+    } else {
+      list = null;
+      if (line) out.append(el("p", {}, inline(line)));
+    }
+  }
+  return out;
+}
+
+function buildColumns() {
+  const grid = $("grid");
+  grid.replaceChildren();
+  for (const s of SYSTEMS) {
+    const col = el("article", { class: "col", id: `col-${s.id}`, style: `--c: var(--${s.id})` },
+      el("h2", { text: s.name }),
+      el("div", { class: "what", text: s.what }),
+      el("div", { class: "status" }),
+      el("div", { class: "answer" }));
+    grid.append(col);
+  }
+}
+
+function evidence(sys, ev) {
+  const d = el("details", {}, el("summary", { text: "Evidence: what this system retrieved" }));
+  const section = (title, body) => d.append(el("h3", { text: title }), body);
+  if (ev.linked) section("Entities linked in the question", el("pre", { text: ev.linked }));
+  if (ev.cypher_attempts?.length) {
+    ev.cypher_attempts.forEach((a, i) => section(
+      `Cypher, attempt ${i + 1} (${a.rows} rows${a.error ? ", error" : ""})`,
+      el("pre", { text: a.cypher + (a.error ? `\n\n-- ${a.error}` : "") })));
+  }
+  if (ev.seed_units?.length) section("Units expanded in the graph", el("pre", { text: ev.seed_units.join("\n") }));
+  if (ev.routed_passages?.length) section("Passages found via the graph", el("pre", { text: ev.routed_passages.join(", ") }));
+  if (sys === "rag" && ev.sources?.length) section("Passage ids", el("pre", { text: ev.sources.join(", ") }));
+  section("Context sent to the answer model", el("pre", { text: ev.context || "(empty)" }));
+  return d;
+}
+
+async function askOne(sys, question) {
+  const col = $(`col-${sys.id}`);
+  const status = col.querySelector(".status");
+  const answer = col.querySelector(".answer");
+  col.querySelector("details")?.remove();
+  answer.className = "answer";
+  answer.replaceChildren();
+  status.replaceChildren(el("span", { class: "spinner" }), "retrieving and answering…");
+  const t0 = performance.now();
+  try {
+    const res = await fetch("/api/ask", {
+      method: "POST", headers: { "content-type": "application/json" },
+      body: JSON.stringify({ question, system: sys.id }),
+    });
+    const data = await res.json();
+    if (!res.ok || data.error && !data.answer) throw new Error(data.error || res.statusText);
+    status.textContent = `${data.seconds}s total · ${data.retrieval_seconds}s retrieval · ` +
+                         `${data.context_chars.toLocaleString()} chars of context`;
+    if (data.answer.toLowerCase().includes(ABSTAIN)) answer.classList.add("abstain");
+    answer.append(renderMarkdown(data.answer));
+    col.append(evidence(sys.id, data.evidence));
+  } catch (err) {
+    status.textContent = `failed after ${((performance.now() - t0) / 1000).toFixed(1)}s`;
+    answer.append(el("p", { class: "error", text: String(err.message || err) }));
+  }
+}
+
+async function ask(question) {
+  question = question.trim();
+  if (!question) return;
+  history.replaceState(null, "", `?q=${encodeURIComponent(question)}`);
+  $("examples").open = false;  // give the answers the space; reopen from the summary
+  $("go").disabled = true;
+  await Promise.allSettled(SYSTEMS.map((s) => askOne(s, question)));
+  $("go").disabled = false;
+}
+
+$("form").addEventListener("submit", (e) => { e.preventDefault(); ask($("q").value); });
+$("q").addEventListener("keydown", (e) => {
+  if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); ask($("q").value); }
+});
+
+const fmt = (n) => Number(n).toLocaleString();
+const MEANING = {
+  PART_OF: "unit is part of a larger unit (Member → Formation → Group)",
+  OVERLIES: "unit lies stratigraphically above another",
+  EQUIVALENT_TO: "units are correlated or equivalent",
+  GRADES_INTO: "unit grades laterally into another",
+  INTERTONGUES_WITH: "units interfinger",
+  HAS_AGE: "unit's geologic age (interval)",
+  WITHIN: "interval lies within a larger interval",
+  HAS_LITHOLOGY: "rock type the unit contains",
+  HAS_MINERAL: "mineral named in the unit's passages",
+  OCCURS_IN: "US state the unit occurs in",
+  IN_PROVINCE: "geologic province or basin",
+  DESCRIBES: "passage is filed under this unit",
+  MENTIONS: "passage names another unit",
+};
+
+let aboutLoaded = false;
+async function loadAbout() {
+  if (aboutLoaded) return;
+  aboutLoaded = true;
+  try {
+    const d = await (await fetch("/api/about")).json();
+    if (d.error) throw new Error(d.error);
+    const t = d.text, u = d.units;
+    const pct = (100 * u.geolex / d.geolex_total_units).toFixed(0);
+    $("coverage").replaceChildren(el("b", { text: `This is ${pct}% of Geolex. ` }),
+      `The corpus holds ${fmt(u.geolex)} of the ${fmt(d.geolex_total_units)} units in the lexicon: ` +
+      `the first slice of its alphabetical index, from “${d.names.first}” to “${d.names.last}”.`);
+    const tiles = [
+      [fmt(u.geolex), "Geolex units"],
+      [fmt(t.passages), "passages (reference summaries)"],
+      [fmt(t.words), "words of text"],
+      [`${d.passages_per_unit.mean}`, `passages per unit on average (max ${d.passages_per_unit.max})`],
+      [`${t.year_min}–${t.year_max}`, `reference years (median ${t.year_median})`],
+      [fmt(d.states.count), "US states and territories"],
+      [fmt(u.placeholders), "placeholder units (named in text only)"],
+      [fmt(d.nodes.reduce((a, n) => a + n.n, 0)), "graph nodes in total"],
+    ];
+    $("tiles").replaceChildren(...tiles.map(([v, l]) => el("div", { class: "tile" }, el("b", { text: v }), el("span", { text: l }))));
+    const tbody = $("rels").querySelector("tbody");
+    for (const r of d.relationships) {
+      tbody.append(el("tr", {},
+        el("td", {}, el("code", { text: r.type })),
+        el("td", { text: MEANING[r.type] || "" }),
+        el("td", { text: r.source }),
+        el("td", { class: "num", text: fmt(r.n) })));
+    }
+    const slots = { year_min: t.year_min, year_max: t.year_max, year_median: t.year_median,
+                    placeholders: fmt(u.placeholders) };
+    document.querySelectorAll("[data-k]").forEach((n) => { n.textContent = slots[n.dataset.k]; });
+  } catch (err) {
+    aboutLoaded = false;
+    $("coverage").textContent = `Could not load statistics: ${err.message || err}`;
+  }
+}
+$("about").addEventListener("toggle", () => { if ($("about").open) loadAbout(); });
+if (location.hash === "#about") { $("about").open = true; $("examples").open = false; }
+
+buildColumns();
+// ?q=... runs a question on load, so a comparison can be linked or bookmarked
+const initial = new URLSearchParams(location.search).get("q");
+if (initial) { $("q").value = initial; ask(initial); }
+fetch("/api/meta").then((r) => r.json()).then((m) => {
+  for (const g of m.examples) {
+    const chips = el("div", { class: "chips" });
+    for (const q of g.questions) {
+      const chip = el("button", { class: "chip", type: "button", text: q });
+      chip.addEventListener("click", () => { $("q").value = q; ask(q); });
+      chips.append(chip);
+    }
+    $("groups").append(el("div", { class: "group" },
+      el("h3", { text: g.title }), el("p", { text: g.hint }), chips));
+  }
+  $("footer").textContent = `Answer model: ${m.model}. The three systems run in parallel, ` +
+    "so timings include contention on the local model.";
+}).catch(() => {});
+</script>
+</body>
+</html>

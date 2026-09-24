@@ -1,0 +1,12 @@
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+
+# Neo4j's store and everything the pipeline regenerates
+data/neo4j/
+data/interim/
+
+# keep: the question set and the run evidence (small, and the record of what happened)
+!data/bench/

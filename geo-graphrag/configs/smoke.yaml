@@ -1,0 +1,30 @@
+# Tiny end-to-end run: ~150 units, 2 questions per category. Proves the wiring
+# in a few minutes. NOTE: it loads into the same Neo4j database, so re-run the
+# full `make ingest` afterwards.
+llm:
+  base_url: http://localhost:1234/v1
+  chat_model: google/gemma-4-12b
+  judge_model: google/gemma-4-12b
+  embed_model: text-embedding-nomic-embed-text-v1.5
+  embed_dim: 768
+  temperature: 0.0
+  max_tokens: 1024
+  reasoning_effort: none
+neo4j:
+  uri: bolt://localhost:7687
+  user: neo4j
+  password: geograph-lab
+  database: neo4j
+ingest:
+  limit_units: 150
+  embed_batch: 64
+retrieval:
+  rag_k: 8
+  graphrag_k: 5
+  graphrag_max_units: 4
+  kg_max_rows: 60
+  kg_retries: 1
+bench:
+  seed: 13
+  per_category: 2
+  name: smoke
