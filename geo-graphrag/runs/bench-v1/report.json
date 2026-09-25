@@ -17,60 +17,25 @@
   ],
   "score": {
     "rag": {
-      "age": 0.762,
-      "states": 0.875,
-      "parent": 0.75,
-      "members": 0.581,
-      "relation": 0.875,
-      "multi_hop": 0.071,
-      "count": 0.0,
-      "descriptive": 1.0,
-      "ALL": 0.614
-    },
-    "kg": {
-      "age": 1.0,
-      "states": 1.0,
-      "parent": 0.875,
-      "members": 1.0,
-      "relation": 1.0,
-      "multi_hop": 1.0,
-      "count": 1.0,
-      "descriptive": 0.0,
-      "ALL": 0.859
-    },
-    "graphrag": {
-      "age": 0.95,
-      "states": 1.0,
-      "parent": 1.0,
-      "members": 1.0,
-      "relation": 1.0,
-      "multi_hop": 0.036,
-      "count": 0.0,
-      "descriptive": 1.0,
-      "ALL": 0.748
-    }
-  },
-  "judge": {
-    "rag": {
-      "age": 0.75,
-      "states": 0.75,
-      "parent": 0.875,
-      "members": 0.5,
-      "relation": 0.875,
+      "age": 0.0,
+      "states": 0.0,
+      "parent": 0.5,
+      "members": 0.602,
+      "relation": 0.375,
       "multi_hop": 0.0,
       "count": 0.0,
-      "descriptive": 1.0,
-      "ALL": 0.594
+      "descriptive": 0.875,
+      "ALL": 0.294
     },
     "kg": {
       "age": 1.0,
       "states": 1.0,
       "parent": 1.0,
       "members": 1.0,
-      "relation": 1.0,
-      "multi_hop": 1.0,
+      "relation": 0.875,
+      "multi_hop": 0.875,
       "count": 1.0,
-      "descriptive": 0.0,
+      "descriptive": 0.25,
       "ALL": 0.875
     },
     "graphrag": {
@@ -79,34 +44,69 @@
       "parent": 1.0,
       "members": 1.0,
       "relation": 1.0,
+      "multi_hop": 0.062,
+      "count": 0.0,
+      "descriptive": 0.875,
+      "ALL": 0.742
+    }
+  },
+  "judge": {
+    "rag": {
+      "age": 0.375,
+      "states": 0.0,
+      "parent": 0.5,
+      "members": 0.75,
+      "relation": 0.375,
       "multi_hop": 0.0,
       "count": 0.0,
-      "descriptive": 1.0,
+      "descriptive": 0.875,
+      "ALL": 0.359
+    },
+    "kg": {
+      "age": 1.0,
+      "states": 1.0,
+      "parent": 1.0,
+      "members": 1.0,
+      "relation": 0.875,
+      "multi_hop": 0.875,
+      "count": 1.0,
+      "descriptive": 0.25,
+      "ALL": 0.875
+    },
+    "graphrag": {
+      "age": 1.0,
+      "states": 1.0,
+      "parent": 1.0,
+      "members": 1.0,
+      "relation": 1.0,
+      "multi_hop": 0.125,
+      "count": 0.0,
+      "descriptive": 0.875,
       "ALL": 0.75
     }
   },
   "context_recall": {
     "rag": {
-      "age": 0.825,
-      "states": 0.875,
-      "parent": 0.75,
-      "members": 0.607,
-      "relation": 0.875,
-      "multi_hop": 0.131,
-      "count": 0.25,
-      "descriptive": 1.0,
-      "ALL": 0.664
+      "age": 0.125,
+      "states": 0.25,
+      "parent": 0.5,
+      "members": 0.693,
+      "relation": 0.5,
+      "multi_hop": 0.062,
+      "count": 0.0,
+      "descriptive": 0.875,
+      "ALL": 0.376
     },
     "kg": {
       "age": 1.0,
       "states": 1.0,
       "parent": 1.0,
       "members": 1.0,
-      "relation": 1.0,
-      "multi_hop": 1.0,
+      "relation": 0.875,
+      "multi_hop": 0.875,
       "count": 1.0,
       "descriptive": 0.0,
-      "ALL": 0.875
+      "ALL": 0.844
     },
     "graphrag": {
       "age": 1.0,
@@ -114,27 +114,27 @@
       "parent": 1.0,
       "members": 1.0,
       "relation": 1.0,
-      "multi_hop": 0.158,
-      "count": 0.125,
-      "descriptive": 1.0,
-      "ALL": 0.785
+      "multi_hop": 0.062,
+      "count": 0.0,
+      "descriptive": 0.75,
+      "ALL": 0.727
     }
   },
   "abstain_rate": {
-    "rag": 0.109,
-    "kg": 0.109,
-    "graphrag": 0.078
+    "rag": 0.5,
+    "kg": 0.078,
+    "graphrag": 0.219
   },
   "median_seconds": {
-    "rag": 7.98,
-    "kg": 4.62,
-    "graphrag": 6.42
+    "rag": 14.53,
+    "kg": 23.43,
+    "graphrag": 16.27
   },
   "median_context_chars": {
-    "rag": 5489,
+    "rag": 3999,
     "kg": 320,
-    "graphrag": 5074
+    "graphrag": 4457
   },
   "kg_query_errors": 0,
-  "judge_agreement": 0.976
+  "judge_agreement": 0.97
 }

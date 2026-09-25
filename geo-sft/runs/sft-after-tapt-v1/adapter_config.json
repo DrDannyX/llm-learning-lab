@@ -6,5 +6,5 @@
     "scale": 2.0,
     "dropout": 0.05
   },
-  "model": "/Users/daniel/git/llm-scratchpad/geo-cpt/artifacts/models/tapt-v1-4bit"
+  "model": "/Users/daniel/git/llm-learning-lab/geo-cpt/artifacts/models/tapt-v1-4bit"
 }

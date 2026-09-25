@@ -6,16 +6,21 @@ The three systems are good at different things, and a single averaged number
 hides exactly the intuition this lab is for. The categories are chosen to pull
 them apart:
 
-  category    example                                            gold from   favours
-  ----------- -------------------------------------------------- ----------- --------
-  age         What is the geologic age of the Aarde Shale Member? geolex      all
-  states      In which US states does X occur?                   geolex      graph
-  parent      What larger unit is X part of?                     geolex      all
-  members     Which units are part of the Y Group?               geolex      graph
-  relation    Which unit overlies X?                             rule labels text
-  multi_hop   Which Cretaceous units in Texas contain chalk?     geolex      graph
-  count       How many Pennsylvanian units occur in Kansas?      geolex      KG only
-  descriptive What fossils occur in X? (LLM-written, 1 passage)  LLM         text
+  category    example                                               gold from  favours
+  ----------- ----------------------------------------------------- ---------- --------
+  age         What is the geologic age of the Alsace Quartzite?     asud       all
+  states      In which Australian states does X occur?              asud       graph
+  parent      What larger unit is X part of?                        asud       all
+  members     Which units are part of the Mount Isa Group?          asud       graph
+  relation    Which unit overlies X?                                asud       all
+  multi_hop   Which Cambrian units in Tasmania consist of limestone? asud      graph
+  count       How many Permian units occur in New South Wales?      asud       KG only
+  descriptive Where was X named from? (LLM-written, 1 passage)      LLM        text
+
+Question SUBJECTS (age, states, parent, members, relation, descriptive) are
+drawn only from units that have passages, so RAG always has something to
+find. Counts and filters range over the whole graph -- all ~18k ASUD units --
+which is exactly the question retrieval of 8 passages cannot answer.
 
 THE CIRCULARITY CAVEAT -- read before quoting any number
 -------------------------------------------------------
@@ -23,8 +28,9 @@ Seven categories take their gold answers from the same curated metadata the
 knowledge graph was built from. On those, the KG is being asked to read back
 its own contents, and it will look better than it would against a truly
 independent test. `descriptive` is the counterweight: its answers exist only
-in prose. `relation` gold comes from geo-sft's rule labeller -- the labeller
-that lab found to be wrong on 83% of reviewed rows -- so treat it as noisy.
+in prose. Unlike the Geolex version of this lab, `relation` gold is now
+CURATED (ASUD records stratigraphic relations; Geolex did not), so it is no
+longer the noisy category -- only curated OVERLIES edges become gold.
 
 This is the same lesson as the SFT lab's gold review, from the other side:
 whoever builds the test set decides what "better" means.
@@ -39,16 +45,21 @@ from pathlib import Path
 
 from rich.progress import track
 
+from geosft.data.states import STATE_NAMES
+
 from ..config import Config
-from ..ingest.extract import STATE_NAMES, Graph, core_name
+from ..ingest.extract import Graph, core_name
 from ..llm import complete
 
 CATEGORIES = ["age", "states", "parent", "members", "relation", "multi_hop", "count", "descriptive"]
 
-#: Period-level names a geologist would actually ask about.
-PERIODS = ["Cambrian", "Ordovician", "Silurian", "Devonian", "Mississippian", "Pennsylvanian",
-           "Permian", "Triassic", "Jurassic", "Cretaceous", "Tertiary", "Quaternary",
-           "Precambrian"]
+#: Period- and era-level names a geologist would actually ask about. Much of
+#: Australia is Precambrian, so the Proterozoic eras and the Archean count too.
+PERIODS = ["Archean", "Paleoproterozoic", "Mesoproterozoic", "Neoproterozoic",
+           "Cambrian", "Ordovician", "Silurian", "Devonian", "Carboniferous", "Permian",
+           "Triassic", "Jurassic", "Cretaceous", "Paleogene", "Neogene", "Quaternary"]
+#: Onshore jurisdictions a question can name ("Offshore Australia" is not a place)
+ASK_STATES = {c: n for c, n in STATE_NAMES.items() if c != "OFF"}
 
 
 def _q(qid: str, category: str, question: str, gold, match: str, source: str,
@@ -69,11 +80,11 @@ class Index:
         for e in g.edges:
             self.out[e["src"]][e["type"]].append(e)
             self.inc[e["dst"]][e["type"]].append(e)
-        cores = Counter(core_name(u["name"]) for u in g.units.values() if u["geolex"])
-        #: units whose name identifies them: no homonym, and a rank word to read naturally
-        self.clean = [k for k, u in g.units.items() if u["geolex"]
-                      and cores[core_name(u["name"])] == 1
-                      and u["rank"] != "Unknown" and u["full_name"] != u["name"]]
+        cores = Counter(core_name(u["name"]) for u in g.units.values() if u["asud"])
+        #: question subjects: curated, with passages, a unique core name (no
+        #: homonym for the linker to guess between) and a rank word
+        self.clean = [k for k, u in g.units.items() if u["asud"] and u.get("has_text")
+                      and cores[core_name(u["name"])] == 1 and u["rank"] != "Unknown"]
         self.passages_of: dict[str, list[dict]] = defaultdict(list)
         for p in g.passages:
             self.passages_of[p["unit_key"]].append(p)
@@ -107,24 +118,25 @@ def gen_age(ix: Index, rng: random.Random, n: int) -> list[dict]:
     for k in rng.sample(keys, n):
         ages = sorted(r.split(":", 1)[1] for r in ix.targets(k, "HAS_AGE"))
         out.append(_q(f"age-{k}", "age", f"What is the geologic age of the {ix.name(k)}?",
-                      ages, "all", k, "geolex",
+                      ages, "all", k, "asud",
                       reference="; ".join(ix.g.units[k]["age_text"])))
     return out
 
 
 def gen_states(ix: Index, rng: random.Random, n: int) -> list[dict]:
     keys = [k for k in ix.clean if 1 <= len(ix.g.units[k]["states"]) <= 4
-            and all(s in STATE_NAMES for s in ix.g.units[k]["states"])]
-    return [_q(f"states-{k}", "states", f"In which US states does the {ix.name(k)} occur?",
-               [STATE_NAMES[s] for s in ix.g.units[k]["states"]], "all", k, "geolex")
+            and all(s in ASK_STATES for s in ix.g.units[k]["states"])]
+    return [_q(f"states-{k}", "states",
+               f"In which Australian states or territories does the {ix.name(k)} occur?",
+               [ASK_STATES[s] for s in ix.g.units[k]["states"]], "all", k, "asud")
             for k in rng.sample(keys, n)]
 
 
 def gen_parent(ix: Index, rng: random.Random, n: int) -> list[dict]:
-    keys = [k for k in ix.clean if ix.g.units[k]["rank"] in {"Member", "Bed", "Tongue", "Lentil"}
+    keys = [k for k in ix.clean if ix.g.units[k]["rank"] in {"Member", "Bed"}
             and ix.targets(k, "PART_OF")]
     return [_q(f"parent-{k}", "parent", f"What larger stratigraphic unit is the {ix.name(k)} part of?",
-               sorted({ix.name(p) for p in ix.targets(k, "PART_OF")}), "any", k, "geolex")
+               sorted({ix.name(p) for p in ix.targets(k, "PART_OF")}), "any", k, "asud")
             for k in rng.sample(keys, n)]
 
 
@@ -133,52 +145,53 @@ def gen_members(ix: Index, rng: random.Random, n: int) -> list[dict]:
             if 3 <= len(set(ix.targets(k, "PART_OF", reverse=True))) <= 12]
     return [_q(f"members-{k}", "members", f"Which units are part of the {ix.name(k)}?",
                sorted({ix.name(c) for c in ix.targets(k, "PART_OF", reverse=True)}), "all", k,
-               "geolex")
+               "asud")
             for k in rng.sample(keys, n)]
 
 
 def gen_relation(ix: Index, rng: random.Random, n: int) -> list[dict]:
-    out = []
-    keys = [k for k in ix.clean if ix.targets(k, "OVERLIES", reverse=True)]
-    for k in rng.sample(keys, n):
-        above = sorted({ix.name(a) for a in ix.targets(k, "OVERLIES", reverse=True)})
-        out.append(_q(f"relation-{k}", "relation", f"Which unit overlies the {ix.name(k)}?",
-                      above, "any", k, "text (rule labeller)"))
-    return out
+    def curated_above(k: str) -> list[str]:
+        return sorted({ix.name(e["src"]) for e in ix.inc[k].get("OVERLIES", [])
+                       if "asud" in e["props"].get("sources", [])})
+
+    keys = [k for k in ix.clean if curated_above(k)]
+    return [_q(f"relation-{k}", "relation", f"Which unit overlies the {ix.name(k)}?",
+               curated_above(k), "any", k, "asud")
+            for k in rng.sample(keys, n)]
 
 
 def gen_multi_hop(ix: Index, rng: random.Random, n: int) -> list[dict]:
     groups: dict[tuple, set[str]] = defaultdict(set)
     for k, u in ix.g.units.items():
-        if not u["geolex"]:
+        if not u["asud"]:
             continue
         # curated lithology only: text-derived tags are noisier than the gold should be
         liths = {e["dst"].split(":", 1)[1] for e in ix.out[k].get("HAS_LITHOLOGY", [])
-                 if "geolex" in e["props"].get("sources", [])}
+                 if "asud" in e["props"].get("sources", [])}
         for period in ix.periods(k):
             for st in u["states"]:
                 for lith in liths:
                     groups[(period, st, lith)].add(k)
-    combos = sorted(c for c, ks in groups.items() if 2 <= len(ks) <= 8 and c[1] in STATE_NAMES)
+    combos = sorted(c for c, ks in groups.items() if 2 <= len(ks) <= 8 and c[1] in ASK_STATES)
     out = []
     for period, st, lith in rng.sample(combos, n):
         ks = groups[(period, st, lith)]
         out.append(_q(f"multi_hop-{period}-{st}-{lith}", "multi_hop",
-                      f"Which {period} units in {STATE_NAMES[st]} consist of {lith}?",
-                      sorted({ix.name(k) for k in ks}), "all", f"{period}|{st}|{lith}", "geolex"))
+                      f"Which {period} units in {ASK_STATES[st]} consist of {lith}?",
+                      sorted({ix.name(k) for k in ks}), "all", f"{period}|{st}|{lith}", "asud"))
     return out
 
 
 def gen_count(ix: Index, rng: random.Random, n: int) -> list[dict]:
     groups: dict[tuple, set[str]] = defaultdict(set)
     for k, u in ix.g.units.items():
-        if u["geolex"]:
+        if u["asud"]:
             for period in ix.periods(k):
                 for st in u["states"]:
                     groups[(period, st)].add(k)
-    combos = sorted(c for c, ks in groups.items() if 5 <= len(ks) <= 80 and c[1] in STATE_NAMES)
-    return [_q(f"count-{p}-{s}", "count", f"How many {p} units occur in {STATE_NAMES[s]}?",
-               len(groups[(p, s)]), "count", f"{p}|{s}", "geolex")
+    combos = sorted(c for c, ks in groups.items() if 5 <= len(ks) <= 80 and c[1] in ASK_STATES)
+    return [_q(f"count-{p}-{s}", "count", f"How many {p} units occur in {ASK_STATES[s]}?",
+               len(groups[(p, s)]), "count", f"{p}|{s}", "asud")
             for p, s in rng.sample(combos, n)]
 
 

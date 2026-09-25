@@ -1,6 +1,7 @@
 name: geo-sft-v1
 data:
-  max_units: 4000
+  max_units: null
+  max_per_unit: 12
   min_passage_chars: 200
   max_passage_chars: 4000
   min_filled_fields: 2
@@ -37,6 +38,7 @@ train:
   val_batches: 20
   grad_checkpoint: true
   mask_prompt: true
+  align_loss_to_answer: true
   seed: 17
 eval:
   max_new_tokens: 512

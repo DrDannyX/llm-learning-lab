@@ -10,7 +10,10 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass
 
-WORD = re.compile(r"[A-Za-z][A-Za-z'\-]*")
+#: Hyphens split words: ASUD writes assemblages and ranges as compounds
+#: ("muscovite-biotite granite", "Carnian-Norian"), and a hyphenated vocabulary
+#: entry is matched as its space-separated parts.
+WORD = re.compile(r"[A-Za-z][A-Za-z']*")
 
 #: Lexicon prose pluralises rock names freely ("shales", "marls").
 _PLURAL_SUFFIXES = ("s", "es")
@@ -31,7 +34,7 @@ class Gazetteer:
         """entries maps a lowercase surface phrase -> canonical output form."""
         self.table: dict[str, str] = {}
         for surface, canonical in entries.items():
-            key = surface.lower().strip()
+            key = " ".join(WORD.findall(surface.lower().strip()))
             if not key:
                 continue
             self.table.setdefault(key, canonical)

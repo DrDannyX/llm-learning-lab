@@ -1,29 +1,10 @@
 name: geo-cpt-tapt
 corpus:
   stage: tapt
-  usgs_queries:
-  - stratigraphy
-  - lithology
-  - sedimentology
-  - petrology
-  - geochronology
-  - mineral deposits
-  - structural geology
-  - volcanology
-  - geomorphology
-  - hydrogeology
-  - paleontology
-  - igneous
-  - metamorphic
-  - basin analysis
-  - formation
-  - sandstone
-  - limestone
-  - shale
-  - fault
-  - ore deposit
-  usgs_max_per_query: 1000
-  geolex_max_units: 16684
+  ecat_resource_types:
+  - document
+  ecat_max_docs: null
+  asud_not_current: true
   min_doc_chars: 300
   max_doc_chars: 50000
   quality_filter: false
@@ -33,8 +14,12 @@ corpus:
   replay_fraction: 0.15
   replay_dataset: Salesforce/wikitext
   replay_config: wikitext-2-raw-v1
+  forgetting_dataset: fancyzhx/ag_news
+  forgetting_config: null
+  forgetting_split: test
   val_docs: 300
   seed: 17
+  variant: ''
 pack:
   block_size: 1024
   add_eos_between_docs: true

@@ -13,19 +13,20 @@ explained where it is made.
 [learning path](#how-to-learn-from-this-repo) below.
 
 ```
-messy USGS lexicon prose  ──►  strict JSON
+messy Australian lexicon prose  ──►  strict JSON
 ```
 
-> *"Austin chalk. The present generally accepted definition applies to the beds
-> below Taylor marl and above Eagle Ford clay. Thickness 200 to 400 feet."*
+> *"Culvida Sandstone. Up to 210m thick; fine to coarse sandstone; siltstone;
+> granule and pebble conglomerate (poorly sorted); fluvial. Conformably overlies
+> Erskine Sandstone. Type section 1km south of Culvida Soak (CORNISH: 20deg
+> 14' 00" S, 126deg 56' 00" E). Plant fossils."*
 
 ```json
-{"unit_name": "Austin", "rank": "Formation",
- "lithologies": ["chalk", "clay", "marl"], "chronostrat": ["Late Cretaceous"],
- "minerals": [], "thickness": {"min_m": 60.96, "max_m": 121.92},
- "relations": [{"kind": "overlies", "unit": "Eagle Ford Clay"},
-               {"kind": "underlies", "unit": "Taylor Marl"}],
- "states": ["TX"]}
+{"unit_name": "Culvida Sandstone", "rank": "Formation",
+ "lithologies": ["conglomerate", "sandstone", "siltstone"], "chronostrat": [],
+ "minerals": [], "thickness": {"min_m": 210.0, "max_m": 210.0},
+ "relations": [{"kind": "overlies", "unit": "Erskine Sandstone"}],
+ "states": []}
 ```
 
 ## Why this task
@@ -118,7 +119,7 @@ training loss and *worse* task scores, which makes §5 permanent.
 | [ARCHITECTURE.md](docs/ARCHITECTURE.md) | **Lookup, not cover to cover.** Go when you want a specific stage, or before changing code. |
 | LEARNING.md §10–11 | Data/weak supervision and tokenizers — read when you reach those stages, not upfront. |
 | LEARNING.md §13–14 | Failure-mode table and glossary. Bookmarks. Go to §13 the moment something looks wrong. |
-| [RESULTS.md](docs/RESULTS.md) §9 | "What these numbers do *not* establish." Read early — it is the antidote to believing the 0.831. |
+| [RESULTS.md](docs/RESULTS.md) §7 | "What these numbers do *not* establish." Read early — it is the antidote to believing the 0.807. |
 
 LEARNING.md §12 is the same journey as sessions 1–3 but command-by-command
 rather than reading-first. Use it as the detailed companion, not a second path.
@@ -151,31 +152,40 @@ second and catches a whole family of bugs.
 
 ### 1. Corpus
 
-**USGS Geologic Names Lexicon** (public domain) — ~16,700 stratigraphic units,
-each with several reference summaries written by geologists between roughly 1890
-and 1990. Abbreviated, archaic, inconsistent: exactly the text a domain model has
-to survive and a general instruct model handles badly.
+**Geoscience Australia's Australian Stratigraphic Units Database (ASUD)**
+(CC BY 4.0) — the national authority on Australian stratigraphic names, 18,387
+units. The lab reads its documented WFS service for the unit index and its
+weekly state-report downloads for the prose: definition cards written by the
+units' authors, and ~350,000 short notes on how each published reference uses
+a unit. Telegraphic, abbreviated (`qtz-rich`, `Sltst`, `Gp`), full of house
+style: exactly the text a domain model has to survive and a general instruct
+model handles badly. **22,311 passages from 8,094 units** — 2.5× the Geolex
+version of this lab.
 
 **Macrostrat API** (CC-BY 4.0) supplies the closed vocabularies: 214 lithologies,
-509 chronostratigraphic intervals, 6,350 minerals, 45,347 stratigraphic names.
+514 chronostratigraphic intervals, 6,350 minerals. Australian spellings
+(*Palaeozoic*, *Archaean*, *Lower Devonian*) are mapped onto them.
 
-Responses are cached on disk, so re-running the labeller never re-hits the network.
+The ASUD download is **snapshotted** with SHA-256 hashes
+(`data/raw/asud/manifest.json`): GA rebuilds the reports weekly, so
+re-downloading is not reproducing.
 
 ### 2. Training pairs
 
 A rule-based labeller (`src/geosft/data/label.py`) turns each passage into a
 `GeoExtraction` object. Two rules govern it:
 
-- **Only facts present in the passage.** Geolex offers curated ages and state
-  lists, and using them would teach the model to state things it cannot see —
-  i.e. to hallucinate confidently. The metadata is used only to *audit* the
-  labeller (`agreement_report`).
+- **Only facts present in the passage.** ASUD offers curated ages, states,
+  thickness and even stratigraphic relations, and using them would teach the
+  model to state things it cannot see — i.e. to hallucinate confidently. The
+  metadata is used only to *audit* the labeller (`agreement_report`).
 - **Canonical targets.** Lists are sorted and de-duplicated. If identical facts
   could serialise two ways, you are training the model to predict a coin flip.
 
-Splitting is **group-wise on `unit_id`**. Geolex has seven near-identical
-passages about the Aarde Shale Member; a random split would put near-duplicates
-on both sides of the wall and inflate the test score.
+Splitting is **group-wise on `unit_id`**. ASUD files up to a dozen overlapping
+notes under one unit; a random split would put near-duplicates on both sides of
+the wall and inflate the test score. Once the gold set is reviewed it is
+**frozen**: later labeller fixes cannot reshuffle it.
 
 ### 3. Tokenizer
 
@@ -191,17 +201,18 @@ So the tokenizer does the two jobs it legitimately can:
 
    | corpus | base tokenizer | geo tokenizer |
    |---|---|---|
-   | geoscience passages | 1.701 | **1.527** (−10%) |
-   | general English | **1.123** | 1.938 (+73%) |
+   | geoscience passages | 1.921 | **1.610** (−16%) |
+   | general English | **1.123** | 1.877 (+67%) |
 
    That second row is the whole argument. The domain tokenizer wins modestly on
    domain text and loses catastrophically everywhere else — which is what a
    wholesale tokenizer swap would cost you.
 
-   1,918 of 2,223 domain terms cost the base tokenizer 3+ tokens. Ranked by
-   tokens actually wasted (frequency × pieces−1): `Pennsylvanian` (4 tokens,
-   340 uses), `Cretaceous` (3×451), `Ordovician` (3×318), `Mississippian`
-   (4×203), `siltstone`, `gneiss`, `rhyolite`, `Pleistocene`. Ranking by raw
+   1,923 of 2,228 domain terms cost the base tokenizer 3+ tokens. Ranked by
+   tokens actually wasted (frequency × pieces−1): `siltstone` (3 tokens,
+   2,951 uses), `granodiorite` (4×1,858), `Biotite` (3×1,406), `rhyolite`
+   (4×1,135), `gneiss`, `monzogranite`, `mafic`, `dolerite` — Australian
+   lexicon prose is dense with igneous rock names. Ranking by raw
    fragmentation instead surfaces junk like
    `Clino-ferro-ferri-fluoro-holmquistite` (16 tokens, zero occurrences).
 
@@ -322,37 +333,41 @@ a model is rewarded for refusing.
 
 ## Measured results
 
-Qwen3-4B-Instruct-2507 4-bit, rank-16 LoRA on 16 layers, 6,635 training pairs,
-scored against the **untuned base on the same prompts** and the same held-out
-test split (group-split by unit, so no near-duplicate leakage).
+Qwen3-4B-Instruct-2507 4-bit, rank-16 LoRA on 16 layers, 14,691 training
+pairs from ASUD, scored against the **untuned base on the same prompts**, on
+the held-out test split (group-split by unit) and on the 150 reviewed gold rows.
 
-| metric | base | tuned (900 iters) | delta |
+| metric | base (gold) | tuned (gold) | delta |
 |---|---|---|---|
-| schema valid rate | 0.810 | **1.000** | +0.190 |
-| unit_name accuracy | 0.101 | **0.946** | +0.845 |
-| rank accuracy | 0.655 | **0.840** | +0.185 |
-| thickness accuracy | 0.635 | **0.880** | +0.245 |
-| lithologies F1 | 0.332 | **0.934** | +0.602 |
-| chronostrat F1 | 0.532 | **0.931** | +0.399 |
-| minerals F1 | 0.377 | **0.680** | +0.303 |
-| states F1 | 0.026 | **0.949** | +0.923 |
-| relations F1 | 0.305 | **0.659** | +0.355 |
-| **macro F1** | **0.314** | **0.831** | **+0.516** |
+| schema valid rate | 0.867 | **0.993** | +0.127 |
+| unit_name accuracy | 0.993 | **0.993** | +0.000 |
+| rank accuracy | 0.887 | **0.973** | +0.087 |
+| thickness accuracy | 0.687 | **0.947** | +0.260 |
+| lithologies F1 | 0.359 | **0.825** | +0.466 |
+| chronostrat F1 | 0.120 | **0.667** | +0.546 |
+| minerals F1 | 0.554 | **0.854** | +0.300 |
+| states F1 | 0.126 | **1.000** | +0.874 |
+| relations F1 | 0.438 | **0.691** | +0.253 |
+| **macro F1** | **0.320** | **0.807** | **+0.488** |
 
-117 minutes on an M4 Pro, 8.5 GB peak memory, no divergence alarms.
+Against rule labels on 200 test rows: **0.311 → 0.806**. The Geolex version of
+this lab scored 0.314 → 0.831 against rules but only **0.705** against its
+reviewed gold; see [RESULTS §3 and §5](docs/RESULTS.md) for why the gap closed
+here and why that is partly leakage from the gold review itself.
 
-Validation bottomed at **iter 749 (0.0703)** and drifted up slightly by 900 —
-the last 150 iterations bought nothing, which is why `save_every` and
-best-checkpoint selection exist.
+167 minutes on an M4 Pro (GPU shared with the graph lab), 13.5 GB peak. Best
+validation at iter 824; a false "overfitting" alarm fired at 674 on noisy
+20-batch validation.
 
-`minerals` and `relations` are the weakest fields, and both are limited by the
-labeller rather than the model: mineral mentions are sparse and relations
-depend on regex patterns that miss unusual sentence forms. That is the ceiling
-described below, showing up in the numbers exactly where you would predict.
+`relations` is the weakest field and `chronostrat` the most improved. Both are
+limited by the labeller: coordinated lists ("overlain by A, B and C") defeat
+the relation rules, and neighbouring units' ages defeat the chronostrat
+gazetteer. Against gold, the tuned model scores slightly *below* the fixed
+rules on every field — it imitates its teacher, imperfectly.
 
-### The bug this table found
+### The bug this table found (Geolex-era run)
 
-The first full run scored **strict JSON rate 1.000 on the base and 0.000 on the
+The first full run of the Geolex version of this lab scored **strict JSON rate 1.000 on the base and 0.000 on the
 tuned model** while macro F1 went *up*. Cause: Qwen3's chat template injects
 `<think>\n\n</think>\n\n` before assistant content in a full conversation but
 not in the generation prompt MLX derives the loss mask from, so the scaffolding
@@ -422,7 +437,7 @@ configs/         default.yaml (full run), smoke.yaml (fast wiring test)
 src/geosft/
   schema.py      the extraction contract + prompt construction (one source of truth)
   config.py      typed config for every stage
-  data/          http cache, gazetteers, Geolex fetch, matcher, labeller, splits
+  data/          ASUD access + snapshot, gazetteers, passages, matcher, labeller, splits
   tokenizer/     train from scratch, fertility analysis, vocabulary extension
   train/         mlx_train.py (QLoRA, primary), hf_train.py (PEFT/TRL, portable)
   monitor/       live tracker, alarms, JSONL metrics, loss curves
@@ -451,10 +466,12 @@ redistributed here:
 
 | what | licence | note |
 |---|---|---|
-| USGS Geolex corpus | public domain | US Government work |
+| ASUD (Geoscience Australia) | CC BY 4.0 | attribute "© Commonwealth of Australia (Geoscience Australia)" |
 | Macrostrat gazetteers | CC-BY 4.0 | attribute Macrostrat if you republish derived data |
 | Qwen3 model weights | Apache-2.0 | fetched from HuggingFace at run time |
 
-The committed `data/gold/gold.jsonl` is derived from Geolex (public domain).
+The committed `data/gold/gold.jsonl` is derived from ASUD (CC BY 4.0,
+© Commonwealth of Australia (Geoscience Australia)). The Geolex-era gold set
+and runs are kept for reference in `runs/geolex-archive/`.
 Training splits, model weights and quantised copies are gitignored and
 regenerated by the pipeline.

@@ -3,14 +3,16 @@
 CPT needs *volume* of raw text, not labelled pairs. That changes the sourcing
 problem completely from the SFT project next door:
 
-  SFT  8,757 passages, each needing a high-quality label   -> label quality is the work
-  CPT  ~10^5 documents, no labels at all                   -> corpus hygiene is the work
+  SFT  ~18k passages, each needing a high-quality label   -> label quality is the work
+  CPT  ~10^5 documents, no labels at all                  -> corpus hygiene is the work
 
-Three public-domain / open sources, all reusable without redistribution:
+Three open sources, all from Geoscience Australia (CC BY 4.0, attribution
+required -- "(c) Commonwealth of Australia (Geoscience Australia)"):
 
-  usgs    USGS Publications Warehouse abstracts (public domain, US Gov work)
-  geolex  the FULL USGS lexicon -- 16,684 units, vs the 3,302 geo-sft sampled
-  task    geo-sft's own passages with the JSON labels thrown away (this is TAPT)
+  ecat   abstracts of GA's publications, from its eCat catalogue (~21k records)
+  asud   the WHOLE Australian stratigraphic lexicon: every definition card and
+         reference note, including superseded units that geo-sft leaves out
+  task   geo-sft's own passages with the JSON labels thrown away (this is TAPT)
 
 The third is the important trick: TAPT is not a different technique from DAPT,
 it is the same technique pointed at the task's own unlabelled text.
@@ -20,7 +22,6 @@ from __future__ import annotations
 import json
 import re
 from pathlib import Path
-from typing import Iterator
 
 import httpx
 from rich.console import Console
@@ -28,17 +29,20 @@ from rich.progress import Progress, TimeElapsedColumn
 from selectolax.parser import HTMLParser
 from tenacity import retry, stop_after_attempt, wait_exponential
 
+from geosft.data.fetch import ADMIN_SECTIONS as _ADMIN_SECTIONS
+
 from .. import paths
 
 console = Console()
-USGS_API = "https://pubs.usgs.gov/pubs-services/publication/"
+ECAT_API = "https://ecat.ga.gov.au/geonetwork/srv/api/search/records/_search"
 UA = "geo-cpt/0.1 (educational CPT project)"
+ECAT_PAGE = 500
 
 _WS = re.compile(r"\s+")
 
 
 def strip_html(text: str) -> str:
-    """USGS abstracts arrive as HTML fragments (<h1>, <p>, &nbsp;)."""
+    """Catalogue abstracts sometimes arrive as HTML fragments (<p>, &nbsp;)."""
     if not text:
         return ""
     if "<" in text:
@@ -47,108 +51,131 @@ def strip_html(text: str) -> str:
 
 
 @retry(wait=wait_exponential(min=2, max=30), stop=stop_after_attempt(4), reraise=True)
-def _get(client: httpx.Client, params: dict) -> dict:
-    r = client.get(USGS_API, params=params)
+def _search(client: httpx.Client, body: dict) -> dict:
+    r = client.post(ECAT_API, json=body, headers={"Accept": "application/json"})
     r.raise_for_status()
     return r.json()
 
 
-def fetch_usgs(queries: list[str], max_per_query: int,
+def fetch_ecat(resource_types: list[str], max_docs: int | None,
                cache: Path | None = None) -> list[dict]:
-    """Abstracts from the USGS Publications Warehouse.
+    """Abstracts from Geoscience Australia's eCat catalogue (GeoNetwork).
 
-    These are real technical geoscience prose written by USGS scientists, and
-    as a US Government work they are public domain. Roughly 300 tokens each.
+    Real technical prose written by GA scientists about Australian geology,
+    ~600 characters each. Paged with `search_after` on the record uuid:
+    Elasticsearch refuses plain from/size paging past 10,000 hits, and eCat
+    holds ~21,000 documents.
     """
-    cache = cache or (paths.RAW / "usgs.jsonl")
+    cache = cache or (paths.RAW / "ecat.jsonl")
     if cache.exists():
         docs = [json.loads(l) for l in cache.open()]
-        console.print(f"[dim]usgs cached: {len(docs)} docs[/dim]")
+        console.print(f"[dim]ecat cached: {len(docs)} docs[/dim]")
         return docs
 
-    page_size = 100
+    query = {"bool": {"must": [{"terms": {"resourceType": resource_types}},
+                               {"exists": {"field": "resourceAbstractObject.default"}}]}}
     docs: list[dict] = []
-    seen_ids: set[int] = set()
-    with httpx.Client(timeout=45.0, headers={"User-Agent": UA},
-                      follow_redirects=True) as client:
+    after = None
+    with httpx.Client(timeout=90.0, headers={"User-Agent": UA}, follow_redirects=True) as client:
         with Progress(*Progress.get_default_columns(), TimeElapsedColumn(),
                       console=console) as prog:
-            task = prog.add_task("usgs abstracts", total=len(queries))
-            for q in queries:
-                got = 0
-                page = 1
-                while got < max_per_query:
-                    try:
-                        payload = _get(client, {"q": q, "page_size": page_size,
-                                                "page_number": page, "format": "json"})
-                    except Exception as exc:
-                        console.print(f"[yellow]usgs '{q}' p{page}: {exc}[/yellow]")
-                        break
-                    records = payload.get("records") or []
-                    if not records:
-                        break
-                    for rec in records:
-                        rid = rec.get("id")
-                        if rid in seen_ids:
-                            continue
-                        body = strip_html(rec.get("docAbstract") or "")
-                        if not body:
-                            continue
-                        seen_ids.add(rid)
-                        docs.append({
-                            "id": f"usgs:{rid}",
-                            "source": "usgs",
-                            "title": rec.get("title") or "",
-                            "year": rec.get("publicationYear"),
-                            "text": body,
-                        })
-                        got += 1
-                    page += 1
-                    if len(records) < page_size:
-                        break
-                prog.advance(task)
+            task = prog.add_task("ecat abstracts", total=max_docs)
+            while max_docs is None or len(docs) < max_docs:
+                body = {"size": ECAT_PAGE, "query": query, "sort": [{"uuid": "asc"}],
+                        "_source": ["uuid", "resourceTitleObject.default",
+                                    "resourceAbstractObject.default",
+                                    "publicationYearForResource"]}
+                if after:
+                    body["search_after"] = after
+                hits = _search(client, body)["hits"]["hits"]
+                if not hits:
+                    break
+                for h in hits:
+                    src = h["_source"]
+                    text = strip_html((src.get("resourceAbstractObject") or {}).get("default", ""))
+                    if not text:
+                        continue
+                    year = src.get("publicationYearForResource")
+                    docs.append({
+                        "id": f"ecat:{src.get('uuid')}",
+                        "source": "ecat",
+                        "title": (src.get("resourceTitleObject") or {}).get("default", ""),
+                        "year": int(year[0]) if isinstance(year, list) and year else None,
+                        "text": text,
+                    })
+                after = hits[-1]["sort"]
+                prog.update(task, completed=len(docs))
+    docs = docs[:max_docs] if max_docs else docs
 
     cache.parent.mkdir(parents=True, exist_ok=True)
     with cache.open("w") as fh:
         for d in docs:
             fh.write(json.dumps(d, ensure_ascii=False) + "\n")
-    console.print(f"[green]usgs[/green] {len(docs)} abstracts -> {cache}")
+    console.print(f"[green]ecat[/green] {len(docs)} abstracts -> {cache}")
     return docs
 
 
-def fetch_geolex_full(max_units: int) -> list[dict]:
-    """The whole USGS lexicon, reusing geo-sft's cached fetcher.
+def fetch_asud_full(not_current: bool = True) -> list[dict]:
+    """The whole ASUD lexicon as raw text: one document per unit.
 
-    geo-sft already downloaded ~3,300 units and its HTTP cache is on disk, so
-    those come back instantly; only the remainder hits the network.
+    geo-sft already snapshotted ASUD (data/raw/asud), so nothing is
+    re-downloaded. Unlike geo-sft this keeps EVERY unit's text -- no
+    per-unit cap, no label filter, superseded names too -- because CPT
+    wants volume and needs no labels.
+
+    A unit's definition card and all its reference notes become ONE document,
+    the way the lexicon itself presents a unit. Most notes are one or two
+    sentences; as separate documents 94% of them fall below any sensible
+    minimum length and the quality filter discards them. Repeated notes
+    within a unit ("Geological Province: Sydney Basin.") are kept once.
+    Leakage into geo-sft's test split is handled by `heldout_units`.
+    """
+    from geosft.data import asud
+    from geosft.data.fetch import clean_passage
+
+    asud.fetch(not_current=not_current)
+    docs: list[dict] = []
+    for status in (["Current", "Notcurrent"] if not_current else ["Current"]):
+        parts: dict[str, list[str]] = {}
+        names: dict[str, str] = {}
+        for r in asud.read_table("definition", status):
+            body = clean_passage(r.get("Contents", ""))
+            if body and r.get("Category") not in _ADMIN_SECTIONS:
+                parts.setdefault(r["Stratno"], []).append(f"{r['Category']}: {body}")
+                names.setdefault(r["Stratno"], r.get("Stratigraphic Name", ""))
+        for r in asud.read_table("articles", status):
+            body = clean_passage(r.get("Reference Comments", ""))
+            if body:
+                parts.setdefault(r["Stratno"], []).append(body)
+                names.setdefault(r["Stratno"], r.get("Stratigraphic Name", ""))
+        for sn, texts in parts.items():
+            uniq = list(dict.fromkeys(texts))
+            docs.append({"id": f"asud:{status}:{sn}", "source": "asud", "unit_id": asud._int(sn),
+                         "title": names[sn], "year": None,
+                         "text": f"{names[sn]}. " + " ".join(uniq)})
+    console.print(f"[green]asud[/green] {len(docs)} unit entries "
+                  f"({sum(len(d['text']) for d in docs):,} chars)")
+    return docs
+
+
+def heldout_units() -> set[int]:
+    """ASUD units in geo-sft's valid, test or gold sets.
+
+    The DAPT corpus is the whole lexicon, which CONTAINS geo-sft's test
+    passages. Pretraining on them and then scoring SFT on them is leakage
+    that no loss curve will show you, so every held-out unit's text is
+    dropped from DAPT. TAPT does not need this: it reads the train split only.
     """
     from geosft import paths as sft_paths
-    from geosft.data.fetch import fetch_details, fetch_index
-    from geosft.data.http import CachedClient
 
-    client = CachedClient(sft_paths.RAW / "http-cache")
-    try:
-        index = fetch_index(client, max_units)
-        docs: list[dict] = []
-        for rec in fetch_details(client, index):
-            uid = rec.get("id")
-            name = (rec.get("name") or "").strip()
-            for i, ref in enumerate(rec.get("unit_reference_summaries") or []):
-                body = " ".join(s for s in (ref.get("summary") or []) if s)
-                body = _WS.sub(" ", body).strip()
-                if not body:
-                    continue
-                docs.append({
-                    "id": f"geolex:{uid}:{i}",
-                    "source": "geolex",
-                    "title": name,
-                    "year": ref.get("reference_year"),
-                    "text": body,
-                })
-    finally:
-        client.close()
-    console.print(f"[green]geolex[/green] {len(docs)} summaries")
-    return docs
+    out: set[int] = set()
+    for p in (sft_paths.PROCESSED / "valid.meta.jsonl", sft_paths.PROCESSED / "test.meta.jsonl",
+              sft_paths.GOLD / "gold.jsonl"):
+        if not p.exists():
+            raise FileNotFoundError(f"{p} missing. Run `geosft build` in ../geo-sft first -- "
+                                    "DAPT must know which units to hold out.")
+        out |= {json.loads(line)["unit_id"] for line in p.open()}
+    return out
 
 
 def load_task_text() -> list[dict]:

@@ -18,7 +18,7 @@ technique for the other half — and it answers two questions that project left
 open:
 
 1. **Does more domain text help the downstream task?** geo-sft reached macro F1
-   0.831 from SFT alone. `geocpt transfer` runs geo-sft's own trainer and
+   0.806 from SFT alone. `geocpt transfer` runs geo-sft's own trainer and
    scorer on a CPT'd model, so the comparison is apples to apples.
 2. **Can vocabulary extension finally pay off?** geo-sft grafted 512 geoscience
    tokens for a 4.89% context saving, but MLX LoRA never touches embeddings so
@@ -30,8 +30,8 @@ Not three techniques — one technique pointed at different text.
 
 | | corpus | size here |
 |---|---|---|
-| **TAPT** | the unlabelled text of the downstream task | ~1.5M tokens |
-| **DAPT** | broad geoscience domain text | ~15–20M tokens |
+| **TAPT** | the unlabelled text of the downstream task (geo-sft's ASUD passages) | ~3.3M tokens |
+| **DAPT** | broad geoscience domain text (GA eCat abstracts + all of ASUD) | ~7.4M tokens |
 | **DAPT→TAPT** | both, in sequence | the full recipe |
 
 One `stage` setting selects which. Run **TAPT first** — it is an evening on
@@ -58,7 +58,7 @@ Requires geo-sft's dataset to exist: run `geosft build` next door first.
 | 3 | Training | `geocpt train` | `runs/<name>/checkpoint-NNNNNN/` |
 | 4 | Perplexity | `geocpt eval` | learn vs forget |
 | 5 | Probes | `geocpt probe` | knowledge vs style |
-| 6 | Transfer | `geocpt transfer` | macro F1 vs geo-sft's 0.831 |
+| 6 | Transfer | `geocpt transfer` | macro F1 vs the no-CPT 1.7B arm |
 
 ## What differs from the SFT lab
 
@@ -97,28 +97,30 @@ every evaluation step, with general-set drift coloured red when it grows.
 
 ## Measured results
 
-TAPT on 1.57M tokens, Qwen3-1.7B full fine-tune, 55 minutes.
+TAPT on 3.26M tokens of Geoscience Australia lexicon text, Qwen3-1.7B full
+fine-tune, 72 minutes.
 
 | | before | after |
 |---|---|---|
-| Domain perplexity | 33.27 | **13.87** (−58.3%) |
-| Cloze probe accuracy | 0.815 | 0.833 (not significant) |
+| Domain perplexity | 29.24 | **13.27** (−54.6%) |
+| Cloze probe accuracy | 0.720 | 0.720 (25 probes, no change) |
 
 Downstream, scored by geo-sft's own trainer and evaluator on identical data:
 
 | arm | macro F1 |
 |---|---|
-| 1.7B + SFT (no CPT) | 0.823 |
-| **1.7B + TAPT + SFT** | **0.842** |
-| 4B + SFT (geo-sft baseline) | 0.831 |
+| 1.7B + SFT (no CPT) | 0.778 |
+| **1.7B + TAPT + SFT** | **0.801** |
+| 4B + SFT (geo-sft baseline) | 0.806 |
 
-**TAPT contributed +0.019** with model size held constant, concentrated in the
-hardest fields (`minerals` +0.037, `relations` +0.030). One seed, 200
-examples — suggestive, not established.
+**TAPT contributed +0.023** with model size held constant, concentrated in
+the vocabulary-heavy fields (`chronostrat` +0.052, `minerals` +0.035). One
+seed — but it replicates the Geolex version of this lab (+0.019 at one seed,
++0.025 mean over three) on a different corpus.
 
-That is *better* than this README originally predicted. The warning below
-still stands for the general case, but at 1.5M tokens the technique was
-slightly more useful than the literature's scale guidance implies.
+The warning below still stands for the general case, but at a few million
+tokens the technique is slightly more useful than the literature's scale
+guidance implies. The DAPT corpus is built and has not been trained.
 
 > Real domain adaptation uses **billions** of tokens. At this scale expect
 > small effects, and treat a null result as a finding about scale rather than
@@ -152,6 +154,7 @@ controls.
 
 ## Licence
 
-[MIT](LICENSE) © 2026 Daniel Bongiorno. Corpus sources: USGS Publications
-Warehouse and Geolex (public domain), Macrostrat (CC-BY 4.0), wikitext
-(CC-BY-SA). None are redistributed here.
+[MIT](LICENSE) © 2026 Daniel Bongiorno. Corpus sources: Geoscience Australia's
+ASUD and eCat (CC BY 4.0, © Commonwealth of Australia (Geoscience Australia)),
+Macrostrat (CC-BY 4.0), wikitext (CC-BY-SA), ag_news. None are redistributed
+here. The Geolex-era runs and results are in `runs/geolex-archive/`.

@@ -25,40 +25,39 @@ from ..retrievers.pipeline import LABELS, SYSTEMS, answer
 CFG = config.load()
 INDEX = Path(__file__).with_name("index.html")
 
-#: Example questions, grouped by what they reveal. Every unit named here is a
-#: Geolex unit in this corpus and resolves in the entity linker (checked when
-#: these were written), so a wrong answer means a wrong retrieval, not a typo.
+#: Example questions, grouped by what they reveal. Every unit named here is an
+#: ASUD unit with passages in this corpus and resolves in the entity linker
+#: (checked when these were written), so a wrong answer means a wrong
+#: retrieval, not a typo.
 EXAMPLES = [
     {
         "title": "Counting and filtering",
         "hint": "The answer is spread across dozens of units. Only the knowledge graph "
-                "can count or filter the whole corpus; the others count what they retrieved.",
+                "can count or filter the whole lexicon; the others count what they retrieved.",
         "questions": [
-            "How many Pennsylvanian units occur in Kansas?",
-            "How many Devonian units occur in West Virginia?",
-            "Which Precambrian units in Wyoming consist of quartzite?",
-            "Which Cretaceous units in Texas contain chalk?",
-            "How many Pennsylvanian units occur in Oklahoma?",
-            "How many Cretaceous units occur in California?",
-            "Which Ordovician units in Massachusetts consist of schist?",
-            "Which Mississippian units in Oklahoma consist of limestone?",
-            "Which Tertiary units in Wyoming consist of tuff?",
+            "How many Permian units occur in New South Wales?",
+            "How many Cambrian units occur in Tasmania?",
+            "Which Neoarchean units in Western Australia consist of basalt?",
+            "Which Devonian units in Victoria consist of granite?",
+            "How many Paleoproterozoic units occur in the Northern Territory?",
+            "Which Jurassic units in Queensland consist of sandstone?",
+            "How many Cretaceous units occur in South Australia?",
+            "Which Ordovician units in New South Wales consist of limestone?",
         ],
     },
     {
         "title": "Hierarchy and neighbours",
-        "hint": "Graph relationships: what a unit is part of, and what lies above it. "
-                "The knowledge graph and GraphRAG should both do well; RAG sometimes misses.",
+        "hint": "Graph relationships: what a unit is part of, what lies above it, what "
+                "intrudes it. The knowledge graph and GraphRAG should both do well.",
         "questions": [
-            "Which units are part of the Chickamauga Group?",
-            "What larger stratigraphic unit is the Beckville Member part of?",
-            "What unit overlies the Aarde Shale Member?",
-            "Which unit overlies the Cibolo Formation?",
-            "Which units are part of the Conemaugh Formation?",
-            "Which units are part of the Claiborne Group?",
-            "Which units make up the Council Grove Group?",
-            "What larger unit is the Argentine Limestone Member part of?",
-            "What unit overlies the Belfast Member?",
+            "Which units are part of the Mount Isa Group?",
+            "Which units make up the Hamersley Group?",
+            "What larger stratigraphic unit is the Breakaway Shale part of?",
+            "Which unit overlies the Alsace Quartzite?",
+            "What overlies the Hawkesbury Sandstone?",
+            "Which units are part of the Illawarra Coal Measures?",
+            "What overlies the Fortescue Group?",
+            "What larger unit is the Brockman Iron Formation part of?",
         ],
     },
     {
@@ -66,14 +65,12 @@ EXAMPLES = [
         "hint": "Only in the prose. The knowledge graph has no passages and should say it "
                 "doesn't know; RAG and GraphRAG should find it.",
         "questions": [
-            "What fossils occur in the Aarde Shale Member?",
-            "What type of fossils are abundant in the Buda Limestone?",
-            "Where was the Bandera Shale named from?",
-            "What fossils does the Capitan Limestone contain?",
-            "What fossils are found in the Anchor Bay Member?",
-            "What is the Chapman Ridge Sandstone named for?",
-            "Where is the type section of the Ardath Shale?",
-            "Where is the type locality of the Anakeesta Formation?",
+            "What is the Mount Isa Group named after?",
+            "Where is the type section of the Tumblagooda Sandstone?",
+            "What trace fossils occur in the Tumblagooda Sandstone?",
+            "Where is the type section of the Hutton Sandstone?",
+            "What fossils does the Pertatataka Formation contain?",
+            "Where is the type section of the Mereenie Sandstone?",
         ],
     },
     {
@@ -81,13 +78,13 @@ EXAMPLES = [
         "hint": "Facts that are in both the graph and the text. Compare how complete and "
                 "how precise each answer is.",
         "questions": [
-            "What is the geologic age of the Castle Hayne Formation?",
-            "In which US states does the Coon Creek Formation occur?",
-            "Tell me about the Austin Chalk.",
-            "What is the geologic age of the Chinle Formation?",
-            "In which states does the Chattanooga Shale occur?",
-            "What rock types make up the Conemaugh Formation?",
-            "Tell me about the Capitan Limestone.",
+            "What is the geologic age of the Hawkesbury Sandstone?",
+            "In which Australian states does the Toolebuc Formation occur?",
+            "Tell me about the Brockman Iron Formation.",
+            "What is the geologic age of the Precipice Sandstone?",
+            "In which states does the Kanmantoo Group occur?",
+            "What rock types make up the Newcastle Coal Measures?",
+            "Tell me about the Mereenie Sandstone.",
         ],
     },
 ]
@@ -136,12 +133,6 @@ async def ask(request: Request) -> JSONResponse:
     })
 
 
-#: Units in the whole USGS Geolex lexicon when geo-sft fetched it (its
-#: configs/default.yaml). geo-sft took the FIRST 4,000 index entries, and the
-#: index is alphabetical -- hence units A to C only.
-GEOLEX_TOTAL_UNITS = 16_684
-
-
 @lru_cache(maxsize=1)
 def corpus_stats() -> dict:
     """What is in the database, measured rather than asserted. Cached: it only
@@ -152,9 +143,10 @@ def corpus_stats() -> dict:
         return db.read(n4, q)[0]
 
     units = one("""
-        MATCH (u:Unit) RETURN sum(CASE WHEN u.geolex THEN 1 ELSE 0 END) AS geolex,
-                              sum(CASE WHEN u.geolex THEN 0 ELSE 1 END) AS placeholders""")
-    names = one("MATCH (u:Unit {geolex: true}) RETURN min(u.name) AS first, max(u.name) AS last")
+        MATCH (u:Unit) RETURN sum(CASE WHEN u.asud THEN 1 ELSE 0 END) AS asud,
+                              sum(CASE WHEN u.has_text THEN 1 ELSE 0 END) AS with_text,
+                              sum(CASE WHEN u.asud THEN 0 ELSE 1 END) AS placeholders""")
+    names = one("MATCH (u:Unit {asud: true}) RETURN min(u.name) AS first, max(u.name) AS last")
     text = one("""
         MATCH (p:Passage)
         RETURN count(p) AS passages, sum(size(p.text)) AS chars,
@@ -162,11 +154,11 @@ def corpus_stats() -> dict:
                min(p.year) AS year_min, max(p.year) AS year_max,
                percentileDisc(p.year, 0.5) AS year_median""")
     per_unit = one("""
-        MATCH (u:Unit {geolex: true})
+        MATCH (u:Unit {has_text: true})
         WITH COUNT { (:Passage)-[:DESCRIBES]->(u) } AS n
         RETURN avg(n) AS mean, max(n) AS max""")
     states = db.read(n4, """
-        MATCH (:Unit {geolex: true})-[:OCCURS_IN]->(s:State) WHERE s.name IS NOT NULL
+        MATCH (:Unit {asud: true})-[:OCCURS_IN]->(s:State) WHERE s.name IS NOT NULL
         RETURN s.name AS state, count(*) AS units ORDER BY units DESC""")
     rels = db.read(n4, """
         MATCH ()-[r]->() WITH type(r) AS type, coalesce(r.sources, ['derived']) AS srcs
@@ -174,7 +166,6 @@ def corpus_stats() -> dict:
         RETURN type, source, count(*) AS n ORDER BY type, source""")
     nodes = db.read(n4, "MATCH (n) RETURN labels(n)[0] AS label, count(*) AS n ORDER BY n DESC")
     return {
-        "geolex_total_units": GEOLEX_TOTAL_UNITS,
         "units": units, "names": names, "text": text,
         "passages_per_unit": {"mean": round(per_unit["mean"], 1), "max": per_unit["max"]},
         "states": {"count": len(states), "top": states[:6]},

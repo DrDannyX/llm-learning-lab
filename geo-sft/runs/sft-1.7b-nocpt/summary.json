@@ -1,14 +1,18 @@
 {
   "run": "sft-1.7b-nocpt",
   "iters_done": 900,
-  "final_train_loss": 0.06412597298622132,
-  "final_val_loss": 0.07224221527576447,
-  "best_val_loss": 0.06654953956604004,
+  "final_train_loss": 0.05530648231506348,
+  "final_val_loss": 0.059298887848854065,
+  "best_val_loss": 0.05406457558274269,
   "best_val_iter": 824,
-  "wall_minutes": 57.23,
-  "alerts": [],
-  "test_loss": 0.06599898636341095,
-  "test_perplexity": 1.068225622177124,
-  "adapter_path": "/Users/daniel/git/llm-scratchpad/geo-sft/runs/sft-1.7b-nocpt",
+  "wall_minutes": 67.49,
+  "alerts": [
+    "iter 599: val loss has not improved for 3 evals (best 0.058 @ 374). Overfitting -- stop here and use the best checkpoint.",
+    "iter 674: val loss has not improved for 4 evals (best 0.058 @ 374). Overfitting -- stop here and use the best checkpoint.",
+    "iter 749: val loss has not improved for 5 evals (best 0.058 @ 374). Overfitting -- stop here and use the best checkpoint."
+  ],
+  "test_loss": 0.05471981689333916,
+  "test_perplexity": 1.0562446117401123,
+  "adapter_path": "/Users/daniel/git/llm-learning-lab/geo-sft/runs/sft-1.7b-nocpt",
   "model_path": "mlx-community/Qwen3-1.7B-4bit"
 }

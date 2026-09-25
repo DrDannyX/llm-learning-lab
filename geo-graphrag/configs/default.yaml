@@ -21,7 +21,7 @@ neo4j:
   database: neo4j
 
 ingest:
-  limit_units: null        # null = all 3,302 Geolex units; set small for a smoke run
+  limit_units: null        # null = all ~8,100 ASUD units with passages; set small for a smoke run
   embed_batch: 64
 
 retrieval:

@@ -7,11 +7,9 @@ and §7–9 before you trust a benchmark number. Everything else is reference.
 
 ## 1. Three ways to give a model knowledge it was not trained on
 
-All three systems answer questions from the same USGS Geolex lexicon (3,302
-geologic units, 8,757 passages) with the same local model. That is the
-alphabetical slice A–C of Geolex's 16,684 units, which is why examples use the
-Aarde Shale Member and the Chickamauga Group rather than famous units like the
-Eagle Ford. None of them changes
+All three systems answer questions from the same source — Geoscience
+Australia's stratigraphic lexicon, ASUD (18,387 geologic units, 22,311
+passages about 8,094 of them) — with the same local model. None of them changes
 the model's weights — that was geo-sft and geo-cpt. They change **what the model
 is shown** at question time.
 
@@ -50,18 +48,19 @@ A **property graph** has nodes (with labels and properties) and directed,
 typed relationships (which can also carry properties):
 
 ```
-(:Unit {name: "Aarde", rank: "Member"}) -[:PART_OF]-> (:Unit {name: "Howard", rank: "Formation"})
-(:Unit {name: "Church"}) -[:OVERLIES]-> (:Unit {name: "Aarde"})
-(:Unit {name: "Aarde"}) -[:HAS_AGE]-> (:Interval {name: "Virgilian"}) -[:WITHIN]-> (:Interval {name: "Pennsylvanian"})
+(:Unit {name: "Alsace Quartzite", rank: "Formation"}) -[:PART_OF]-> (:Unit {name: "Myally Subgroup", rank: "Subgroup"})
+(:Unit {name: "Bortala Formation"}) -[:OVERLIES]-> (:Unit {name: "Alsace Quartzite"})
+(:Unit {name: "Alsace Quartzite"}) -[:HAS_AGE]-> (:Interval {name: "Statherian"}) -[:WITHIN]-> (:Interval {name: "Paleoproterozoic"})
 ```
 
 (The alternative, RDF triples with ontologies and SPARQL, is more formal and
 common in linked-data and government geoscience, e.g. GeoSciML. Property graphs
 are simpler and are what most GraphRAG tooling uses.)
 
-The graph's value is in the **edges**. A table can hold "Aarde's age is
-Virgilian". Only a graph makes "every unit whose age is *anywhere inside* the
-Pennsylvanian, in Kansas, that sits above a limestone" a single query.
+The graph's value is in the **edges**. A table can hold "the Alsace
+Quartzite's age is Statherian". Only a graph makes "every unit whose age is
+*anywhere inside* the Paleoproterozoic, in Queensland, that sits above a
+basalt" a single query.
 
 ### This lab's schema
 
@@ -69,13 +68,14 @@ Pennsylvanian, in Kansas, that sits above a limestone" a single query.
 (:Passage)-[:DESCRIBES]->(:Unit)<-[:PART_OF]-(:Unit)
 (:Passage)-[:MENTIONS]->(:Unit)
 (:Unit)-[:OVERLIES]->(:Unit)           (:Unit)-[:EQUIVALENT_TO|GRADES_INTO|INTERTONGUES_WITH]-(:Unit)
+(:Unit)-[:INTRUDES]->(:Unit)
 (:Unit)-[:HAS_AGE]->(:Interval)-[:WITHIN]->(:Interval)
 (:Unit)-[:HAS_LITHOLOGY]->(:Lithology)     (:Unit)-[:HAS_MINERAL]->(:Mineral)
 (:Unit)-[:OCCURS_IN]->(:State)             (:Unit)-[:IN_PROVINCE]->(:Province)
 ```
 
 Open http://localhost:7474 after ingest and run
-`MATCH p=(:Unit {name:'Aarde'})-[*1..2]-() RETURN p LIMIT 60` to see it.
+`MATCH p=(:Unit {name:'Alsace Quartzite'})-[*1..2]-() RETURN p LIMIT 60` to see it.
 
 ---
 
@@ -89,37 +89,54 @@ three; read it alongside this section.
 
 | source | used for | trust |
 |---|---|---|
-| **curated metadata** (Geolex usages, ages, states, provinces) | hierarchy, ages, states | high — a person entered it |
-| **rules** (geo-sft's labeller over passage text) | relations, lithology, minerals, thickness | medium — geo-sft found errors in 83% of reviewed rows |
-| **an LLM** reading each passage | *not used here* — experiment #1 | variable, and slow: ~9k calls |
+| **curated metadata** (ASUD's tables) | hierarchy, ages, states, provinces, lithology, thickness, **relations** | high — the Australian Stratigraphy Commission curates it |
+| **rules** (geo-sft's labeller over passage text) | more relations, lithology, minerals | medium — geo-sft's gold review corrected 57% of rule-labelled rows |
+| **an LLM** reading each passage | *not used here* — experiment #1 | variable, and slow: ~22k calls |
 
 Every edge records its `sources`. That provenance is not decoration: it is how
 you later decide which facts a query may rely on. **Ages come only from curated
 metadata**, because the rule labeller tags every interval a passage mentions,
 including the ages of *neighbouring* units, and that noise would poison exactly
-the "which units are Cretaceous?" queries a graph is for.
+the "which units are Cambrian?" queries a graph is for.
+
+ASUD, unlike Geolex, curates stratigraphic **relations**, so this graph holds
+both kinds of `OVERLIES` edge and you can compare them directly:
+
+```
+OVERLIES edges     curated only 6,230   both 3,206   text only 1,990
+```
+
+62% of the relations the rules extract from text are confirmed by curation
+(3,206 of 5,196). The remaining 1,990 are a mix of real relations ASUD does not
+record and rule errors — the same ambiguity the SFT lab's gold review found.
 
 ### 3.2 Entity resolution: are these the same thing?
 
-Prose says "Eagle Ford Clay", "Eagle Ford shales" and "the Eagle Ford". Geolex
-calls the unit "Eagle Ford". If those become four nodes, the graph is four
-disconnected fragments and every traversal is wrong.
+Curated facts arrive keyed by ASUD's permanent unit number (STRATNO), so they
+need no resolution at all. Prose is the problem: it says "Alsace quartzites",
+"Sugarbag Ck. Quartzite" or "Nirranda Gp". If each spelling becomes a node,
+the graph is disconnected fragments and every traversal is wrong.
 
-This lab reduces every name to a **core** (`core_name`: strip trailing rank and
-lithology words) and matches on that. Then it hits **homonyms**: 289 names in
-this corpus belong to more than one unit (two Adas, two Aberdeens). Ties are
-broken by shared states. The ingest reports the outcome; look at it:
+This lab reduces every name to a **core** (`core_name`: strip trailing rank,
+lithology words and house abbreviations like `Gp`, `Sst`) and matches on that.
+Then it hits **homonyms**: 1,052 cores belong to more than one unit (2,279
+units — Brumby, Razorback, Wonga, Black Range...). And some homonyms are *not*
+the same unit even in one sentence: *Murchison Granite* intrudes *Murchison
+Volcanics*. So an exact full name wins first, then a matching rank, and only
+then are ties broken by shared states. The ingest reports the outcome:
 
 ```
-resolved              1,504    exact unique match to a Geolex unit
-ambiguous_by_state      216    homonym, state overlap picked one
-ambiguous_guess          89    homonym, no signal -- a coin flip, recorded as such
-placeholder_created   3,211    no Geolex unit in this corpus: new Unit {geolex: false}
+resolved             10,234    unique match to an ASUD unit
+ambiguous_by_state      125    homonym, state overlap picked one
+ambiguous_guess          56    homonym, no signal -- a coin flip, recorded as such
+placeholder_created     453    no ASUD unit: new Unit {asud: false}
 ```
 
-Placeholders matter. Most relation targets ("overlies the Wauneta Limestone")
-name units outside our 3,302. Dropping them would drop the relation; keeping
-them as `geolex: false` nodes keeps it and marks it as less-known.
+Placeholders matter. A relation target the lexicon does not list (a
+superseded name, a typo, an informal unit) would otherwise drop the relation;
+keeping it as an `asud: false` node keeps it and marks it as less-known.
+Because the graph holds the *whole* lexicon, only 453 are needed — the
+Geolex version of this lab, holding a 3,302-unit slice, created 3,211.
 
 ### 3.3 Canonicalisation: one fact, one shape
 
@@ -127,9 +144,11 @@ them as `geolex: false` nodes keeps it and marks it as less-known.
 `(B)-[:OVERLIES]->(A)`. **There is no UNDERLIES relationship.** One shape per
 fact means one way to query it, which matters enormously when a 12B model is
 writing the query. The same logic applies to the computed timescale: intervals
-carry numeric ages, so Virgilian is linked `-[:WITHIN]->` Pennsylvanian by
+carry numeric ages, so Statherian is linked `-[:WITHIN]->` Paleoproterozoic by
 containment, and `HAS_AGE/WITHIN*0..6` finds a unit tagged only "Cenomanian"
-when you ask for "Cretaceous".
+when you ask for "Cretaceous". Intrusions get the same treatment: "A is
+intruded by B" is stored as `(B)-[:INTRUDES]->(A)`, and there is no
+INTRUDED_BY.
 
 > **The key idea.** In RAG, most of the intelligence is at query time. In a KG,
 > most of it is at **build** time: every decision above is a question you
@@ -143,13 +162,13 @@ when you ask for "Cretaceous".
 Cypher is ASCII-art pattern matching:
 
 ```cypher
-// what overlies the Aarde Shale Member?
-MATCH (above:Unit)-[:OVERLIES]->(u:Unit {key: 'geolex:6304'})
+// what overlies the Alsace Quartzite?
+MATCH (above:Unit)-[:OVERLIES]->(u:Unit {key: 'asud:332'})
 RETURN above.full_name
 
-// how many Pennsylvanian units in Kansas? -- no vector system can answer this
-MATCH (u:Unit)-[:HAS_AGE]->(:Interval)-[:WITHIN*0..6]->(:Interval {name: 'Pennsylvanian'})
-MATCH (u)-[:OCCURS_IN]->(:State {code: 'KS'})
+// how many Cambrian units in Tasmania? -- no vector system can answer this
+MATCH (u:Unit)-[:HAS_AGE]->(:Interval)-[:WITHIN*0..6]->(:Interval {name: 'Cambrian'})
+MATCH (u)-[:OCCURS_IN]->(:State {code: 'TAS'})
 RETURN count(DISTINCT u)
 ```
 
@@ -160,15 +179,16 @@ make it work with a small local model, and each is a general lesson:
    schema, but that dump includes every property and no guidance. The prompt
    carries a compact schema plus the rules that bite ("there is no UNDERLIES";
    "use WITHIN*0..6 for ages") and five worked examples.
-2. **Entity linking first.** The model is never asked to guess that "the Eagle
-   Ford Shale" is `{name: 'Eagle Ford'}`, or which Ada you meant. `link.py`
+2. **Entity linking first.** The model is never asked to guess that "the
+   Alsace quartzites" is `{name: 'Alsace Quartzite'}`, or which Murchison you
+   meant. `link.py`
    resolves names to keys deterministically, and the prompt says *use these keys*.
 3. **One repair round.** On an error, *or an empty result*, the model sees what
    happened and tries again. Empty results are the dangerous case: a wrong
    query and a true "none" look identical.
 
 And one that is easy to miss: **show the answer model the query.** Rows alone
-(`{"overlying_unit": "Church Member"}`) do not say *what* they overlie; the
+(`{"overlying_unit": "Bortala Formation"}`) do not say *what* they overlie; the
 first version of this lab answered "I don't know" from correct rows because
 of it (`kg.format_rows`).
 
@@ -182,24 +202,25 @@ session is the actual guarantee.
 
 `retrievers/rag.py` is 40 lines, which is the appeal:
 
-1. **Chunk.** Geolex passages are already paragraph-sized (median 545 chars), so
-   each passage is one chunk. On long documents, chunking strategy is most of
+1. **Chunk.** ASUD passages are already short (median 273 chars; definition
+   cards are split on section boundaries at 4,000), so each passage is one chunk. On long documents, chunking strategy is most of
    the RAG work; here it is a non-issue, which keeps the comparison clean.
 2. **Embed.** `nomic-embed-text` via LM Studio, 768-d. Two details that silently
    cost quality if missed:
    - **Task prefixes.** nomic was trained with `search_document:` on passages and
      `search_query:` on queries. Omit them and retrieval degrades with no error
      (experiment #2).
-   - **Contextual headers.** Many passages never name their unit ("Consists of
-     erratic development of sandstones..."). Each is embedded as
-     `"<unit name>. <passage>"`, so the vector knows what the passage is about.
+   - **Contextual headers.** A reference note rarely names its own unit
+     ("Conformably overlain by the Cygnet Coal Measures."). Each passage is
+     embedded as `"<unit name>. <passage>"` — geo-sft already renders them
+     that way — so the vector knows what the passage is about.
 3. **Index.** A Neo4j vector index (HNSW, cosine) on `Passage.embedding`. A
    vector index is just another index; it does not need its own database.
 4. **Retrieve k=8, stuff into the prompt.**
 
 **What RAG cannot do, structurally:** anything whose answer is spread over more
-passages than k. "How many Pennsylvanian units are in Kansas?" has 41 answers
-across ~100 passages. RAG retrieves 8, and the model then *counts the 8* and
+passages than k. "How many Cambrian units occur in Tasmania?" has 212 answers,
+most of which have no passage at all. RAG retrieves 8, and the model then *counts the 8* and
 reports it confidently. That is not a bug to be fixed with a bigger k; it is
 the shape of the method.
 

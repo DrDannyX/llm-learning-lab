@@ -25,52 +25,53 @@ from .link import linker
 
 SCHEMA = """\
 Nodes
-  (:Unit {key, name, full_name, rank, geolex, age_text, thickness_min_m, thickness_max_m})
-      key is the unique id, e.g. 'geolex:6304'. rank is one of Supergroup, Group,
-      Subgroup, Formation, Member, Bed, Tongue, Lentil, Unknown.
-      geolex=false marks units only mentioned in text (no curated metadata).
-  (:Interval {name, rank, top_ma, base_ma})   geologic time; rank is age/epoch/period/era/eon
-  (:Lithology {name})    lowercase rock type, e.g. 'shale', 'limestone'
-  (:Mineral {name})      e.g. 'Pyrite'
-  (:State {code, name})  e.g. {code:'TX', name:'Texas'}
-  (:Province {name})     geologic province/basin, e.g. 'Permian basin'
+  (:Unit {key, name, full_name, rank, asud, has_text, age_text, thickness_min_m, thickness_max_m})
+      key is the unique id, e.g. 'asud:332'. rank is one of Supergroup, Supersuite,
+      Group, Suite, Subgroup, Formation, Member, Bed, Unknown.
+      asud=false marks units only mentioned in text (no curated metadata).
+  (:Interval {name, rank, top_ma, base_ma})   geologic time; rank is age/epoch/period/era/eon/supereon
+  (:Lithology {name})    lowercase rock type, e.g. 'sandstone', 'granite'
+  (:Mineral {name})      e.g. 'Biotite'
+  (:State {code, name})  Australian state/territory, e.g. {code:'QLD', name:'Queensland'}
+  (:Province {name})     geological province/basin, e.g. 'Sydney Basin'
 
 Relationships
   (:Unit)-[:PART_OF]->(:Unit)              Member -> Formation -> Group hierarchy
-  (:Unit)-[:OVERLIES {unconformable}]->(:Unit)   stratigraphically above (there is no UNDERLIES)
+  (:Unit)-[:OVERLIES {unconformable, contact, sources}]->(:Unit)   stratigraphically above (there is no UNDERLIES)
+  (:Unit)-[:INTRUDES]->(:Unit)             an intrusion and the unit it intrudes (there is no INTRUDED_BY)
   (:Unit)-[:EQUIVALENT_TO|GRADES_INTO|INTERTONGUES_WITH]->(:Unit)   lateral relations; match undirected
-  (:Unit)-[:HAS_AGE]->(:Interval)
-  (:Interval)-[:WITHIN]->(:Interval)       Virgilian -> Pennsylvanian -> Carboniferous ...
+  (:Unit)-[:HAS_AGE]->(:Interval)          a unit's oldest and youngest ages
+  (:Interval)-[:WITHIN]->(:Interval)       Statherian -> Paleoproterozoic -> Proterozoic ...
   (:Unit)-[:HAS_LITHOLOGY {sources}]->(:Lithology)
   (:Unit)-[:HAS_MINERAL]->(:Mineral)
   (:Unit)-[:OCCURS_IN]->(:State)
   (:Unit)-[:IN_PROVINCE]->(:Province)"""
 
 EXAMPLES = """\
-Q: What is the age of the Aarde Shale Member?   (linked key 'geolex:6304')
-MATCH (u:Unit {key: 'geolex:6304'})-[:HAS_AGE]->(i:Interval)
+Q: What is the age of the Alsace Quartzite?   (linked key 'asud:332')
+MATCH (u:Unit {key: 'asud:332'})-[:HAS_AGE]->(i:Interval)
 RETURN u.full_name AS unit, collect(i.name) AS ages, u.age_text AS age_text
 
-Q: What unit underlies the Aarde Shale Member?
-MATCH (u:Unit {key: 'geolex:6304'})-[:OVERLIES]->(below:Unit)
+Q: What unit underlies the Alsace Quartzite?
+MATCH (u:Unit {key: 'asud:332'})-[:OVERLIES]->(below:Unit)
 RETURN below.full_name AS underlying_unit
 
-Q: Which units make up the Chickamauga Group?   (linked key 'geolex:1036')
-MATCH (m:Unit)-[:PART_OF]->(g:Unit {key: 'geolex:1036'})
+Q: Which units make up the Mount Isa Group?   (linked key 'asud:12822')
+MATCH (m:Unit)-[:PART_OF]->(g:Unit {key: 'asud:12822'})
 RETURN m.full_name AS unit, m.rank AS rank
 
-Q: Which Cretaceous units in Texas contain chalk?
-MATCH (u:Unit)-[:HAS_AGE]->(:Interval)-[:WITHIN*0..6]->(:Interval {name: 'Cretaceous'})
-MATCH (u)-[:OCCURS_IN]->(:State {code: 'TX'})
-MATCH (u)-[:HAS_LITHOLOGY]->(:Lithology {name: 'chalk'})
+Q: Which Cambrian units in Tasmania contain limestone?
+MATCH (u:Unit)-[:HAS_AGE]->(:Interval)-[:WITHIN*0..6]->(:Interval {name: 'Cambrian'})
+MATCH (u)-[:OCCURS_IN]->(:State {code: 'TAS'})
+MATCH (u)-[:HAS_LITHOLOGY]->(:Lithology {name: 'limestone'})
 RETURN DISTINCT u.full_name AS unit
 
-Q: How many Pennsylvanian units occur in Kansas?
-MATCH (u:Unit)-[:HAS_AGE]->(:Interval)-[:WITHIN*0..6]->(:Interval {name: 'Pennsylvanian'})
-MATCH (u)-[:OCCURS_IN]->(:State {code: 'KS'})
+Q: How many Permian units occur in New South Wales?
+MATCH (u:Unit)-[:HAS_AGE]->(:Interval)-[:WITHIN*0..6]->(:Interval {name: 'Permian'})
+MATCH (u)-[:OCCURS_IN]->(:State {code: 'NSW'})
 RETURN count(DISTINCT u) AS n"""
 
-SYSTEM = f"""You translate questions about US geologic units into Neo4j Cypher.
+SYSTEM = f"""You translate questions about Australian geologic units into Neo4j Cypher.
 
 Graph schema:
 {SCHEMA}

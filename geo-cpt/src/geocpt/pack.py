@@ -6,8 +6,8 @@ In the SFT project next door, each training example is one prompt+answer pair,
 padded to the longest item in its batch. That is fine there: examples are
 similar lengths and every one carries a label.
 
-CPT documents vary wildly -- a 40-token Geolex fragment next to a 3,000-token
-USGS abstract. Padding each to `block_size` would mean a 40-token document
+CPT documents vary wildly -- a 40-token ASUD note next to a 3,000-token
+definition card. Padding each to `block_size` would mean a 40-token document
 occupies a 1,024-token slot and **wastes 96% of that compute on padding**.
 
 So CPT *packs*: concatenate every document into one long token stream, then

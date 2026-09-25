@@ -24,14 +24,16 @@ from typing import Literal
 
 from pydantic import BaseModel, Field, field_validator
 
+#: ASUD's ranks, with Suite/Supersuite kept distinct from Group/Supergroup:
+#: they are the same rank, but the NAME says Suite, and the label reads the name.
 RankT = Literal[
-    "Supergroup", "Group", "Subgroup", "Formation",
-    "Member", "Bed", "Tongue", "Lentil", "Unknown",
+    "Supergroup", "Supersuite", "Group", "Suite", "Subgroup",
+    "Formation", "Member", "Bed", "Unknown",
 ]
 
 RelationT = Literal[
-    "overlies", "underlies", "grades_into",
-    "intertongues_with", "unconformable_on", "equivalent_to",
+    "overlies", "underlies", "unconformable_on", "grades_into",
+    "intertongues_with", "equivalent_to", "intrudes", "intruded_by",
 ]
 
 
@@ -67,7 +69,7 @@ class GeoExtraction(BaseModel):
     )
     states: list[str] = Field(
         default_factory=list,
-        description="US state postal codes for states NAMED IN THE PASSAGE.",
+        description="Australian state/territory codes (NSW, QLD, ...) NAMED IN THE PASSAGE.",
     )
 
     # --- canonicalisation: identical facts must always serialise identically ---
@@ -105,16 +107,16 @@ class GeoExtraction(BaseModel):
 #: a long schema dump eats context that the passage needs, and the model learns
 #: the shape from examples far faster than from prose.
 SCHEMA_HINT = """{
-  "unit_name": string|null, "rank": one of [Supergroup,Group,Subgroup,Formation,Member,Bed,Tongue,Lentil,Unknown],
+  "unit_name": string|null, "rank": one of [Supergroup,Supersuite,Group,Suite,Subgroup,Formation,Member,Bed,Unknown],
   "lithologies": [string], "chronostrat": [string], "minerals": [string],
   "thickness": {"min_m": number|null, "max_m": number|null}|null,
-  "relations": [{"kind": one of [overlies,underlies,grades_into,intertongues_with,unconformable_on,equivalent_to], "unit": string}],
-  "states": [string]
+  "relations": [{"kind": one of [overlies,underlies,unconformable_on,grades_into,intertongues_with,equivalent_to,intrudes,intruded_by], "unit": string}],
+  "states": [one of NSW,QLD,VIC,TAS,SA,WA,NT,ACT,ATA]
 }"""
 
 SYSTEM_PROMPT = (
-    "You are a geoscience information-extraction engine. Read the passage from a "
-    "geological lexicon and return ONLY a JSON object matching this schema:\n"
+    "You are a geoscience information-extraction engine. Read the passage from "
+    "Australia's stratigraphic lexicon and return ONLY a JSON object matching this schema:\n"
     f"{SCHEMA_HINT}\n"
     "Use the exact wording of the source for names. Omit nothing that is stated; "
     "invent nothing that is not. Sort every list alphabetically."

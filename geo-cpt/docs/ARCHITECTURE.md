@@ -8,8 +8,8 @@ the concepts; this is the code tour.
 ## Data flow
 
 ```
- USGS Publications Warehouse     geo-sft's Geolex cache      geo-sft's task text
- (abstracts, public domain)      (16,684 units)              (train split only)
+ GA eCat catalogue               geo-sft's ASUD snapshot     geo-sft's task text
+ (20,974 abstracts, CC BY 4.0)   (all units, both statuses)  (train split only)
         │                               │                            │
         │  corpus/sources.py            │                            │
         └───────────────┬───────────────┴────────────────────────────┘
@@ -52,7 +52,7 @@ choice about what is *the same problem*:
 
 | reused | why |
 |---|---|
-| `geosft.data.fetch` + its HTTP cache | ~3,300 Geolex units are already on disk; only the remaining 13,000 hit the network |
+| `geosft.data.asud` + its snapshot | ASUD is already on disk (data/raw/asud); nothing is downloaded twice, and both labs read the same weekly snapshot |
 | `geosft.paths.PROCESSED` task text | TAPT *is* pretraining on the SFT task's text — reading it from source keeps them provably identical |
 | `geosft.monitor.tracker.RunTracker` | monitoring is backend-agnostic; live panel, alarms, JSONL metrics and loss curves all apply unchanged |
 | `geosft.train.mlx_train` + `geosft.eval` | the downstream-transfer experiment must use the *same* trainer and scorer, or the comparison against 0.831 is meaningless |
@@ -64,14 +64,23 @@ multi-GB base models are not downloaded twice.
 
 Three functions, one per corpus type.
 
-**`fetch_usgs`** — abstracts from the USGS Publications Warehouse. Real
-technical geoscience prose, public domain as a US Government work, ~500 tokens
-each. Paginated per query with de-duplication by record id, cached to
-`data/raw/usgs.jsonl`. Abstracts arrive as HTML fragments, so `strip_html`
-(selectolax) runs first.
+**`fetch_ecat`** — abstracts of Geoscience Australia's publications from its
+eCat catalogue (a GeoNetwork Elasticsearch API). Real technical prose about
+Australian geology, CC BY 4.0, median ~600 characters. Elasticsearch refuses
+plain `from`/`size` paging past 10,000 hits and eCat holds ~21,000 documents,
+so it pages with `search_after` on the record uuid. Cached to
+`data/raw/ecat.jsonl`; `strip_html` (selectolax) runs first.
 
-**`fetch_geolex_full`** — the entire lexicon, calling geo-sft's own fetcher so
-its disk cache applies.
+**`fetch_asud_full`** — the entire lexicon from geo-sft's snapshot, current
+*and* superseded units, as **one document per unit** (definition card plus
+every reference note). As separate documents 94% of the notes fall below the
+300-character minimum and the quality filter discards them; as unit entries
+the text survives and reads the way the lexicon presents it.
+
+**`heldout_units`** — the DAPT corpus is the whole lexicon, which *contains*
+geo-sft's valid, test and gold passages. Pretraining on them and then scoring
+SFT on them is leakage no loss curve shows. Every held-out unit's entry
+(1,442 units) is dropped before the corpus is built.
 
 **`load_task_text`** — the TAPT corpus. Two rules enforced in code, both fatal
 if broken:
@@ -195,7 +204,7 @@ starting model.
 |---|---|
 | `paths.py` | paths; shares geo-sft's HF cache |
 | `config.py` | typed config for corpus, packing, training, eval |
-| `corpus/sources.py` | USGS, full Geolex, task text, replay |
+| `corpus/sources.py` | GA eCat abstracts, full ASUD, held-out units, task text, replay |
 | `corpus/quality.py` | heuristic filtering with per-reason reporting |
 | `corpus/dedup.py` | MinHash + LSH near-duplicate removal |
 | `corpus/build.py` | assembly, replay mixing, clean splits |

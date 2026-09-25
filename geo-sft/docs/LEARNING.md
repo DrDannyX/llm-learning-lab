@@ -148,8 +148,8 @@ Start with the chat messages (`schema.py:build_messages`):
 
 ```
 system:    You are a geoscience information-extraction engine... [schema]
-user:      Passage: Austin chalk. The present generally accepted...
-assistant: {"unit_name": "Austin", "rank": "Formation", ...}
+user:      Passage: Wilton Formation. Overlies Woonona Coal. Overlain by Appin...
+assistant: {"unit_name": "Wilton Formation", "rank": "Formation", ...}
 ```
 
 The chat template renders that into a flat token sequence:
@@ -234,11 +234,11 @@ This vocabulary is a genuine trap, and it cost this project a wasted run.
 
 | term | meaning | this repo |
 |---|---|---|
-| **example** | one training pair | 6,635 in train |
+| **example** | one training pair | 14,691 in train |
 | **micro-batch / iteration** | `batch_size` examples processed in one forward+backward | batch 4 |
 | **optimizer step** | one actual weight update | every 4 iterations |
 | **effective batch** | examples per weight update | 4 × 4 = **16** |
-| **epoch** | one full pass over the data | 6,635 / 4 ≈ 1,659 iterations |
+| **epoch** | one full pass over the data | 14,691 / 4 ≈ 3,673 iterations |
 
 **Gradient accumulation** means running several micro-batches, summing their
 gradients, and only *then* updating. It buys a large effective batch without
@@ -357,8 +357,8 @@ stops you crediting the fine-tune with domain skill it did not acquire.
 unparseable outputs you reward a model for refusing to answer. Here, every
 gold item in an unparseable response becomes a false negative.
 
-**Rule 4: hold out by *group*, not by row.** Geolex has ~7 near-identical
-passages about the same unit. A random split puts near-duplicates on both
+**Rule 4: hold out by *group*, not by row.** ASUD files up to a dozen
+overlapping notes under the same unit. A random split puts near-duplicates on both
 sides and inflates your score — you would be testing on paraphrases of the
 training set. Split on `unit_id`.
 
@@ -400,13 +400,16 @@ it sees context the rules cannot.
 
 Three principles worth stealing:
 
-1. **Only label what is in the input.** Geolex gives us curated ages and state
-   lists for each unit, and using them would be tempting. It would also teach
+1. **Only label what is in the input.** ASUD gives us curated ages, states,
+   thickness and even stratigraphic relations for each unit, and using them
+   would be tempting. It would also teach
    the model to assert facts it cannot see — i.e. to hallucinate confidently.
    The metadata is used *only to audit* the labeller.
 2. **Audit with held-out signal.** Because the labeller never reads the curated
-   metadata, that metadata is independent ground truth. Rule-extracted ages
-   agree with curated ages **89.5%** of the time. If you change a rule and that
+   metadata, that metadata is independent ground truth. Name-derived ranks
+   agree with ASUD's **98.3%** of the time, extracted thicknesses fall inside
+   the curated range **89.2%** of the time, and **59.7%** of extracted
+   relations are ones ASUD also curates. If you change a rule and one of those
    drops, you broke something.
 3. **Make targets canonical.** Lists are sorted and de-duplicated. If the same
    facts could serialise two ways, you are training the model to predict a coin
@@ -446,7 +449,8 @@ base    (18 tokens): Penn|s|ylv|anian| s|ilt|stone| uncon|form|ably| ...
 extended (7 tokens): Pennsylvanian| siltstone| unconformably| ...
 ```
 
-Worth **4.89%** fewer tokens across held-out passages here.
+Worth **4.89%** fewer tokens across held-out passages in the Geolex-era
+version of this lab (the extension experiment has not been re-run on ASUD).
 
 **But be clear about what that is.** It is a *cost* win — shorter sequences,
 faster steps, more room in the context window. It is **not** evidence of a

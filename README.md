@@ -1,7 +1,10 @@
 # llm-learning-lab
 
 Three hands-on labs for learning how to **adapt LLMs to a domain**, worked
-end to end on a single Apple Silicon Mac, using geoscience as the domain.
+end to end on a single Apple Silicon Mac, using geoscience as the domain —
+specifically **Geoscience Australia's open stratigraphic data**: the
+Australian Stratigraphic Units Database (ASUD) and GA's eCat publication
+catalogue, both CC BY 4.0.
 
 The first two **change the model's weights**. Together they cover the two
 training techniques that do most of the work in practice, and, just as
@@ -12,39 +15,38 @@ model is shown**: knowledge graphs, RAG and GraphRAG, compared side by side.
 |---|---|---|
 | Technique | **Supervised fine-tuning** (QLoRA) | **Continued pre-training** (DAPT/TAPT) |
 | Teaches the model | *form* — a task, a schema, a convention | *content* — domain language and vocabulary |
-| Data | 6,635 labelled pairs | ~10⁴ raw documents, no labels |
+| Data | 14,691 labelled pairs | 3.3M tokens (TAPT); 7.4M built for DAPT |
 | Loss on | the answer only (72% of tokens masked) | every token |
 | Method | LoRA, 0.365% of parameters | full fine-tune, 100% |
 | Signature failure | overfitting | catastrophic forgetting |
 | The hard part | label quality | corpus hygiene |
-| Result | macro F1 **0.314 → 0.831** | TAPT contributes **+0.019** |
+| Result | macro F1 **0.320 → 0.807** (reviewed gold) | TAPT contributes **+0.023** |
 
 | | [geo-graphrag](geo-graphrag/) |
 |---|---|
 | Technique | **Retrieval**: knowledge graph vs vector RAG vs GraphRAG, side by side |
 | Changes | the context the model is shown, not its weights |
-| Data | 3,302 Geolex units, 8,757 passages → a 16k-node, 50k-relationship Neo4j graph |
+| Data | all 18,387 ASUD units, 22,311 passages → a 42k-node, 180k-relationship Neo4j graph |
 | Stack | Neo4j (graph + vector index), Strands agents, MCP, local LLM via LM Studio |
-| Signature failure | RAG: confidently counts only what it retrieved. KG: a query that silently returns nothing |
+| Signature failure | RAG: cannot see facts that live in tables, not prose. KG: a query that silently returns nothing |
 | The hard part | extraction and entity resolution (graph); recall over many passages (RAG) |
-| Result | overall **0.61 / 0.86 / 0.75** (RAG / KG / GraphRAG); each wins the question types its design predicts |
+| Result | overall **0.29 / 0.88 / 0.74** (RAG / KG / GraphRAG); each wins the question types its design predicts |
 
 ## The task
 
 The two training labs point at one problem: turning messy geological prose into a
 structured database record.
 
-> *"Austin chalk. The present generally accepted definition applies to the
-> beds below Taylor marl and above Eagle Ford clay. Thickness 200 to 400
-> feet."*
+> *"Culvida Sandstone. Up to 210m thick; fine to coarse sandstone; siltstone;
+> granule and pebble conglomerate (poorly sorted); fluvial. Conformably
+> overlies Erskine Sandstone. Type section 1km south of Culvida Soak."*
 
 ```json
-{"unit_name": "Austin", "rank": "Formation",
- "lithologies": ["chalk", "clay", "marl"], "chronostrat": ["Late Cretaceous"],
- "thickness": {"min_m": 60.96, "max_m": 121.92},
- "relations": [{"kind": "overlies", "unit": "Eagle Ford Clay"},
-               {"kind": "underlies", "unit": "Taylor Marl"}],
- "states": ["TX"]}
+{"unit_name": "Culvida Sandstone", "rank": "Formation",
+ "lithologies": ["conglomerate", "sandstone", "siltstone"], "chronostrat": [],
+ "thickness": {"min_m": 210.0, "max_m": 210.0},
+ "relations": [{"kind": "overlies", "unit": "Erskine Sandstone"}],
+ "states": []}
 ```
 
 Extraction was chosen deliberately over geoscience Q&A because it is
@@ -54,16 +56,16 @@ grading style with an LLM judge and guessing.
 
 The retrieval lab *does* answer questions, and it inherits that concern. Seven
 of its eight benchmark categories have deterministic gold answers taken from
-curated Geolex metadata ("How many Pennsylvanian units occur in Kansas?" → 41).
+curated ASUD metadata ("How many Ordovician units occur in Tasmania?" → 58).
 Only the prose-detail category needs an LLM judge, and the judge is calibrated
-against the string matcher (98% agreement).
+against the string matcher (97% agreement).
 
 ## How the labs fit together
 
 ```
   pretraining          CPT              SFT            deploy
   (someone else's      geo-cpt          geo-sft
-   36T tokens)         1.5M tokens      6,635 pairs
+   36T tokens)         3.3M tokens      14,691 pairs
        │                  │                │
    general           domain              task
    language          language            behaviour
@@ -83,8 +85,10 @@ monitoring and — for the transfer experiment — its trainer and scorer, so
 Training puts knowledge *in* the weights, where it is compressed, hard to
 update and impossible to cite. Retrieval leaves it *outside*, where it can be
 queried, updated and shown as evidence. `geo-graphrag` imports geo-sft too: its
-rule labeller extracts the knowledge graph's relations, so geo-sft's finding
-that 83% of rule-labelled rows were wrong reappears as a graph-quality problem.
+rule labeller extracts the knowledge graph's text relations, so geo-sft's
+finding that 57% of rule-labelled rows had an error reappears as a
+graph-quality problem — and because ASUD also *curates* relations, the graph
+can measure it: 62% of the rules' OVERLIES edges are confirmed by curation.
 And the SFT model is a natural next extractor for that graph
 ([experiment #1](geo-graphrag/docs/EXPERIMENTS.md)).
 
@@ -135,7 +139,7 @@ byte-identical to the inference prompt.
 | 5 | [LEARNING.md](geo-cpt/docs/LEARNING.md) §1–5 — CPT vs SFT, packing, forgetting | `make smoke` |
 | 6 | §6–9 — replay, full-FT vs LoRA, corpus hygiene, hyperparameters | `make all` (~1 h) |
 | 7 | §10 — the three evaluation questions | `geocpt eval`, `geocpt probe` |
-| 8 | — | `geocpt transfer`, compare against 0.831 |
+| 8 | — | `geocpt transfer`, compare against the no-CPT arm (0.778) |
 
 ### Stage 3 — knowledge graphs, RAG and GraphRAG
 
@@ -188,130 +192,97 @@ both the edge count and the error rate go up.
 
 ## Results
 
+All three labs were first built on the USGS Geolex lexicon and then migrated
+to Geoscience Australia's data; the Geolex runs and results are kept in each
+lab's `runs/geolex-archive/`. Where both exist, both are shown — same code,
+same hyperparameters, different corpus.
+
 ### Training labs: SFT and CPT
 
-**Against hand-corrected gold labels** — the defensible numbers:
+**SFT** (Qwen3-4B, QLoRA, 900 iterations):
+
+| scored against | base | + SFT | Geolex version |
+|---|---|---|---|
+| rule labels (200 test rows) | 0.311 | 0.806 | 0.314 → 0.831 |
+| **reviewed gold (150 rows)** | **0.320** | **0.807** | 0.393 → 0.705 |
+
+**CPT** (Qwen3-1.7B, full fine-tune, TAPT then SFT, rule-label test set):
 
 | arm | macro F1 |
 |---|---|
-| 4B zero-shot, no training | 0.393 |
-| **4B + SFT** | **0.705** |
+| 1.7B + SFT | 0.778 |
+| **1.7B + TAPT + SFT** | **0.801** |
+| 4B + SFT | 0.806 |
 
-Against the *rule-derived* labels the same model scores 0.831. That gap is
-finding 3 below, and it is the single most useful result here.
-
-The arm comparisons were run against rule labels throughout, so they are
-internally consistent but share that ~40% inflation. Read them as *relative*:
-
-| arm | macro F1 (rule labels) |
-|---|---|
-| 1.7B + SFT | 0.823 |
-| 4B + SFT | 0.831 |
-| **1.7B + TAPT + SFT** | **0.842** |
-| 1.7B + *vocab-extended* TAPT + SFT | 0.758 |
-
-Domain perplexity under CPT: 33.27 → 13.87 (−58%).
+Domain perplexity under TAPT: 29.24 → 13.27 (−55%).
 
 ### Three findings worth the compute
 
-**1. TAPT helps, and it replicates.** Three seeds, both arms retrained each
-time: **+0.025 mean, sd 0.005, 95% CI [+0.012, +0.039]**. The arms do not
-overlap (no-CPT 0.816–0.823, TAPT 0.842–0.847). This is *better* than the CPT
-lab predicted — it warned to expect nothing at 1.5M tokens.
+**1. TAPT helps, and it replicates across corpora.** +0.023 on ASUD; +0.019
+at one seed and **+0.025 mean over three seeds** (95% CI [+0.012, +0.039]) on
+Geolex. The gain lands on the vocabulary-heavy fields (chronostrat +0.052,
+minerals +0.035). And 1.7B + TAPT nearly matches 4B: the task is not
+capacity-limited.
 
-**2. Vocabulary extension makes things worse.** −0.084, three times TAPT's
-gain in the opposite direction. Fragmentation is not pure loss:
-`Penn|s|ylv|anian` uses four embeddings trained on trillions of tokens; the
-grafted `Pennsylvanian` is one row starting at their mean and trained on 1.2M.
-The 4.89% context saving costs real quality at this scale.
+**2. Better rules shrank the rule-label inflation — and a review that fixes
+the rules contaminates the gold.** The Geolex rules were wrong on 83% of
+reviewed rows and inflated the SFT score by ~40% (0.831 vs 0.705 on gold). The
+ASUD rules were wrong on 57%, and rule and gold scores now agree (0.806 vs
+0.807). But the gold review found five mechanical rule bugs, which were fixed
+*before the final training labels were built*: the labels were improved using
+what the test rows revealed. The gold score is therefore optimistic, and the
+tuned model scores slightly *below* the fixed rules on every field — it
+imitates its teacher imperfectly and shows no sign of exceeding it. A second
+gold slice reviewed after the rules were frozen is the clean measurement
+([geo-sft RESULTS §8](geo-sft/docs/RESULTS.md)).
 
-**3. The rule labels were inflating everything by ~40%.** All 150 gold rows
-were hand-reviewed; **125 (83%) had wrong labels**. Scored against corrected
-gold, the SFT result is **0.705, not 0.831**, and the delta over base falls
-from +0.516 to **+0.312**.
-
-Also: **the task is not capacity-limited** — a 1.7B model matched a 4B one, so
-the ceiling is label quality, not model size.
-
-### Retrieval lab: KG vs RAG vs GraphRAG
-
-64 questions, 8 categories, `gemma-4-12b` as answerer and judge
-([full report](geo-graphrag/docs/RESULTS.md)):
+**3. ASUD stores its structure in tables, and only the graph can read them.**
 
 | category | Vector RAG | Knowledge graph | GraphRAG |
 |---|---|---|---|
-| age, states, parent, relation | 0.75–0.88 | 0.88–1.00 | 0.95–1.00 |
-| members (lists) | 0.58 | **1.00** | **1.00** |
-| multi-hop filters | 0.07 | **1.00** | 0.04 |
+| age, states | 0.00 | **1.00** | **1.00** |
+| parent, members | 0.50–0.60 | **1.00** | **1.00** |
+| relation | 0.38 | 0.88 | **1.00** |
+| multi-hop filters | 0.00 | **0.88** | 0.06 |
 | count | 0.00 | **1.00** | 0.00 |
-| descriptive (prose only) | **1.00** | 0.00 | **1.00** |
-| **overall** | 0.61 | **0.86** | 0.75 |
+| descriptive (prose only) | **0.88** | 0.25 | **0.88** |
+| **overall** | 0.29 | **0.88** | 0.74 |
+| *Geolex version* | *0.61* | *0.86* | *0.75* |
 
-**1. Each system wins exactly where its design predicts.** The KG is the only
-system that can count or filter the whole corpus, and it cannot answer anything
-stated only in prose. RAG counts the 8 passages it retrieved and reports that
-number confidently: "7 units" when the answer is 41.
-
-**2. GraphRAG's gain over RAG is on entity-centred questions** (members
-0.58 → 1.00), where the graph routes retrieval to the right unit. Its expansion
-is local, so on counts and filters it is as blind as RAG.
-
-**3. Context recall separates retrieval failures from generation failures.**
-Did the retrieved context contain the answer at all? RAG's count failures are
-retrieval failures (context recall 0.25); they cannot be fixed by a better
-prompt.
-
-The practical conclusion matches the GraphRAG literature: **the hybrid is a
-routing problem**. A router sending count and filter questions to the KG and
-everything else to GraphRAG would score ~1.0 on every category here.
+The graph systems replicate; RAG halves. Geolex summaries said *"Age is Late
+Cretaceous ... in Texas"*; ASUD's reference notes give ages as "51.5–36.5 Ma"
+and places as geological provinces, and keep the curated age and state in a
+table. RAG's context recall on age is 0.12: the answer is not in the text. The
+lesson of the lab — *where the facts live decides which system can answer* —
+is sharper on the new corpus than on the one it was built for. A router
+sending counts, filters and table facts to the KG and prose questions to
+GraphRAG would score near 1.0 everywhere.
 
 ## The honest caveats
 
-**0.705 is the defensible SFT headline**, not 0.831. The gold review was a
-*machine* review, not a geologist's, with one row flagged for expert eyes.
+**The SFT gold score (0.807) is optimistic** — see finding 2. The review was a
+*machine* review (claude-opus-5.5), not a geologist's.
 
-`states` fell hardest under review (0.946 → 0.664) because the model had
-faithfully learned the labeller's blind spot — it never extracted postal
-abbreviations, because it was never taught to. It scored 0.946 for reproducing
-an error. Meanwhile the **base model improved** against gold (0.314 → 0.393):
-it was being penalised for extracting things the rules had missed.
+**Seeds:** the ASUD TAPT result is one seed; the Geolex three-seed result is
+what makes the effect credible. Everything else is one seed.
 
-**Seeds:** the TAPT result is three seeds; everything else is one.
+**The KG's 0.88 is partly circular.** Seven of eight benchmark categories take
+gold answers from the curated metadata the graph was built from.
+`descriptive` is the counterweight, and an independent, hand-written test set
+is [geo-graphrag experiment #10](geo-graphrag/docs/EXPERIMENTS.md). Some
+benchmark subjects are informal ASUD entries ("Balbirini Dolostone, 'lower'")
+that the question filter should exclude. One run, 8 questions per category.
 
-**The retrieval corpus is units A to C only.** geo-sft fetched the first 4,000
-entries of Geolex's alphabetical index: 3,302 of 16,684 units, "A-L Peak" to
-"Cross Creek". Famous units like the Eagle Ford are absent, and every count is a
-count of A–C units. The comparison between systems is unaffected (all three see
-the same slice), but no number there describes US geology as a whole.
+**The ASUD snapshot is dated.** GA rebuilds the state reports weekly; the
+numbers here come from the 20 Sep 2026 snapshot recorded in
+`geo-sft/data/raw/asud/manifest.json`.
 
-**The KG's 0.86 is partly circular.** Seven of eight categories take gold answers
-from the curated metadata the graph was built from, so the KG is reading back
-its own contents. The prose-only category is the counterweight, and an
-independent, hand-written test set is
-[geo-graphrag experiment #10](geo-graphrag/docs/EXPERIMENTS.md). The retrieval
-results are also one run with 8 questions per category: one question moves a
-category by 0.125.
-
-**Nine bugs are documented rather than hidden**, across
-[SFT RESULTS §10](geo-sft/docs/RESULTS.md) and
-[CPT RESULTS §6/§9](geo-cpt/docs/RESULTS.md). The common thread is worth more
-than any result here: **every one produced a plausible loss curve and no error
-message.** Three were caught only by running control arms, and one was masked
-by a regression test that grepped source instead of executing the code — it
-passed while the function was completely broken.
-
-The retrieval lab added four more of the same kind, none of which raised an
-error:
-- a few-shot Cypher example pointed at a unit key that does not exist, silently
-  teaching the model a query that returns nothing;
-- usages joined by "in" ("Bloomfield limestone in Glenshaw Formation") were
-  not split, silently turning two units into one name;
-- the knowledge graph answered "I don't know" from correct rows, because the rows
-  did not say what they were rows *of*;
-- LM Studio's JIT loading swapped the chat and embedding models on every
-  question, making the benchmark 5× slower.
-
-The live test tier, which executes every few-shot example, caught the first.
+**Bugs are documented rather than hidden**, in each lab's RESULTS and the
+Geolex archives. Migrating to ASUD found seven more (a reversed participle
+direction, a self-relation check broken by rank-bearing names, a record
+stitcher that corrupted STRATNOs, `rstrip("s")` turning "Beds" into Beds, ...).
+The common thread is unchanged: **every one produced a plausible dataset or
+loss curve and no error message.**
 
 ## Where to go next
 
@@ -322,15 +293,16 @@ already made; everything after it is new ground.
 
 | | why | cost |
 |---|---|---|
-| **Three seeds on the vocab-extension arm** | the −0.084 result is one seed. TAPT's +0.025 only became a claim at n=3; this deserves the same. | ~3 h unattended |
+| **A second, clean gold slice** | the current gold informed the labeller fixes (finding 2). 150 fresh rows reviewed against the frozen rules measure the leakage. | an afternoon |
+| **Three seeds on the ASUD TAPT arms** | +0.023 is one seed; the Geolex effect only became a claim at n=3. | ~7 h unattended |
 | **Geologist spot-check of ~20 gold rows** | the review was a *machine* review. Twenty rows tells you how much to trust the other 130. | an hour of your time |
-| **Run DAPT** | only TAPT ran (1.5M tokens). The ~20M-token DAPT corpus is already configured in `geo-cpt/configs/dapt.yaml`, and `dapt_tapt` runs both in sequence. Does 13× more domain text help further? | ~4 h |
+| **Run DAPT** | only TAPT ran (3.3M tokens). The 7.4M-token DAPT corpus (GA eCat abstracts + all of ASUD, held-out units removed) is built; `dapt_tapt` runs both in sequence. | ~4 h |
 | **Experiment #1, prompt masking** | the most instructive hour in either lab: the unmasked run reaches *lower* training loss and *worse* task scores. | ~2 h |
 
 ### 2. The next technique: preference optimisation
 
 SFT is **imitation** — it can never exceed the quality of your labels. That is
-the 0.705 ceiling. Preference methods learn from *comparisons*, which are both
+the ceiling this repo keeps hitting (the tuned model never beats its rules). Preference methods learn from *comparisons*, which are both
 cheaper to collect and able to surpass the demonstrations.
 
 - **DPO for calibrated abstention.** Teach the model to prefer `null` over a
@@ -376,9 +348,9 @@ these, so this is the HF/MPS path: slower, and no real 4-bit.
 
 ### 5. Retrieval: from comparison to system
 
-- **Fetch all of Geolex.** 16,684 units instead of the A–C slice. A config
-  change in geo-sft and a longer fetch; it makes the retrieval lab's answers
-  meaningful for real geology.
+- **Fix the benchmark's subject filter and re-run.** Exclude informal ASUD
+  entries (quotes, commas, numbered units) from question subjects, and score
+  ages in Ma as well as by name.
 - **A router or an agent.** Route count and filter questions to the KG and the
   rest to GraphRAG, or give the MCP agent only the retrieval primitives and let
   it choose ([experiments #7 and #9](geo-graphrag/docs/EXPERIMENTS.md)).
@@ -387,7 +359,7 @@ these, so this is the HF/MPS path: slower, and no real 4-bit.
   loop across all three labs, and the graph inherits whatever the fine-tune
   learned, including its errors.
 - **Global GraphRAG.** Community detection plus LLM summaries, for "what are the
-  main Pennsylvanian groups of the mid-continent?": the synthesis questions none
+  main Permian groups of the Sydney Basin?": the synthesis questions none
   of the current three systems handles well.
 
 ### 6. Staying in geoscience
@@ -403,15 +375,16 @@ these, so this is the HF/MPS path: slower, and no real 4-bit.
 
 ### If you only do one thing
 
-**Run DAPT.** It is already configured, it answers the question the CPT lab
-was built for at 13× the scale, and you now have a three-seed baseline to
-measure it against. If 20M tokens moves the needle further than 1.5M did, you
-have located the scaling curve for yourself — which is worth more than any
-single number in this repo.
+**Review a second gold slice.** It is the only way to know how much of the
+0.807 is real, and it is the lesson this repo keeps teaching one level
+deeper each time: whoever builds the test set decides what "better" means —
+including you, after you have looked at it.
 
-If your interest is retrieval rather than training: **fetch all of Geolex and
-rerun the benchmark.** It is the cheapest change that turns the retrieval lab
-from a comparison on a 20% slice into a tool you could actually query.
+If your interest is training scale rather than evaluation: **run DAPT.** The
+corpus is built, and TAPT's replicated +0.023 is the baseline to beat.
+
+If your interest is retrieval: **build the router** (geo-graphrag experiment
+#9). The benchmark says exactly which questions to send where.
 
 ## Add to the repo
 I would love if you want to contribute and add in a lesson of your own on something related to geoscience and AI. To do this follow these rough steps:
@@ -444,5 +417,8 @@ every question. The Neo4j browser is at http://localhost:7474 (`neo4j` /
 ## Licence
 
 [MIT](LICENSE) © 2026 Daniel Bongiorno. Data sources carry their own licences —
-USGS Geolex and Publications Warehouse (public domain), Macrostrat (CC-BY 4.0),
-wikitext and ag_news (their own terms). None are redistributed here.
+Geoscience Australia's ASUD and eCat (CC BY 4.0, © Commonwealth of Australia
+(Geoscience Australia)), Macrostrat (CC-BY 4.0), wikitext and ag_news (their
+own terms). The reviewed gold set and benchmark questions committed here are
+derived from ASUD and carry its attribution. The archived Geolex-era material
+derives from USGS Geolex (public domain).

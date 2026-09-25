@@ -1,68 +1,68 @@
 {
   "run": "tapt-v1",
   "iters_done": 600,
-  "final_train_loss": 3.047245740890503,
-  "final_val_loss": 2.6295477808738243,
-  "best_val_loss": 2.6295477808738243,
+  "final_train_loss": 2.3567416667938232,
+  "final_val_loss": 2.5857867346869576,
+  "best_val_loss": 2.5857867346869576,
   "best_val_iter": 600,
-  "wall_minutes": 57.11,
+  "wall_minutes": 72.22,
   "alerts": [],
   "stage": "tapt",
   "base_model": "Qwen/Qwen3-1.7B",
   "fine_tune_type": "full",
-  "checkpoint": "/Users/daniel/git/llm-scratchpad/geo-cpt/runs/tapt-v1/checkpoint-000600",
-  "domain_ppl_before": 33.27162536165201,
-  "domain_ppl_after": 13.867497336421991,
-  "domain_ppl_improvement_pct": 58.320348989005815,
-  "general_ppl_before": 20.292491051590066,
-  "general_ppl_after": 12.068829578799784,
-  "forgetting_pct": -40.525638039623026,
+  "checkpoint": "/Users/daniel/git/llm-learning-lab/geo-cpt/runs/tapt-v1/checkpoint-000600",
+  "domain_ppl_before": 29.243846710383174,
+  "domain_ppl_after": 13.273727885301032,
+  "domain_ppl_improvement_pct": 54.61018512113823,
+  "general_ppl_before": 40.12071502597467,
+  "general_ppl_after": 26.963935442371397,
+  "forgetting_pct": -32.79298381169279,
   "tokens_seen": 613800,
   "curve": [
     {
       "iter": 0,
-      "domain_ppl": 33.27162536165201,
-      "general_ppl": 20.292491051590066
+      "domain_ppl": 29.243846710383174,
+      "general_ppl": 40.12071502597467
     },
     {
       "iter": 75,
-      "domain_ppl": 22.424892515352077,
-      "general_ppl": 13.632249625960304
+      "domain_ppl": 21.691076132303643,
+      "general_ppl": 25.649388786074383
     },
     {
       "iter": 150,
-      "domain_ppl": 17.045346992453677,
-      "general_ppl": 12.573708680121332
+      "domain_ppl": 16.221412527403444,
+      "general_ppl": 25.60914118875495
     },
     {
       "iter": 225,
-      "domain_ppl": 15.295194181081758,
-      "general_ppl": 12.392679065628384
+      "domain_ppl": 14.678916889199469,
+      "general_ppl": 26.256993719160516
     },
     {
       "iter": 300,
-      "domain_ppl": 14.647481812955853,
-      "general_ppl": 12.305716770503212
+      "domain_ppl": 13.980560821356196,
+      "general_ppl": 26.893706047543294
     },
     {
       "iter": 375,
-      "domain_ppl": 14.18681419050218,
-      "general_ppl": 12.169027961881856
+      "domain_ppl": 13.536311488249549,
+      "general_ppl": 27.02598321793745
     },
     {
       "iter": 450,
-      "domain_ppl": 13.953317107153925,
-      "general_ppl": 12.0933601125837
+      "domain_ppl": 13.352309826698129,
+      "general_ppl": 26.9940306576865
     },
     {
       "iter": 525,
-      "domain_ppl": 13.892202774486963,
-      "general_ppl": 12.076592356674043
+      "domain_ppl": 13.297075070659215,
+      "general_ppl": 26.980361984515618
     },
     {
       "iter": 600,
-      "domain_ppl": 13.867497336421991,
-      "general_ppl": 12.068829578799784
+      "domain_ppl": 13.273727885301032,
+      "general_ppl": 26.963935442371397
     }
   ]
 }

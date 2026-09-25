@@ -39,7 +39,8 @@ mcp = MCPServer(
     name="geo-graphrag",
     log_level="WARNING",
     instructions=(
-        "Question answering over the USGS Geolex lexicon of US geologic units, three ways: "
+        "Question answering over Geoscience Australia's lexicon of Australian geologic units "
+        "(ASUD), three ways: "
         "vector RAG (text passages), a knowledge graph (Neo4j, queried with Cypher), and "
         "GraphRAG (both). Use compare_all to see all three answers side by side."
     ),
@@ -116,7 +117,7 @@ def graph_schema() -> str:
 
 @mcp.tool()
 def unit_facts(name: str) -> str:
-    """Look up a geologic unit by name (e.g. 'Eagle Ford', 'Aarde Shale Member') and return
+    """Look up a geologic unit by name (e.g. 'Alsace Quartzite', 'Mount Isa Group') and return
     its graph neighbourhood: age, lithology, states, hierarchy, over/underlying units,
     plus its graph key for use in run_cypher."""
     linked = linker(CFG.neo4j).link(name if name[:1].isupper() else name.title())

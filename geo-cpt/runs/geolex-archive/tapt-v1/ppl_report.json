@@ -1,0 +1,19 @@
+{
+  "stage": "tapt",
+  "base_model": "Qwen/Qwen3-1.7B",
+  "adapted": "runs/tapt-v1/checkpoint-000600",
+  "domain_blocks": 49,
+  "general_blocks": 130,
+  "results": {
+    "base": {
+      "domain_ppl": 33.27162536165201,
+      "general_ppl": 20.292491051590066
+    },
+    "adapted": {
+      "domain_ppl": 13.867497336421991,
+      "general_ppl": 12.068829578799784
+    }
+  },
+  "domain_improvement_pct": 58.320348989005815,
+  "forgetting_pct": -40.525638039623026
+}

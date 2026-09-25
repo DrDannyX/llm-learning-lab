@@ -5,7 +5,8 @@ what the passages leave out.
   2. entity linking -> the units the question actually names
   3. seed units = linked units first, then the units the entry passages describe
   4. for each seed, a fixed Cypher "unit card": its ages *and their parent
-     intervals*, lithologies, states, hierarchy, and stratigraphic neighbours
+     intervals*, lithologies, states, hierarchy, stratigraphic neighbours and
+     intrusive relations
   5. for linked units the vector search missed, pull their best passages
      directly through the graph (DESCRIBES), ranked by similarity
 
@@ -31,7 +32,7 @@ from .rag import format_passages
 
 CARD = """
 MATCH (u:Unit {key: $key})
-RETURN u.full_name AS unit, u.rank AS rank, u.age_text AS geolex_age,
+RETURN u.full_name AS unit, u.rank AS rank, u.age_text AS asud_age,
        u.thickness_min_m AS thickness_min_m, u.thickness_max_m AS thickness_max_m,
        [(u)-[:HAS_AGE]->(i) | i.name] AS ages,
        apoc_free_ancestors AS age_context,
@@ -43,6 +44,8 @@ RETURN u.full_name AS unit, u.rank AS rank, u.age_text AS geolex_age,
        [(c)-[:PART_OF]->(u) | c.full_name + ' (' + c.rank + ')'][..30] AS contains,
        [(u)-[:OVERLIES]->(x) | x.full_name] AS overlies,
        [(x)-[:OVERLIES]->(u) | x.full_name] AS overlain_by,
+       [(u)-[:INTRUDES]->(x) | x.full_name] AS intrudes,
+       [(x)-[:INTRUDES]->(u) | x.full_name] AS intruded_by,
        [(u)-[:EQUIVALENT_TO|GRADES_INTO|INTERTONGUES_WITH]-(x) | x.full_name] AS laterally_related
 """.replace(
     "apoc_free_ancestors",

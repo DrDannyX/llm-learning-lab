@@ -8,10 +8,10 @@ what and why; this document is the how.
 ## Data flow
 
 ```
- USGS Geolex API                 Macrostrat API
- (16,684 stratigraphic units)    (lithologies, intervals, minerals, strat names)
-        │                                │
-        │  data/fetch.py                 │  data/vocab.py
+ Geoscience Australia (ASUD)     Macrostrat API
+ WFS unit index + weekly         (lithologies, intervals, minerals)
+ state-report ZIPs, 18,387 units        │
+        │  data/asud.py, data/fetch.py   │  data/vocab.py (+ ASUD unit names)
         ▼                                ▼
  data/interim/passages.jsonl      data/interim/vocab.json
         │                                │
@@ -58,7 +58,7 @@ class GeoExtraction(BaseModel):
     minerals:    list[str]           # closed vocab, set-scored
     thickness:   Thickness | None    # numeric, tolerance-scored
     relations:   list[Relation]      # (kind, unit) pairs, set-scored
-    states:      list[str]           # postal codes, set-scored
+    states:      list[str]           # ASUD codes (NSW, QLD, ...), set-scored
 ```
 
 Two properties are load-bearing:
@@ -80,38 +80,74 @@ one number.
 
 ---
 
-## Stage 1 — corpus (`data/fetch.py`, `data/vocab.py`, `data/http.py`)
+## Stage 1 — corpus (`data/asud.py`, `data/fetch.py`, `data/vocab.py`)
 
-**Source: USGS Geologic Names Lexicon (Geolex).** A US Government work, so
-public domain. Each of ~16,700 stratigraphic units carries several *reference
-summaries* — prose written by geologists between roughly 1890 and 1990,
-abbreviated and inconsistent, e.g.
+**Source: Geoscience Australia's Australian Stratigraphic Units Database
+(ASUD)**, the national authority on Australian stratigraphic names, released
+under CC BY 4.0 (attribution required). It is reached two ways, and the lab
+needs both:
 
-> *Aarde Shale Member (restricted) of Howard Limestone of Wabaunsee Group. The
-> hard dense limestone and black fissile shale in the upper part of the Aarde
-> are reallocated to newly named Wauneta Limestone… 2 to 7 feet thick…*
+| | what | why |
+|---|---|---|
+| **WFS** `services.ga.gov.au/gis/stratunits` | the documented OGC service: 18,354 units with rank, lithology class, state, hierarchy | the unit index. But `DESCRIPTION` is **truncated at 255 characters** and ages are era-level only |
+| **state reports** (ZIPs linked from asud.ga.gov.au) | six pipe-delimited tables per jurisdiction, rebuilt weekly | the prose (definition cards, 350k per-reference notes), **curated relations**, thickness in metres, fine-grained ages |
 
-This is deliberately *not* clean text. A general instruct model handles it
-badly, which is exactly what leaves room for a fine-tune to show a real gain.
+`asud.py` pages the WFS (always with `count` and `sortBy=STRATNO` — the
+server default page is a million rows, and GA warns paging is not
+transaction-safe), checks the attribute names against `DescribeFeatureType` at
+run time (GA has renamed them before), and snapshots the report ZIPs into
+`data/raw/asud/` with a manifest of SHA-256 hashes and server dates. The
+reports change weekly, so re-downloading is not reproducing: every downstream
+step reads the snapshot, and only `--force` refetches.
 
-**Source: Macrostrat** (CC-BY 4.0) supplies four closed vocabularies: 214
-lithologies, 509 chronostratigraphic intervals, 6,350 minerals, 45,347
-stratigraphic names.
+The prose is two kinds of passage, each rendered as a lexicon *entry* —
+`"<Unit Name>. <text>"` — because a note like *"Conformably overlain by
+Cygnet Coal Measures."* has no subject without its heading:
 
-**`CachedClient`** wraps both with a disk cache keyed by URL+params hash, a
-politeness delay, exponential-backoff retries, and atomic writes (a `.tmp`
-file then `replace`, so concurrent workers never read a torn file). Detail
-fetches run through a 6-worker thread pool: serially it is ~1.7 s per unit,
-nearly two hours for 4,000 units, almost all of it network wait.
+> *Wilton Formation. Overlies Woonona Coal. Overlain by Appin Formation.
+> Thickness: ~250 m. Of Illawarra Coal Measures. Possibly Stratigraphically
+> equivalent to part of Four Mile Creek Subgroup. Geological Province: Sydney
+> Basin.*
 
-The cache is why you can iterate on extraction rules a hundred times without
-touching the network again — and the rules are the part you actually iterate on.
+- **definition cards** (2,307 passages): the author's sections — lithology,
+  relationships and boundaries, thickness, extent, age reasons, name source —
+  with administrative sections (proposer, reservation) dropped.
+- **reference notes** (20,004 passages): one published reference's comment on
+  the unit, with page-location boilerplate (*"Location in text includes p325
+  Fig.3"*) stripped. A note filed under **more than one unit** is dropped
+  entirely: it is about none of them, and it would put identical text on both
+  sides of the group split.
+
+At most 12 passages per unit, so a few heavily-cited units cannot dominate the
+loss. Result: **22,311 passages from 8,094 units**.
+
+This is deliberately *not* clean text — telegraphic, abbreviated
+(`qtz-rich`, `Sltst`, `Gp`), full of house style. A general instruct model
+handles it badly, which is exactly what leaves room for a fine-tune to show a
+real gain.
+
+**Source: Macrostrat** (CC-BY 4.0) supplies three closed vocabularies: 214
+lithologies, 514 chronostratigraphic intervals and 6,350 minerals. The unit
+names the relation rules validate against come from ASUD itself.
+
+**Australian spellings.** ASUD writes *Palaeozoic*, *Archaean* and series
+names (*Lower Devonian*) where Macrostrat has *Paleozoic*, *Archean* and the
+epoch (*Early Devonian*). `vocab.chrono_aliases` maps every such surface form
+to one canonical name, so the label space stays closed. Precambrian and the
+ICS's unnamed Cambrian series and stages, which Macrostrat lacks, are added.
 
 **Gotcha handled:** Macrostrat carries planetary timescales. `Amazonian`,
 `Noachian` and `Hesperian` are *Martian* periods and would be nonsense labels
-on a USGS corpus. They are filtered by inspecting the nested `timescales[].name`
-— note that the naive substring check for `"mars"` fails, because the string is
-`"Martian"`.
+on an Australian corpus. They are filtered by inspecting the nested
+`timescales[].name` — note that the naive substring check for `"mars"` fails,
+because the string is `"Martian"`.
+
+**Gotcha handled:** a newline inside a report's free-text field splits one
+record over two lines. When it falls in the *last* field, the fragment has
+too few fields to be a record — and gluing it to the *next* line instead
+silently corrupts that record's STRATNO. `parse_table` attaches a short line
+to the previous record. Guarded by
+`test_report_table_stitches_split_records_and_folds_pipes`.
 
 ## Stage 2 — training pairs (`data/label.py`, `data/match.py`, `data/build.py`)
 
@@ -119,25 +155,30 @@ on a USGS corpus. They are filtered by inspecting the nested `timescales[].name`
 
 > **A target field may only contain facts present in the passage itself.**
 
-Geolex offers tempting curated metadata (authoritative ages, state lists), but
-training on facts the model cannot see teaches it to state things confidently
-without evidence. The metadata is therefore used *only* to audit the labeller,
-never to write labels.
+ASUD offers tempting curated metadata (authoritative ages, states, thickness,
+even the unit's stratigraphic relations), but training on facts the model
+cannot see teaches it to state things confidently without evidence. The
+metadata is therefore used *only* to audit the labeller, never to write labels.
 
 `agreement_report()` exploits that separation: because the labeller never reads
-the curated fields, they act as independent ground truth. On the full corpus:
+the curated fields, they act as independent ground truth. ASUD curates far more
+than Geolex did, so almost every field has a tripwire. On the full corpus:
 
 | check | value | reading |
 |---|---|---|
-| unit_name retained | 85.5% | name appears early in its own passage |
-| chronostrat consistency | 89.5% | rule-extracted ages agree with curated ages |
-| states precision | 0.581 | **expected to be low — see below** |
-| states recall | 0.233 | **expected to be low — see below** |
+| unit_name retained | 99.9% | every passage leads with its unit's name |
+| rank agreement | 98.3% | name-derived rank matches ASUD's |
+| thickness in curated range | 89.2% | extracted thickness within ASUD's min–max |
+| relations in curated list | 59.7% | a **precision floor**: ASUD's list is incomplete |
+| chronostrat consistency | 51.9% | token overlap only; `Sakmarian` vs curated `Cisuralian` counts as a miss |
+| states precision | 0.841 | named states are real |
+| states recall | 0.041 | **expected to be low — see below** |
 
-The states numbers are low *by design*, not by defect. We extract states
-*named in the passage*; Geolex curates every state the unit occurs in across
-all references. Different questions. The number is a drift tripwire, not an
-accuracy score — if it moves sharply after you edit the rules, something broke.
+The states recall is low *by design*, not by defect. We extract states
+*named in the passage*; ASUD records every jurisdiction the unit occurs in,
+and a reference note rarely names one. Different questions. These numbers are
+drift tripwires, not accuracy scores — if one moves sharply after you edit the
+rules, something broke.
 
 ### How the rules work
 
@@ -153,8 +194,24 @@ are converted to metres.
 
 `extract_relations` matches trigger phrases (`overlies`, `underlies`, `below`,
 `above`, `grades into`, `intertongues with`, …) followed by a capitalised name,
-then **validates the head word against the 45k-name Macrostrat gazetteer** so
-we do not capture ordinary capitalised English.
+then **validates the head word against ASUD's 18k unit names** so we do not
+capture ordinary capitalised English. ASUD's own templates are covered too:
+*"Overlying unit: X"*, *"Overlies: X"*, *"Conformable on X"*, and the
+shorthand *"Over X; under Y"*.
+
+> **Bug found here (direction).** *"the overlying Bortala Formation"* puts the
+> named unit above the subject, but *"an interval overlying Oolloo Dolostone"*
+> puts the *subject* above it. The first version of the rule treated both the
+> same and reversed every participle. The article is what disambiguates them.
+> Found in the gold review; guarded by `test_relation_templates`.
+
+> **Bug found here (self-relations).** ASUD names carry their rank, so the
+> Geolex-era check "is the head word the unit's own name?" no longer fired —
+> *"Breakfast Sandstone overlies Breakfast Sandstone"*. Comparing *cores*
+> fixed that and broke something else: *Murchison Granite* and *Murchison
+> Volcanics* share a core, and the real intrusive relation between them was
+> discarded as a self-reference. Only the full name or the bare core counts as
+> self.
 
 > **Bug found here.** These patterns are compiled *without* `re.IGNORECASE`.
 > The name group relies on `[A-Z]` to find proper nouns, and a global
@@ -164,18 +221,37 @@ we do not capture ordinary capitalised English.
 > case-insensitivity use scoped `(?i:...)` groups instead. Guarded by
 > `test_relation_names_are_not_greedy`.
 
-`infer_rank` reads the rank word following the unit name, with explicit ranks
-(`Member`, `Group`) beating the lithology-as-rank fallback (`Austin chalk` →
-Formation). Order matters: `Aarde shale member of Howard limestone` must
-resolve to Member, not Formation.
+`infer_rank` reads the unit name's own last word, then the words following it,
+with explicit ranks (`Member`, `Suite`) beating the lithology-as-rank fallback
+(`Tumblagooda Sandstone` → Formation). The rock words that stand in for a rank
+were *measured* on ASUD: units named "X Granite", "X Volcanics" or "X Beds"
+are Formation rank 95–100% of the time, while "Complex" and "Sequence" split
+evenly between Group and Formation and are left as Unknown.
+
+> **Bug found here.** `rstrip("s")` de-pluralised "Beds" into "bed" — a Bed —
+> when ASUD's "X Beds" are Formation rank, and turned "Volcanics" into
+> "volcanic", which matched nothing. Rank fill was 1.1% until the exact word
+> was tried before the de-pluralised one.
+
+**Unit names are masked before tagging rock, mineral, age and state terms.**
+*Tumblagooda Sandstone* names a unit; it does not report sandstone. The
+Geolex-era gold review found rock words inside proper names to be the single
+most common rule error, and every ASUD passage leads with one. Both current
+ASUD names and anything that *looks* like a name (capitalised words ending in a
+capitalised rank or rock word, or a house abbreviation — *Carcoar Granite*,
+*Nirranda Gp*) are blanked first. Relations still read the unmasked text.
 
 ### Splitting
 
-**Group-wise on `unit_id`.** Geolex carries several reference summaries per
-unit and they overlap heavily — seven passages all describing the Aarde Shale
-Member. A random split puts near-duplicates on both sides of the wall and
-inflates the test score badly. Every passage about a unit lands in exactly one
-split.
+**Group-wise on `unit_id`.** ASUD carries many reference notes per unit and
+they overlap heavily — a dozen notes all describing the Mathinna Supergroup.
+A random split puts near-duplicates on both sides of the wall and inflates the
+test score badly. Every passage about a unit lands in exactly one split.
+
+**A reviewed gold set is frozen.** Every labeller fix changes which rows pass
+the filter, which reshuffles the unit split, which draws a different gold
+slice — silently discarding hours of review. Once `gold.jsonl` has reviewed
+rows, `build` keeps it verbatim and forces its units into test.
 
 Passages are also de-duplicated by normalised-text SHA1, and rows where the
 labeller found fewer than `min_filled_fields` are dropped — a target that is
@@ -206,6 +282,11 @@ not raw fragmentation. Raw fragmentation surfaces junk like
 weighted ranking surfaces `Pennsylvanian` (4 tokens × 340 uses).
 
 ## Stage 4 — vocabulary extension (`tokenizer/extend.py`)
+
+> The measurements in this section (`Pennsylvanian`, 2.54% → 4.89%) are from
+> the Geolex-era version of this lab; the extension experiment has not been
+> re-run on ASUD. The traps are properties of the model and libraries, not
+> the data, and all still apply.
 
 Adds the top-K domain terms to the base vocabulary and initialises each new
 embedding row as the **mean of the sub-word embeddings it replaces**. Existing
@@ -332,8 +413,9 @@ rather than an error — on the vocabulary-extended path the base is *not*
 | `config.py` | typed config for every stage, YAML in/out |
 | `paths.py` | every path, `ensure()`, `GEOSFT_HF_HOME` override |
 | `data/http.py` | cached, retrying, atomic-write HTTP |
-| `data/vocab.py` | Macrostrat gazetteers |
-| `data/fetch.py` | Geolex corpus, concurrent detail fetch |
+| `data/asud.py` | ASUD access: WFS unit index, report snapshot, table parsing |
+| `data/fetch.py` | ASUD passages (definition cards, reference notes) |
+| `data/vocab.py` | Macrostrat gazetteers, Australian spellings, ASUD names |
 | `data/match.py` | longest-match n-gram gazetteer tagger |
 | `data/label.py` | rules, `Labeller`, `agreement_report` |
 | `data/build.py` | dedupe, filter, group-split, gold slice |

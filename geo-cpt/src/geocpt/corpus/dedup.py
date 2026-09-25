@@ -13,9 +13,9 @@ deduplication to be one of the highest-leverage data interventions available.
 
 This corpus is unusually duplicate-heavy:
 
-* Geolex publishes several reference summaries per unit, and later summaries
-  often quote earlier ones nearly word for word.
-* USGS abstracts recur across revised editions of the same report series.
+* ASUD files a note per reference per unit, and later notes often repeat
+  earlier ones nearly word for word ("Geological Province: Sydney Basin.").
+* eCat abstracts recur across editions and derived products of one report.
 
 EXACT vs NEAR DUPLICATES
 ------------------------

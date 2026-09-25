@@ -45,8 +45,8 @@ The geo-sft lab established that **SFT teaches form far better than facts**.
 CPT is the technique for the other half. If your model needs to *know* more
 geoscience rather than *format* its answers better, this is the tool.
 
-> **Honest expectation for this project.** Our corpus is roughly 1.5M tokens
-> for TAPT and ~15–20M for DAPT. Real domain adaptation uses billions. You
+> **Honest expectation for this project.** Our corpus is roughly 3.3M tokens
+> for TAPT and ~7.4M for DAPT. Real domain adaptation uses billions. You
 > should expect modest, measurable perplexity movement and quite possibly no
 > downstream gain at all. That is not a failed experiment — knowing the scale
 > at which a technique starts to pay is exactly what you are here to learn.
@@ -116,8 +116,8 @@ have shifted it away from its instruction tuning.
 In SFT, each example was one prompt+answer pair, padded to the batch's longest
 item. Reasonable: examples are similar lengths and each carries a label.
 
-CPT documents vary enormously — a 40-token Geolex fragment beside a 3,000-token
-USGS abstract. Padding each to `block_size` would waste **96% of the compute**
+CPT documents vary enormously — a 40-token ASUD note beside a 3,000-token
+definition card. Padding each to `block_size` would waste **96% of the compute**
 on the short one.
 
 So CPT **packs**: concatenate everything into one token stream, slice into
@@ -313,8 +313,9 @@ eat your data.
 model predicting every token of duplicated text simply memorises it, and every
 duplicate token is budget spent teaching recitation.
 
-Our corpus is duplicate-heavy by nature: Geolex publishes several reference
-summaries per unit, often quoting each other nearly verbatim.
+Our corpus is duplicate-heavy by nature: ASUD files a note per reference per
+unit, and later notes often repeat earlier ones nearly verbatim; the same unit
+also appears under its current and superseded names.
 
 Exact hashing only catches byte-identical text. Two abstracts differing by one
 year are different strings, same content. So we compare **sets of word
@@ -371,7 +372,7 @@ order of what they actually prove:
 ### Q1 — did it learn? (domain perplexity)
 
 `geocpt eval`. Should fall. Easy to move, and **weak evidence**: perplexity
-improves when the model learns the *style* of USGS prose — the hedging, the
+improves when the model learns the *style* of lexicon prose — the hedging, the
 abbreviations, the rhythm — which is real but is not knowledge.
 
 ### Q2 — what did it forget? (general perplexity)
@@ -396,8 +397,8 @@ traded general capability for domain fluency.
 model ranks the true term above distractors from the same class:
 
 ```
-"The Austin Chalk is of Late ______ age."   →  Cretaceous
-                                     vs Jurassic / Devonian / Permian
+"The Hawkesbury Sandstone is of Middle ______ age."   →  Triassic
+                                               vs Jurassic / Devonian / Permian
 ```
 
 Chance is 0.25 with three distractors. This separates *knowledge* from *style*
@@ -479,8 +480,8 @@ geocpt probe --checkpoint runs/tapt-v1/checkpoint-000600
 ```bash
 geocpt transfer --checkpoint runs/tapt-v1/checkpoint-000600
 ```
-Compare against 0.831. **Be prepared for no improvement** — at 1.5M tokens
-that is the likely outcome, and it is a real result about scale.
+Compare against the no-CPT arm. **Be prepared for no improvement** — at 3.3M
+tokens that is the likely outcome, and it is a real result about scale.
 
 **7. Then run experiment 3** (replay 0.0). Watching general perplexity climb
 teaches forgetting better than any explanation.
