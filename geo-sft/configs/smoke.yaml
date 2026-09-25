@@ -4,6 +4,7 @@ name: geo-sft-smoke
 
 data:
   max_units: 300
+  max_per_unit: 12
   min_passage_chars: 200
   max_passage_chars: 3000
   min_filled_fields: 2

@@ -13,7 +13,11 @@ from pydantic import BaseModel, Field
 
 
 class DataCfg(BaseModel):
-    max_units: int = 4000          # Geolex units to download (16,684 available)
+    #: Cap on ASUD units sampled for passages. None = every unit with prose.
+    max_units: int | None = None
+    #: Cap on passages per unit. A few famous units carry 100+ reference notes
+    #: and would dominate the loss. None = no cap.
+    max_per_unit: int | None = 12
     min_passage_chars: int = 200
     max_passage_chars: int = 4000
     min_filled_fields: int = 2     # drop near-empty targets: they teach silence

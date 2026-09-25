@@ -5,6 +5,8 @@ import json
 
 import pytest
 
+from geosft.data import asud
+from geosft.data.fetch import clean_passage
 from geosft.data.label import (Labeller, extract_relations, infer_rank,
                                parse_thickness)
 from geosft.data.match import Gazetteer
@@ -21,16 +23,16 @@ def test_lists_are_canonical():
 
 def test_relations_dedupe_and_sort():
     g = GeoExtraction(relations=[
-        Relation(kind="underlies", unit="Taylor Group"),
-        Relation(kind="overlies", unit="Eagle Ford"),
-        Relation(kind="underlies", unit="taylor group"),
+        Relation(kind="underlies", unit="Cygnet Coal Measures"),
+        Relation(kind="overlies", unit="Minnie Point Formation"),
+        Relation(kind="underlies", unit="cygnet coal measures"),
     ])
     assert len(g.relations) == 2
 
 
 def test_prompt_symmetry():
     """Train and inference prompts must be identical up to the answer turn."""
-    t = GeoExtraction(unit_name="Austin")
+    t = GeoExtraction(unit_name="Abels Bay Formation")
     train = build_messages("some passage", t)
     infer = build_messages("some passage")
     assert train[:-1] == infer
@@ -53,11 +55,21 @@ def test_relation_names_are_not_greedy():
     """The bug this guards: re.IGNORECASE makes [A-Z] match anything, so the
     name group swallows 'member of Howard limestone'."""
     rels = extract_relations(
-        "Below the Church member of Howard limestone.",
-        strat_names={"Church"}, self_name=None,
+        "Below the Barnetts member of Abels Bay formation.",
+        strat_names={"Barnetts"}, self_name=None,
     )
-    assert rels and rels[0].unit == "Church Member"
+    assert rels and rels[0].unit == "Barnetts Member"
     assert "of" not in rels[0].unit
+
+
+def test_australian_relation_wording():
+    rels = extract_relations(
+        "Abels Bay Formation. Conformably overlain by the Cygnet Coal Measures. "
+        "Intruded by the Ben Lomond Granite.",
+        strat_names={"Cygnet", "Ben"}, self_name="Abels Bay Formation",
+    )
+    assert {(r.kind, r.unit) for r in rels} == {
+        ("underlies", "Cygnet Coal Measures"), ("intruded_by", "Ben Lomond Granite")}
 
 
 def test_relation_requires_known_strat_name():
@@ -70,10 +82,23 @@ def test_explicit_rank_beats_lithology_fallback():
     assert infer_rank("Austin Group comprises several units.", "Austin") == "Group"
 
 
+@pytest.mark.parametrize("name,rank", [
+    ("Tumblagooda Sandstone", "Formation"),   # rank from the name's own last word
+    ("Bulgonunna Volcanics", "Formation"),    # not de-pluralised to 'volcanic'
+    ("Moolayember Beds", "Formation"),        # ASUD 'Beds' are Formation rank, not Bed
+    ("Babel Island Suite", "Suite"),
+    ("Warakurna Supersuite", "Supersuite"),
+    ("Glyde Hill Volcanic Complex", "Unknown"),  # ASUD ranks Complexes both ways
+])
+def test_rank_from_australian_names(name, rank):
+    assert infer_rank(f"{name}. Conformably overlies basement.", name) == rank
+
+
 @pytest.mark.parametrize("text,lo,hi", [
     ("Thickness 100 feet.", 30.48, 30.48),
     ("is 2 to 7 feet thick", 0.61, 2.13),
     ("ranges from 10 to 30 m in thickness", 10.0, 30.0),
+    ("Thickness range: up to 1.5 km", 1500.0, 1500.0),
 ])
 def test_thickness_parsing(text, lo, hi):
     t = parse_thickness(text)
@@ -84,11 +109,130 @@ def test_thickness_ignores_unrelated_numbers():
     assert parse_thickness("Located 5 miles north; exposed along 200 feet of road.") is None
 
 
+def _au_labeller() -> Labeller:
+    return Labeller.from_vocab({
+        "lithologies": ["sandstone", "shale", "limestone"], "chronostrat": [
+            {"name": "Early Devonian"}, {"name": "Paleozoic"}],
+        "chronostrat_aliases": {"lower devonian": "Early Devonian", "palaeozoic": "Paleozoic"},
+        "minerals": [], "strat_names": ["Tumblagooda Sandstone", "Dirk Hartog Group"]})
+
+
+def test_unit_names_do_not_leak_into_lithology():
+    """The most common rule error in the Geolex gold review: rock words inside
+    proper names. Every ASUD passage leads with one, so it must be masked."""
+    out = _au_labeller().label({
+        "unit_name": "Tumblagooda Sandstone",
+        "passage": "Tumblagooda Sandstone. Reservoir sealed by Dirk Hartog Group shales."})
+    assert out.lithologies == ["shale"]
+    assert out.rank == "Formation"
+
+
+def test_capitalised_minerals_are_names():
+    lab = Labeller.from_vocab({"lithologies": ["granite"], "chronostrat": [],
+                               "minerals": ["silver", "biotite"], "strat_names": []})
+    out = lab.label({"unit_name": None, "passage":
+                     "Mount You You Granite. Silver Spur Subprovince. Biotite granite: I-type."})
+    assert out.minerals == ["biotite"] and out.lithologies == ["granite"]
+
+
+def test_superseded_names_are_masked_too():
+    """'Carcoar Granite' is no longer an ASUD name, but it is still a name."""
+    out = _au_labeller().label({"unit_name": None, "passage":
+                                "Originally included in the Carcoar Granite. Grey shale."})
+    assert out.lithologies == ["shale"]
+
+
+def test_no_self_relations_and_no_age_prefix():
+    rels = extract_relations(
+        "Breakfast Sandstone. Unconformably overlies Palaeoproterozoic Murphy Metamorphics. "
+        "Buddycurrawa Volcanics overlies Breakfast Sandstone. Overlying unit: Bowgan Sandstone.",
+        strat_names={"Murphy", "Breakfast", "Bowgan"}, self_name="Breakfast Sandstone")
+    assert {(r.kind, r.unit) for r in rels} == {
+        ("unconformable_on", "Murphy Metamorphics"), ("underlies", "Bowgan Sandstone")}
+
+
+@pytest.mark.parametrize("text,expected", [
+    # the article decides the direction
+    ("Gogo Formation. Shown overlying the Sadler Limestone.", ("overlies", "Sadler Limestone")),
+    ("Alsace Quartzite. The overlying Bortala Formation.", ("underlies", "Bortala Formation")),
+    ("Gerowie Tuff. Overlies: Koolpin Formation.", ("overlies", "Koolpin Formation")),
+    ("Tanwarra Shale. Underlain by Pipers Flat Formation.", ("overlies", "Pipers Flat Formation")),
+    ("Goyder Formation. Is overlain unconformably by Pacoota Sandstone.", ("underlies", "Pacoota Sandstone")),
+    ("Apex Basalt. Over Marble Bar Chert Member; under Panorama Formation.", ("overlies", "Marble Bar Chert Member")),
+    # a shared core is not the same unit
+    ("Murchison Volcanics. Intruded by Murchison Granite.", ("intruded_by", "Murchison Granite")),
+    ("Symons Granite. Intrudes the Archaean Mulgathing Complex.", ("intrudes", "Mulgathing Complex")),
+])
+def test_relation_templates(text, expected):
+    heads = {"Sadler", "Bortala", "Koolpin", "Pipers", "Pacoota", "Marble", "Murchison", "Mulgathing"}
+    subject = text.split(".")[0]
+    rels = {(r.kind, r.unit) for r in extract_relations(text, heads, subject)}
+    assert expected in rels
+    flip = {"overlies": "underlies", "underlies": "overlies"}.get(expected[0])
+    assert (flip, expected[1]) not in rels, "a relation must never come out in both directions"
+
+
+def test_hyphenated_terms_are_split():
+    lab = Labeller.from_vocab({"lithologies": ["granite"], "chronostrat": [
+        {"name": "Carnian"}, {"name": "Norian"}], "minerals": ["Biotite", "Muscovite"],
+        "strat_names": []})
+    out = lab.label({"unit_name": None, "passage": "Muscovite-biotite granite of Carnian-Norian age."})
+    assert out.minerals == ["Biotite", "Muscovite"] and out.chronostrat == ["Carnian", "Norian"]
+
+
+def test_state_names_inside_place_names():
+    assert _au_labeller().label({"unit_name": None,
+                                 "passage": "Used in the second Victoria Bridge."}).states == []
+
+
+def test_australian_spellings_canonicalise():
+    out = _au_labeller().label({"unit_name": None,
+                                "passage": "Of Lower Devonian age, within the Palaeozoic."})
+    assert out.chronostrat == ["Early Devonian", "Paleozoic"]
+
+
+@pytest.mark.parametrize("text,states", [
+    ("Mapped across New South Wales and Qld.", ["NSW", "QLD"]),
+    ("Exposed along the Victoria River.", []),         # a river, not the state
+    ("Outcrops in Victoria near Omeo.", ["VIC"]),
+    ("An act of deposition in a sa basin.", []),        # lowercase abbreviations are words
+])
+def test_states(text, states):
+    assert _au_labeller().label({"unit_name": None, "passage": text}).states == states
+
+
 def test_labeller_only_claims_visible_unit_names():
     lab = Labeller.from_vocab({"lithologies": ["shale"], "chronostrat": [],
                                "minerals": [], "strat_names": []})
     out = lab.label({"unit_name": "Nowhere", "passage": "A grey shale is exposed."})
     assert out.unit_name is None, "must not assert a name absent from the passage"
+
+
+# ---------------- ASUD parsing ----------------
+def test_report_table_stitches_split_records_and_folds_pipes():
+    text = ("Stratno | Name | Comments\n"
+            "1|Abels Bay Formation|Overlain by\ncoal measures.\n"
+            "2|Amber Formation|a | b\n")
+    rows, bad = asud.parse_table(text)
+    assert bad == 0
+    assert rows[0]["Comments"] == "Overlain by coal measures."
+    assert rows[1]["Comments"] == "a | b"
+
+
+def test_related_table_direction():
+    """The related table reads `<related> <relation> <subject>`; two columns share
+    a header name, so the parser must use positional names."""
+    text = ("Related Stratno | Related unit name | Relation Type | Related Stratno | "
+            "Stratigraphic Name |Contact Type | Comments\n"
+            "5105|Cygnet Coal Measures|overlies|23322|Abels Bay Formation||\n")
+    (row,), _ = asud.parse_table(text, asud.RELATED_COLS)
+    assert (row["related_stratno"], row["relation"], row["stratno"]) == ("5105", "overlies", "23322")
+
+
+def test_boilerplate_stripped_from_comments():
+    got = clean_passage("Sharp boundary with Hutton Formation. Location in text includes "
+                        "p325 Fig.3, p328. See also p66 Fig.1. See 100k_geologyp_lut.csv.")
+    assert got == "Sharp boundary with Hutton Formation."
 
 
 # ---------------- metrics ----------------
@@ -110,10 +254,10 @@ def test_unparseable_counts_as_wrong_not_skipped():
 
 
 def test_perfect_prediction_scores_one():
-    gold = {"unit_name": "Austin", "rank": "Group", "lithologies": ["chalk"],
-            "chronostrat": ["Late Cretaceous"], "minerals": [], "states": ["TX"],
+    gold = {"unit_name": "Abels Bay Formation", "rank": "Formation", "lithologies": ["siltstone"],
+            "chronostrat": ["Late Permian"], "minerals": [], "states": ["TAS"],
             "thickness": {"min_m": 10.0, "max_m": 20.0},
-            "relations": [{"kind": "underlies", "unit": "Taylor Group"}]}
+            "relations": [{"kind": "underlies", "unit": "Cygnet Coal Measures"}]}
     s = Scorer()
     s.add(json.dumps(gold), gold)
     r = s.report()

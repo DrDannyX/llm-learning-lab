@@ -1,6 +1,7 @@
-"""Domain gazetteers, downloaded from Macrostrat (CC-BY 4.0).
+"""Domain gazetteers: rock, time and mineral terms from Macrostrat (CC-BY 4.0),
+unit names from ASUD (CC BY 4.0).
 
-These four vocabularies are load-bearing for the whole project:
+These vocabularies are load-bearing for the whole project:
 
 * they are the **closed label space** the extraction schema normalises to,
 * they seed the **rule-based labeller**,
@@ -24,9 +25,40 @@ API = "https://macrostrat.org/api"
 CHRONO_RANKS = {"eon", "era", "period", "epoch", "age"}
 
 #: Macrostrat carries planetary timescales too. "Amazonian" and "Noachian" are
-#: Martian periods and would be nonsense labels on a USGS lexicon corpus, so
-#: they must not enter the gazetteer. Matched against the timescale *name*.
+#: Martian periods and would be nonsense labels on an Australian lexicon corpus,
+#: so they must not enter the gazetteer. Matched against the timescale *name*.
 NON_TERRESTRIAL = ("martian", "lunar", "mars", "moon")
+
+#: Intervals ASUD uses that Macrostrat lacks: the informal Precambrian, and the
+#: ICS's still-unnamed Cambrian series and stages (common in Australian
+#: Cambrian stratigraphy, which helped define them).
+EXTRA_INTERVALS = [
+    {"name": "Precambrian", "rank": "supereon", "t_age": 538.8, "b_age": 4600.0},
+    {"name": "Cambrian Series 2", "rank": "epoch", "t_age": 506.5, "b_age": 521.0},
+    {"name": "Cambrian Stage 2", "rank": "age", "t_age": 521.0, "b_age": 529.0},
+    {"name": "Cambrian Stage 3", "rank": "age", "t_age": 514.5, "b_age": 521.0},
+    {"name": "Cambrian Stage 4", "rank": "age", "t_age": 506.5, "b_age": 514.5},
+]
+
+
+def chrono_aliases(names: list[str]) -> dict[str, str]:
+    """Surface spellings Australian prose uses -> the canonical ICS name.
+
+    Australian (and older ICS) usage writes Palaeozoic and Archaean, and names
+    chronostratigraphic series ("Lower Devonian") where Macrostrat has the
+    geochronologic epoch ("Early Devonian"). Canonicalising all of them to one
+    name is what keeps the label space closed.
+    """
+    known = set(names)
+    out: dict[str, str] = {}
+    for n in names:
+        brit = n.replace("Paleo", "Palaeo").replace("paleo", "palaeo").replace("rchean", "rchaean")
+        if brit != n:
+            out[brit.lower()] = n
+        for series, epoch in (("Lower", "Early"), ("Upper", "Late")):
+            if n.startswith(epoch + " "):
+                out[(series + n[len(epoch):]).lower()] = n
+    return {k: v for k, v in out.items() if k not in {x.lower() for x in known}}
 
 
 def _unwrap(payload: dict) -> list[dict]:
@@ -34,7 +66,10 @@ def _unwrap(payload: dict) -> list[dict]:
 
 
 def build(force: bool = False) -> dict[str, list]:
-    """Download and normalise all gazetteers into data/interim/vocab.json."""
+    """Download and normalise all gazetteers into data/interim/vocab.json.
+
+    Needs the ASUD snapshot (`asud.fetch()`) for the unit names.
+    """
     paths.ensure()
     out = paths.INTERIM / "vocab.json"
     if out.exists() and not force:
@@ -46,9 +81,6 @@ def build(force: bool = False) -> dict[str, list]:
         liths = _unwrap(client.get_json(f"{API}/defs/lithologies", {"all": ""}))
         intervals = _unwrap(client.get_json(f"{API}/defs/intervals", {"all": ""}))
         minerals = _unwrap(client.get_json(f"{API}/defs/minerals", {"all": ""}))
-        strats = _unwrap(
-            client.get_json(f"{API}/defs/strat_names", {"all": "", "response": "short"})
-        )
     finally:
         client.close()
 
@@ -65,6 +97,8 @@ def build(force: bool = False) -> dict[str, list]:
             continue
         chrono.append({"name": d["name"], "rank": d["int_type"],
                        "t_age": d.get("t_age"), "b_age": d.get("b_age")})
+    have = {c["name"] for c in chrono}
+    chrono += [c for c in EXTRA_INTERVALS if c["name"] not in have]
     chrono.sort(key=lambda d: d["name"])
 
     # Short mineral names ("ice", "gold") collide with ordinary English and with
@@ -73,16 +107,18 @@ def build(force: bool = False) -> dict[str, list]:
         {d["mineral"] for d in minerals if d.get("mineral") and len(d["mineral"]) >= 5}
     )
 
-    strat_names = sorted({
-        d["strat_name"] for d in strats if d.get("strat_name") and len(d["strat_name"]) >= 4
-    })
+    # Unit names come from ASUD itself: the relation rules only accept a
+    # captured name whose first word starts a real Australian unit name.
+    from . import asud
+    strat_names = sorted({u.name for u in asud.load_units().values() if len(u.name) >= 4})
 
     vocab = {
         "lithologies": lith_names,
         "chronostrat": chrono,
+        "chronostrat_aliases": chrono_aliases([c["name"] for c in chrono]),
         "minerals": mineral_names,
         "strat_names": strat_names,
-        "_license": "Macrostrat API, CC-BY 4.0",
+        "_license": "Macrostrat API, CC-BY 4.0; unit names from ASUD, CC BY 4.0",
     }
     out.write_text(json.dumps(vocab))
     console.print(

@@ -1,16 +1,16 @@
 {
   "stage": "tapt",
-  "probes": 54,
+  "probes": 25,
   "results": {
     "base": {
-      "n": 54,
-      "accuracy": 0.8148148148148148,
-      "mean_margin": 2.130044129245949
+      "n": 25,
+      "accuracy": 0.72,
+      "mean_margin": 1.3817977963015438
     },
     "adapted": {
-      "n": 54,
-      "accuracy": 0.8333333333333334,
-      "mean_margin": 2.3304864626929715
+      "n": 25,
+      "accuracy": 0.72,
+      "mean_margin": 1.2593153837323188
     }
   }
 }

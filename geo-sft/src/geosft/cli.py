@@ -79,14 +79,18 @@ def doctor() -> None:
 @app.command()
 def fetch(config: Optional[str] = ConfigOpt,
           force: bool = typer.Option(False, help="Ignore the cache and refetch.")) -> None:
-    """Download the Geolex corpus and the Macrostrat gazetteers."""
+    """Snapshot ASUD (Geoscience Australia) and download the Macrostrat gazetteers."""
     cfg = _cfg(config)
+    from .data import asud
     from .data import fetch as fetch_mod
     from .data import vocab as vocab_mod
 
+    asud.fetch(force=force)
     vocab_mod.build(force=force)
     fetch_mod.run(cfg.data.max_units, cfg.data.min_passage_chars,
-                  cfg.data.max_passage_chars, force=force)
+                  cfg.data.max_passage_chars, max_per_unit=cfg.data.max_per_unit,
+                  seed=cfg.data.seed, force=force)
+    console.print(f"[dim]{asud.ATTRIBUTION}[/dim]")
 
 
 @app.command()

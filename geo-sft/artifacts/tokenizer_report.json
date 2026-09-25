@@ -3,15 +3,15 @@
   "geo_vocab": 8000,
   "base_vocab": 151643,
   "fertility_geo_text": {
-    "base": 1.701,
-    "geo": 1.527
+    "base": 1.921,
+    "geo": 1.61
   },
   "fertility_general_text": {
     "base": 1.123,
-    "geo": 1.938
+    "geo": 1.877
   },
-  "n_terms_ge3_tokens": 1918,
-  "n_terms_checked": 2223,
+  "n_terms_ge3_tokens": 1923,
+  "n_terms_checked": 2228,
   "worst_fragmented_raw": [
     {
       "term": "Clino-ferro-ferri-fluoro-holmquistite",
@@ -91,154 +91,154 @@
   ],
   "worst_fragmented_weighted": [
     {
-      "term": "Pennsylvanian",
-      "base_tokens": 4,
-      "corpus_freq": 340,
-      "tokens_wasted": 1020
-    },
-    {
-      "term": "Cretaceous",
-      "base_tokens": 3,
-      "corpus_freq": 451,
-      "tokens_wasted": 902
-    },
-    {
-      "term": "Ordovician",
-      "base_tokens": 3,
-      "corpus_freq": 318,
-      "tokens_wasted": 636
-    },
-    {
-      "term": "Mississippian",
-      "base_tokens": 4,
-      "corpus_freq": 203,
-      "tokens_wasted": 609
-    },
-    {
-      "term": "gneiss",
-      "base_tokens": 3,
-      "corpus_freq": 248,
-      "tokens_wasted": 496
-    },
-    {
-      "term": "rhyolite",
-      "base_tokens": 4,
-      "corpus_freq": 158,
-      "tokens_wasted": 474
-    },
-    {
       "term": "siltstone",
       "base_tokens": 3,
-      "corpus_freq": 217,
-      "tokens_wasted": 434
-    },
-    {
-      "term": "Pleistocene",
-      "base_tokens": 3,
-      "corpus_freq": 209,
-      "tokens_wasted": 418
-    },
-    {
-      "term": "Oligocene",
-      "base_tokens": 3,
-      "corpus_freq": 151,
-      "tokens_wasted": 302
-    },
-    {
-      "term": "Proterozoic",
-      "base_tokens": 4,
-      "corpus_freq": 100,
-      "tokens_wasted": 300
-    },
-    {
-      "term": "Pliocene",
-      "base_tokens": 3,
-      "corpus_freq": 143,
-      "tokens_wasted": 286
-    },
-    {
-      "term": "Silurian",
-      "base_tokens": 3,
-      "corpus_freq": 135,
-      "tokens_wasted": 270
-    },
-    {
-      "term": "Biotite",
-      "base_tokens": 3,
-      "corpus_freq": 123,
-      "tokens_wasted": 246
-    },
-    {
-      "term": "breccia",
-      "base_tokens": 3,
-      "corpus_freq": 94,
-      "tokens_wasted": 188
+      "corpus_freq": 2951,
+      "tokens_wasted": 5902
     },
     {
       "term": "granodiorite",
       "base_tokens": 4,
-      "corpus_freq": 62,
-      "tokens_wasted": 186
+      "corpus_freq": 1858,
+      "tokens_wasted": 5574
     },
     {
-      "term": "andesite",
-      "base_tokens": 3,
-      "corpus_freq": 84,
-      "tokens_wasted": 168
+      "term": "rhyolite",
+      "base_tokens": 4,
+      "corpus_freq": 1135,
+      "tokens_wasted": 3405
     },
     {
-      "term": "Paleozoic",
+      "term": "Biotite",
       "base_tokens": 3,
-      "corpus_freq": 73,
-      "tokens_wasted": 146
+      "corpus_freq": 1406,
+      "tokens_wasted": 2812
+    },
+    {
+      "term": "gneiss",
+      "base_tokens": 3,
+      "corpus_freq": 1174,
+      "tokens_wasted": 2348
+    },
+    {
+      "term": "monzogranite",
+      "base_tokens": 5,
+      "corpus_freq": 538,
+      "tokens_wasted": 2152
+    },
+    {
+      "term": "mafic",
+      "base_tokens": 3,
+      "corpus_freq": 845,
+      "tokens_wasted": 1690
+    },
+    {
+      "term": "dolerite",
+      "base_tokens": 3,
+      "corpus_freq": 779,
+      "tokens_wasted": 1558
+    },
+    {
+      "term": "ignimbrite",
+      "base_tokens": 3,
+      "corpus_freq": 646,
+      "tokens_wasted": 1292
+    },
+    {
+      "term": "breccia",
+      "base_tokens": 3,
+      "corpus_freq": 602,
+      "tokens_wasted": 1204
+    },
+    {
+      "term": "Proterozoic",
+      "base_tokens": 4,
+      "corpus_freq": 382,
+      "tokens_wasted": 1146
+    },
+    {
+      "term": "dolostone",
+      "base_tokens": 3,
+      "corpus_freq": 504,
+      "tokens_wasted": 1008
+    },
+    {
+      "term": "gabbro",
+      "base_tokens": 3,
+      "corpus_freq": 498,
+      "tokens_wasted": 996
+    },
+    {
+      "term": "leucogranite",
+      "base_tokens": 5,
+      "corpus_freq": 235,
+      "tokens_wasted": 940
+    },
+    {
+      "term": "tonalite",
+      "base_tokens": 3,
+      "corpus_freq": 469,
+      "tokens_wasted": 938
     },
     {
       "term": "diorite",
       "base_tokens": 3,
-      "corpus_freq": 62,
-      "tokens_wasted": 124
-    },
-    {
-      "term": "Cenomanian",
-      "base_tokens": 4,
-      "corpus_freq": 35,
-      "tokens_wasted": 105
-    },
-    {
-      "term": "argillite",
-      "base_tokens": 3,
-      "corpus_freq": 52,
-      "tokens_wasted": 104
-    },
-    {
-      "term": "Carboniferous",
-      "base_tokens": 3,
-      "corpus_freq": 51,
-      "tokens_wasted": 102
-    },
-    {
-      "term": "Desmoinesian",
-      "base_tokens": 4,
-      "corpus_freq": 32,
-      "tokens_wasted": 96
+      "corpus_freq": 408,
+      "tokens_wasted": 816
     },
     {
       "term": "amphibolite",
       "base_tokens": 3,
-      "corpus_freq": 48,
-      "tokens_wasted": 96
+      "corpus_freq": 404,
+      "tokens_wasted": 808
     },
     {
-      "term": "graywacke",
-      "base_tokens": 4,
-      "corpus_freq": 29,
-      "tokens_wasted": 87
+      "term": "Mesoproterozoic",
+      "base_tokens": 5,
+      "corpus_freq": 194,
+      "tokens_wasted": 776
     },
     {
-      "term": "pumice",
+      "term": "andesite",
       "base_tokens": 3,
-      "corpus_freq": 43,
-      "tokens_wasted": 86
+      "corpus_freq": 360,
+      "tokens_wasted": 720
+    },
+    {
+      "term": "Ordovician",
+      "base_tokens": 3,
+      "corpus_freq": 354,
+      "tokens_wasted": 708
+    },
+    {
+      "term": "siliciclastic",
+      "base_tokens": 4,
+      "corpus_freq": 218,
+      "tokens_wasted": 654
+    },
+    {
+      "term": "Neoproterozoic",
+      "base_tokens": 5,
+      "corpus_freq": 154,
+      "tokens_wasted": 616
+    },
+    {
+      "term": "Carboniferous",
+      "base_tokens": 3,
+      "corpus_freq": 287,
+      "tokens_wasted": 574
+    },
+    {
+      "term": "pegmatite",
+      "base_tokens": 3,
+      "corpus_freq": 283,
+      "tokens_wasted": 566
+    },
+    {
+      "term": "rhyodacite",
+      "base_tokens": 5,
+      "corpus_freq": 140,
+      "tokens_wasted": 560
     }
   ]
 }

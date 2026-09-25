@@ -21,16 +21,19 @@ Match modes
   count  1 if the first number in the answer equals the gold count, else 0.
   judge  the judge's verdict (descriptive questions have no string gold).
 
-Names are matched on their core ("Church Member" matches "Church limestone"),
+Names are matched on their core ("Alsace Quartzite" matches "Alsace quartzites"),
 because an answer that names the right unit with a different rank word is right.
+Australian spellings match US ones ("Palaeoproterozoic" = "Paleoproterozoic").
 """
 from __future__ import annotations
 
 import json
 import re
 
+from geosft.data.states import STATE_NAMES
+
 from ..config import Config
-from ..ingest.extract import STATE_NAMES, core_name
+from ..ingest.extract import core_name
 from ..llm import complete
 from ..retrievers.pipeline import ABSTAIN
 
@@ -40,7 +43,8 @@ _QUALIFIER = re.compile(r"^ (early|middle|late) ")
 
 
 def _norm(text: str) -> str:
-    return " " + re.sub(r"[^a-z0-9]+", " ", text.lower()) + " "
+    t = text.lower().replace("palaeo", "paleo").replace("archaean", "archean")
+    return " " + re.sub(r"[^a-z0-9]+", " ", t) + " "
 
 
 def mentions(text: str, item: str) -> bool:
@@ -48,7 +52,7 @@ def mentions(text: str, item: str) -> bool:
     forms = {_norm(item).strip(), core_name(item)}
     # "Paleocene" for gold "Late Paleocene" is less precise, not wrong
     forms.add(_QUALIFIER.sub("", _norm(item)).strip())
-    if item.lower() in _CODE_OF:  # a state: its postal code counts too
+    if item.lower() in _CODE_OF:  # a state: its code (QLD, NSW, ...) counts too
         forms.add(_CODE_OF[item.lower()].lower())
     return any(f and f" {f} " in t for f in forms)
 

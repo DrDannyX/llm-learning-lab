@@ -1,0 +1,14 @@
+{
+  "run": "sft-1.7b-nocpt",
+  "iters_done": 900,
+  "final_train_loss": 0.06412597298622132,
+  "final_val_loss": 0.07224221527576447,
+  "best_val_loss": 0.06654953956604004,
+  "best_val_iter": 824,
+  "wall_minutes": 57.23,
+  "alerts": [],
+  "test_loss": 0.06599898636341095,
+  "test_perplexity": 1.068225622177124,
+  "adapter_path": "/Users/daniel/git/llm-scratchpad/geo-sft/runs/sft-1.7b-nocpt",
+  "model_path": "mlx-community/Qwen3-1.7B-4bit"
+}

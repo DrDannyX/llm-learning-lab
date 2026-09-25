@@ -3,13 +3,14 @@ question names, and map them to graph keys.
 
 Both graph-aware systems depend on this step, and it is where they most often
 fail. Text-to-Cypher with a 12B model cannot be trusted to guess that "the
-Eagle Ford Shale" is stored as `{name: 'Eagle Ford'}`, and it certainly cannot
-choose between the two units called Ada. So the names are resolved here,
-deterministically, and handed to the model as exact keys.
+Alsace quartzite" is stored as `{name: 'Alsace Quartzite'}`, and it certainly
+cannot choose between Murchison Granite and Murchison Volcanics when a question
+says "the Murchison". So the names are resolved here, deterministically, and
+handed to the model as exact keys.
 
 Matching is longest-match over word n-grams, and a unit match must start with
-a capital letter in the question -- 289 units have names like "Big", "Box" or
-"Alum" that are also ordinary words.
+a capital letter in the question -- ASUD has units whose names are ordinary
+words once the rank is stripped ("Top", "Red", "Mount").
 """
 from __future__ import annotations
 
@@ -17,7 +18,7 @@ import re
 from dataclasses import dataclass, field
 from functools import lru_cache
 
-from geosft.data.states import STATES
+from geosft.data.states import STATES, abbreviations
 
 from .. import db
 from ..config import Neo4jConfig
@@ -32,7 +33,7 @@ _NAME_TAIL = _RANK_OR_LITH | {"serie"}
 class Linked:
     units: list[dict] = field(default_factory=list)
     intervals: list[str] = field(default_factory=list)
-    states: list[str] = field(default_factory=list)      # postal codes
+    states: list[str] = field(default_factory=list)      # ASUD codes: NSW, QLD, ...
     lithologies: list[str] = field(default_factory=list)
 
     def describe(self) -> str:
@@ -54,7 +55,7 @@ class Linker:
         rows = db.read(cfg, """
             MATCH (u:Unit)
             RETURN u.key AS key, u.name AS name, u.full_name AS full_name, u.rank AS rank,
-                   u.aliases AS aliases, u.geolex AS geolex,
+                   u.aliases AS aliases, u.asud AS asud,
                    [(u)-[:OCCURS_IN]->(s) | s.code] AS states
         """)
         self.units = {r["key"]: r for r in rows}
@@ -67,7 +68,7 @@ class Linker:
                         self.surface.setdefault(form, set()).add(r["key"])
         self.intervals = {r["n"].lower(): r["n"] for r in db.read(cfg, "MATCH (i:Interval) RETURN i.name AS n")}
         self.lithologies = {r["n"]: r["n"] for r in db.read(cfg, "MATCH (l:Lithology) RETURN l.name AS n")}
-        self.states = {k: v for k, v in STATES.items() if k != "alaska peninsula"}
+        self.states = dict(STATES)
 
     def link(self, question: str) -> Linked:
         toks = [(m.group(0), m.start()) for m in _WORD.finditer(question)]
@@ -84,7 +85,7 @@ class Linker:
                     out.intervals.append(self.intervals[phrase])
                 elif phrase in self.surface and toks[i][0][0].isupper():
                     unit_hits.append(self.surface[phrase])
-                    # "Eagle Ford Shale": the trailing rank/lithology word is
+                    # "Alsace quartzites": the trailing rank/lithology word is
                     # part of the name, not a lithology filter
                     while i + span < len(toks) and low[i + span].rstrip("s") in _NAME_TAIL:
                         span += 1
@@ -96,16 +97,15 @@ class Linker:
                 break
             else:
                 i += 1
-        # bare postal codes: "units in TX"
-        codes = set(self.states.values())
-        out.states += [t for t, _ in toks if t in codes and t not in out.states]
+        # bare codes: "units in QLD", "Qld"
+        out.states += [c for c in sorted(abbreviations(question)) if c not in out.states]
 
         for keys in unit_hits:
             cands = [self.units[k] for k in keys]
-            # prefer curated Geolex units over placeholders, then homonyms that
+            # prefer curated ASUD units over placeholders, then homonyms that
             # share a state with the question
-            if any(c["geolex"] for c in cands):
-                cands = [c for c in cands if c["geolex"]]
+            if any(c["asud"] for c in cands):
+                cands = [c for c in cands if c["asud"]]
             if out.states and len(cands) > 1:
                 near = [c for c in cands if set(c["states"]) & set(out.states)]
                 cands = near or cands

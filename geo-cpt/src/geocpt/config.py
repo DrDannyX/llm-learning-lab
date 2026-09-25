@@ -12,19 +12,18 @@ Stage = Literal["tapt", "dapt", "dapt_tapt"]
 
 class CorpusCfg(BaseModel):
     #: Which corpus this run trains on.
-    #:   dapt  = broad geoscience domain text (USGS abstracts, full Geolex, ...)
+    #:   dapt  = broad geoscience domain text (GA publication abstracts, all of ASUD)
     #:   tapt  = the unlabelled text of the DOWNSTREAM TASK (geo-sft's passages)
     #: They are the same technique with different data -- see docs/LEARNING.md.
     stage: Stage = "tapt"
 
-    usgs_queries: list[str] = Field(default_factory=lambda: [
-        "stratigraphy", "lithology", "sedimentology", "petrology", "geochronology",
-        "mineral deposits", "structural geology", "volcanology", "geomorphology",
-        "hydrogeology", "paleontology", "igneous", "metamorphic", "basin analysis",
-        "formation", "sandstone", "limestone", "shale", "fault", "ore deposit",
-    ])
-    usgs_max_per_query: int = 1000
-    geolex_max_units: int = 16684          # the whole lexicon this time
+    #: eCat record types to take abstracts from. "document" = GA publications;
+    #: "dataset" adds ~10k dataset descriptions, which are drier and repetitive.
+    ecat_resource_types: list[str] = Field(default_factory=lambda: ["document"])
+    ecat_max_docs: int | None = None       # None = every record (~21k)
+    #: Include ASUD's superseded ("not current") units. Their notes are real
+    #: geology prose; for CPT the name being obsolete does not matter.
+    asud_not_current: bool = True
 
     min_doc_chars: int = 300
     max_doc_chars: int = 50_000

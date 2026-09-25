@@ -1,13 +1,15 @@
 # DAPT -- domain-adaptive pretraining on broad geoscience text.
-# USGS Publications Warehouse abstracts + the FULL USGS lexicon (16,684 units).
-# Expect ~15-20M tokens. Run TAPT first: if that moves nothing, this probably
-# will not either, and it costs hours of fetching.
+# Geoscience Australia: eCat publication abstracts + the WHOLE ASUD lexicon
+# (current and superseded units, minus geo-sft's held-out units).
+# Expect ~8M tokens. Run TAPT first: if that moves nothing, this probably
+# will not either.
 name: geo-cpt-dapt
 
 corpus:
   stage: dapt
-  usgs_max_per_query: 1000
-  geolex_max_units: 16684
+  ecat_resource_types: [document]
+  ecat_max_docs: null
+  asud_not_current: true
   quality_filter: true       # broad corpus DOES need filtering, unlike TAPT
   min_doc_chars: 300
   max_doc_chars: 50000

@@ -99,15 +99,15 @@
   </header>
 
   <form id="form">
-    <textarea id="q" rows="1" placeholder="Ask about a US geologic unit, e.g. What unit overlies the Aarde Shale Member?"></textarea>
+    <textarea id="q" rows="1" placeholder="Ask about an Australian geologic unit, e.g. Which unit overlies the Alsace Quartzite?"></textarea>
     <button id="go" type="submit">Ask all three</button>
   </form>
   <details class="examples" id="examples" open>
     <summary>Example questions: click one to run it</summary>
     <div class="groups" id="groups"></div>
-    <p class="tip">Writing your own? Name units the way the USGS lexicon does ("Aarde Shale Member",
-      "Chickamauga Group") and use US state names and geologic periods (Cretaceous, Pennsylvanian).
-      The corpus covers US geologic units only.</p>
+    <p class="tip">Writing your own? Name units the way Australia's lexicon does ("Alsace Quartzite",
+      "Mount Isa Group") and use Australian state names and geologic periods or eras (Permian,
+      Paleoproterozoic). The corpus covers Australian geologic units only.</p>
   </details>
 
   <section class="grid" id="grid"></section>
@@ -116,12 +116,13 @@
     <summary>About the data: where it comes from, how much there is, and its limits</summary>
 
     <h3>Where the text comes from</h3>
-    <p>Every answer is built from the <a href="https://ngmdb.usgs.gov/Geolex/search" target="_blank"
-      rel="noopener">USGS Geologic Names Lexicon (Geolex)</a>, the US Geological Survey's register of
-      named rock units. For each unit, Geolex holds short summaries of the published references that
-      defined or revised it, plus curated metadata: its age, the states it occurs in, its geologic
-      province, and how it nests inside larger units. The rock-type and timescale vocabularies come
-      from <a href="https://macrostrat.org" target="_blank" rel="noopener">Macrostrat</a>.
+    <p>Every answer is built from the <a href="https://asud.ga.gov.au" target="_blank"
+      rel="noopener">Australian Stratigraphic Units Database (ASUD)</a>, Geoscience Australia's
+      national register of named rock units. For each unit, ASUD holds a definition card and short
+      notes on how each published reference uses it, plus curated metadata: its age, the states it
+      occurs in, its geological province, how it nests inside larger units, its thickness, and
+      which units it overlies, underlies or intrudes. The rock-type and timescale vocabularies
+      come from <a href="https://macrostrat.org" target="_blank" rel="noopener">Macrostrat</a>.
       The corpus was downloaded by the first lab in this repo (geo-sft) and is reused unchanged.</p>
 
     <h3>How much data</h3>
@@ -136,34 +137,35 @@
       <th>relationship</th><th>meaning</th><th>source</th><th class="num">edges</th>
     </tr></thead><tbody></tbody></table></div>
     <p style="color: var(--muted); font-size: 12px">An edge asserted by both sources is counted
-      under each. <b>geolex</b>: curated by the USGS. <b>text</b>: extracted from passages by
+      under each. <b>asud</b>: curated by Geoscience Australia. <b>text</b>: extracted from passages by
       pattern-matching rules. <b>derived</b>: computed (filing, mentions, the timescale).</p>
 
     <h3>Limitations</h3>
     <ul>
-      <li><b>Units A to C only.</b> The corpus holds the first alphabetical slice of Geolex (see
-        above). A question about the Eagle Ford, the Morrison or the Navajo Sandstone will find
-        little or nothing, and every count is a count of A–C units, not of all US units.</li>
-      <li><b>US units only.</b> Geolex covers the United States and its territories.</li>
-      <li><b>Summaries, not papers.</b> Passages are lexicon summaries of references written
-        between <span data-k="year_min">…</span> and <span data-k="year_max">…</span> (median
-        <span data-k="year_median">…</span>). Much is archaic, and older passages can contradict
-        newer ones: names, ranks and ages were revised over time.</li>
-      <li><b>Rule-extracted relationships are noisy.</b> "Overlies", "equivalent to" and
-        text-derived rock types come from pattern-matching rules. When the first lab reviewed 150
-        rows labelled by those rules (a machine review, not a geologist's), 83% had at least one error.</li>
-      <li><b>Name matching is imperfect.</b> The same name can belong to more than one unit (there
-        are two Adas). Units mentioned in the text but outside the corpus appear as
+      <li><b>Not every unit has text.</b> The graph holds every current ASUD unit, but only
+        about <span data-k="with_text">…</span> have passages. Counts and filters cover the whole
+        lexicon; RAG can only ever see the units with text.</li>
+      <li><b>Australian units only.</b> ASUD covers Australia, its offshore basins and the
+        Australian Antarctic Territory.</li>
+      <li><b>Notes, not papers.</b> Passages are definition cards and short reference notes, from
+        references published between <span data-k="year_min">…</span> and
+        <span data-k="year_max">…</span> (median <span data-k="year_median">…</span>). Older notes
+        can contradict newer ones: names, ranks and ages were revised over time.</li>
+      <li><b>Rule-extracted relationships are noisy.</b> Text-derived "overlies", "intrudes",
+        "equivalent to" and rock types come from pattern-matching rules. When the first lab
+        reviewed 150 rows labelled by those rules (a machine review, not a geologist's), 57% had
+        at least one error. Curated ASUD relations are far more reliable.</li>
+      <li><b>Name matching is imperfect.</b> Many names share a core ("Murchison Granite",
+        "Murchison Volcanics"). Units named in the text that ASUD does not list appear as
         <span data-k="placeholders">…</span> placeholder units with no curated age, rock type or
         state.</li>
-      <li><b>Ages come only from curated metadata</b>, so a unit whose Geolex entry has no parseable
-        age will not match an age query in the graph, even if its passages mention one.</li>
+      <li><b>Ages come only from curated metadata</b>, so a unit whose ASUD entry has no age will
+        not match an age query in the graph, even if its passages mention one.</li>
       <li><b>No maps, figures or tables</b>: text and metadata only.</li>
     </ul>
-    <p style="color: var(--muted); font-size: 12px">Geolex is a US Government work in the public
-      domain. Macrostrat vocabularies are CC-BY 4.0. Counts are measured from the loaded database;
-      the Geolex total (16,684) is from when geo-sft fetched the corpus, and the 83% is from geo-sft's
-      gold review.</p>
+    <p style="color: var(--muted); font-size: 12px">ASUD: © Commonwealth of Australia (Geoscience
+      Australia), CC BY 4.0. Macrostrat vocabularies are CC-BY 4.0. Counts are measured from the
+      loaded database; the 57% is from geo-sft's gold review.</p>
   </details>
 
   <footer id="footer">The three systems run in parallel, so timings include contention on the local model.</footer>
@@ -290,12 +292,13 @@ const MEANING = {
   OVERLIES: "unit lies stratigraphically above another",
   EQUIVALENT_TO: "units are correlated or equivalent",
   GRADES_INTO: "unit grades laterally into another",
-  INTERTONGUES_WITH: "units interfinger",
+  INTERTONGUES_WITH: "units interfinger or are interbedded",
+  INTRUDES: "an intrusion and the unit it cuts",
   HAS_AGE: "unit's geologic age (interval)",
   WITHIN: "interval lies within a larger interval",
   HAS_LITHOLOGY: "rock type the unit contains",
   HAS_MINERAL: "mineral named in the unit's passages",
-  OCCURS_IN: "US state the unit occurs in",
+  OCCURS_IN: "Australian state or territory the unit occurs in",
   IN_PROVINCE: "geologic province or basin",
   DESCRIBES: "passage is filed under this unit",
   MENTIONS: "passage names another unit",
@@ -309,17 +312,18 @@ async function loadAbout() {
     const d = await (await fetch("/api/about")).json();
     if (d.error) throw new Error(d.error);
     const t = d.text, u = d.units;
-    const pct = (100 * u.geolex / d.geolex_total_units).toFixed(0);
-    $("coverage").replaceChildren(el("b", { text: `This is ${pct}% of Geolex. ` }),
-      `The corpus holds ${fmt(u.geolex)} of the ${fmt(d.geolex_total_units)} units in the lexicon: ` +
-      `the first slice of its alphabetical index, from “${d.names.first}” to “${d.names.last}”.`);
+    const pct = (100 * u.with_text / u.asud).toFixed(0);
+    $("coverage").replaceChildren(el("b", { text: `The whole lexicon is in the graph. ` }),
+      `It holds all ${fmt(u.asud)} current ASUD units, and ${fmt(u.with_text)} of them (${pct}%) ` +
+      `have passages that vector search can find.`);
     const tiles = [
-      [fmt(u.geolex), "Geolex units"],
-      [fmt(t.passages), "passages (reference summaries)"],
+      [fmt(u.asud), "ASUD units"],
+      [fmt(u.with_text), "units with passages"],
+      [fmt(t.passages), "passages (definitions and reference notes)"],
       [fmt(t.words), "words of text"],
       [`${d.passages_per_unit.mean}`, `passages per unit on average (max ${d.passages_per_unit.max})`],
       [`${t.year_min}–${t.year_max}`, `reference years (median ${t.year_median})`],
-      [fmt(d.states.count), "US states and territories"],
+      [fmt(d.states.count), "states, territories and offshore"],
       [fmt(u.placeholders), "placeholder units (named in text only)"],
       [fmt(d.nodes.reduce((a, n) => a + n.n, 0)), "graph nodes in total"],
     ];
@@ -333,7 +337,7 @@ async function loadAbout() {
         el("td", { class: "num", text: fmt(r.n) })));
     }
     const slots = { year_min: t.year_min, year_max: t.year_max, year_median: t.year_median,
-                    placeholders: fmt(u.placeholders) };
+                    placeholders: fmt(u.placeholders), with_text: fmt(u.with_text) };
     document.querySelectorAll("[data-k]").forEach((n) => { n.textContent = slots[n.dataset.k]; });
   } catch (err) {
     aboutLoaded = false;

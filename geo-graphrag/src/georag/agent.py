@@ -20,7 +20,7 @@ from .llm import model
 from .paths import ROOT
 
 SYSTEM = """You are a research assistant comparing three ways of answering questions about
-US geologic units from the USGS Geolex lexicon:
+Australian geologic units from Geoscience Australia's stratigraphic lexicon (ASUD):
   1. vector RAG      - retrieves similar text passages (ask_rag)
   2. knowledge graph - writes a Cypher query over a Neo4j graph (ask_kg)
   3. GraphRAG        - text passages plus graph facts (ask_graphrag)

@@ -84,11 +84,22 @@ def run(cfg: DataCfg, force: bool = False) -> dict:
     rng = random.Random(cfg.seed)
     rng.shuffle(unit_ids)
 
+    # A REVIEWED gold set is frozen. Its units are forced into test, and the
+    # file is never regenerated -- otherwise every labeller fix reshuffles the
+    # split and silently throws away hours of review. Delete the file to
+    # draw a fresh gold slice.
+    gold_p = paths.GOLD / "gold.jsonl"
+    frozen = [json.loads(l) for l in gold_p.open()] if gold_p.exists() else []
+    frozen = frozen if any(r.get("reviewed") for r in frozen) else []
+    gold_units = {r["unit_id"] for r in frozen}
+
     n_units = len(unit_ids)
     n_test = int(n_units * cfg.test_frac)
     n_val = int(n_units * cfg.val_frac)
-    test_u = set(unit_ids[:n_test])
-    val_u = set(unit_ids[n_test:n_test + n_val])
+    rest = [u for u in unit_ids if u not in gold_units]
+    test_u = set(sorted(gold_units & set(unit_ids))) | set(rest[:max(n_test - len(gold_units), 0)])
+    rest = [u for u in rest if u not in test_u]
+    val_u = set(rest[:n_val])
 
     splits: dict[str, list[dict]] = {"train": [], "valid": [], "test": []}
     for uid in unit_ids:
@@ -107,12 +118,16 @@ def run(cfg: DataCfg, force: bool = False) -> dict:
         ])
 
     # ---- gold slice, drawn from test and never trained on ----------------
-    gold_rows = splits["test"][: cfg.gold_n]
-    _write_jsonl(paths.GOLD / "gold.jsonl", [
-        {**{k: v for k, v in r.items() if k != "messages"},
-         "reviewed": False, "reviewer_notes": ""}
-        for r in gold_rows
-    ])
+    if frozen:
+        gold_rows = frozen
+        console.print(f"[dim]gold frozen: {len(frozen)} reviewed rows kept, units forced into test[/dim]")
+    else:
+        gold_rows = splits["test"][: cfg.gold_n]
+        _write_jsonl(gold_p, [
+            {**{k: v for k, v in r.items() if k != "messages"},
+             "reviewed": False, "reviewer_notes": ""}
+            for r in gold_rows
+        ])
 
     stats = {
         "passages_in": len(records),

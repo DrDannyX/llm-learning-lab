@@ -1,7 +1,7 @@
 """Cloze probes: does the model actually KNOW more geoscience?
 
 Perplexity is a fluency measure over whole passages, and it can improve simply
-because the model learned the *style* of USGS prose -- the hedging, the
+because the model learned the *style* of lexicon prose -- the hedging, the
 abbreviations, the sentence rhythm. That is real but it is not knowledge.
 
 A cloze probe isolates knowledge. Take a held-out sentence containing a domain

@@ -8,11 +8,12 @@ run over the same geoscience corpus as [geo-sft](../geo-sft/) and
 Ask one question and get three answers side by side:
 
 ```
-$ georag ask "How many Pennsylvanian units occur in Kansas?"
+$ georag ask "How many Ordovician units occur in Tasmania?"
 
  Vector RAG                    Knowledge graph                GraphRAG
- There are 7 Pennsylvanian     There are 41 Pennsylvanian     Based on the context, there
- units mentioned ...           units that occur in Kansas.    are 4 Pennsylvanian units ...
+ There are 3 Ordovician        There are 58 Ordovician        There are 3 Ordovician units
+ units mentioned in the        units that occur in            identified in the context
+ context for Tasmania ...      Tasmania.                      for Tasmania ...
 ```
 
 Only one of those is right, and it is not always the same system. Building an
@@ -34,7 +35,7 @@ intuition for *which one, and why* is what this lab is for.
 | LLM integration | [Strands Agents](https://strandsagents.com/): every LLM call and the agent loop |
 | graph + vectors | Neo4j 5 (Docker): property graph **and** vector index in one store |
 | tool interface | MCP server (8 tools) + a Strands agent that uses it |
-| corpus | USGS Geolex: 3,302 units, 8,757 passages, read from `../geo-sft/data/interim` |
+| corpus | Geoscience Australia's ASUD: all 18,387 units, 22,311 passages about 8,094 of them, read from `../geo-sft/data` |
 
 ## Quick start
 
@@ -51,7 +52,7 @@ make up             # Neo4j in Docker; browser at http://localhost:7474 (neo4j /
 make doctor         # checks everything
 make ingest         # corpus -> graph + embeddings -> Neo4j (~3 min first time, 15 s after)
 
-make ask Q="What unit overlies the Aarde Shale Member?"
+make ask Q="Which unit overlies the Alsace Quartzite?"
 make inspect Q="Which Cretaceous units in Texas contain chalk?"
 make agent          # chat with a Strands agent that uses all three via MCP
 make web            # the same comparison in a browser: http://localhost:8000
@@ -94,24 +95,27 @@ Three questions that separate the systems:
 
 ```bash
 make ask Q="How many Pennsylvanian units occur in Kansas?"          # only the KG can count
-make ask Q="What fossils occur in the Aarde Shale Member?"          # the KG has no prose
+make ask Q="What trace fossils occur in the Tumblagooda Sandstone?"  # the KG has no prose
 make ask Q="Which Cretaceous units in Texas contain chalk?"         # complete vs. what's written
 ```
 
 ## Results
 
 See **[docs/RESULTS.md](docs/RESULTS.md)** for the full report and what it does
-and does not establish. In short: each system wins the categories its design
-predicts, and **context recall** separates retrieval failures from generation
-failures.
+and does not establish. Overall: **RAG 0.29, knowledge graph 0.88, GraphRAG
+0.74** (64 questions). Each system wins the categories its design predicts,
+and **context recall** separates retrieval failures from generation failures.
+RAG scores lower than on the Geolex version of this lab (0.61) because ASUD
+prose rarely states a unit's age or state in words — those facts live in
+ASUD's tables, which only the graph reads.
 
 ## Gotchas
 
-- **The corpus is units A to C only.** geo-sft fetched the first 4,000 entries
-  of Geolex's alphabetical index: 3,302 of 16,684 units, from "A-L Peak" to
-  "Cross Creek". Questions about the Eagle Ford or the Morrison find little, and
-  every count is a count of A–C units. The web UI's *About the data* panel
-  shows the full picture.
+- **The graph holds the whole lexicon; the text does not.** All 18,387 current
+  ASUD units are nodes, but only 8,094 have passages. Counts and filters range
+  over every unit, so RAG can never see most of what a count question asks
+  about. That is by design, and it is the lesson. The web UI's *About the
+  data* panel shows the full picture.
 
 - **Pin both models in LM Studio.** With JIT loading and auto-evict, the
   embedding model and the chat model evict each other on *every question*. Nothing

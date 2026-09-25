@@ -1,1582 +1,1174 @@
 {
  "0": {
-  "lithologies": [],
-  "states": [
-   "MT"
-  ],
-  "_note": "limestone and AK both from the unit name 'Alaska Bench Limestone'; Amsden's own lithology is not described"
+  "_note": "correct as labelled"
  },
  "1": {
-  "minerals": [],
-  "_note": "quartz appears only inside the rock-type name 'Quartz Syenite', not as a reported mineral occurrence"
+  "lithologies": [
+   "mafic"
+  ],
+  "relations": [
+   {
+    "kind": "intrudes",
+    "unit": "Astrea Fm"
+   },
+   {
+    "kind": "intrudes",
+    "unit": "Sugarbag Ck.Quartzite"
+   }
+  ],
+  "_note": "quartzite came from the intruded unit's name 'Sugarbag Ck.Quartzite'; its second intrusive relation was missed (coordinated list)"
  },
  "2": {
-  "rank": "Member",
   "lithologies": [
+   "carbonate",
    "sandstone",
-   "shale"
+   "shale",
+   "siliciclastic",
+   "siltstone"
   ],
-  "states": [
-   "OH"
-  ],
-  "relations": [
-   {
-    "kind": "overlies",
-    "unit": "Arnoldsburg Coal"
-   },
-   {
-    "kind": "underlies",
-    "unit": "Uniontown Limestone"
-   }
-  ],
-  "_note": "explicit 'member of Monongahela series'; coal/limestone belong to adjacent units; 'Morgan Co., OH'; overlying/underlying construction missed by the regex"
+  "minerals": [],
+  "_note": "dolomite (rock and mineral) is the 'cap dolomite of the Areyonga Formation', a different unit; 1020 m type-section thickness kept (reference sections are partial)"
  },
  "3": {
-  "_note": "correct as labelled"
+  "relations": [
+   {
+    "kind": "equivalent_to",
+    "unit": "Weaner Sandstone"
+   }
+  ],
+  "_note": "'lithostratigraphic correlative of either the upper or lower Weaner Sandstone' missed: 'correlative of' is followed by 'either'"
  },
  "4": {
-  "_note": "correct as labelled; rank Formation via the lithology-as-rank convention for 'Amberg Granite'"
+  "_note": "correct; andesitic/dacitic are adjectives on the ignimbrite"
  },
  "5": {
-  "rank": "Member",
-  "lithologies": [
-   "limestone",
-   "shale"
-  ],
-  "minerals": [],
-  "states": [
-   "KY"
-  ],
-  "_note": "'Named middle member'; dolomite only from the unit name 'Saluda Dolomite Member'; unit_name correctly null since Bardstown never appears in the passage"
+  "_note": "correct; tuff and chert appear only in the unit's current and former names"
  },
  "6": {
-  "rank": "Group",
   "lithologies": [],
-  "states": [
-   "NV"
+  "relations": [
+   {
+    "kind": "overlies",
+    "unit": "Showell Member"
+   },
+   {
+    "kind": "underlies",
+    "unit": "Arnold Sandst"
+   },
+   {
+    "kind": "underlies",
+    "unit": "Jalboi Fm"
+   }
   ],
-  "_note": "'rank raised to Bird Springs Group'; limestone only from 'Yellowpine Limestone'; 'Clark Co, NV'"
+  "_note": "'the sandstone' is the Arnold Sandstone; 'Overlain disconformably by' (adverb between verb and 'by') defeated the overlain-by rule"
  },
  "7": {
-  "minerals": [],
-  "states": [
-   "TX"
+  "minerals": [
+   "Biotite",
+   "Hornblende"
   ],
-  "relations": [
-   {
-    "kind": "overlies",
-    "unit": "Bullwagon Dolomite"
-   },
-   {
-    "kind": "underlies",
-    "unit": "San Angelo Formation"
-   }
-  ],
-  "_note": "dolomite is the rock, not a separate mineral; 'Coke Co., central TX'; bounding units stated as 'from top of X to base of Y'"
+  "_note": "quartz only inside the rock name 'quartz monzonite'"
  },
  "8": {
-  "lithologies": [
-   "dolomite",
-   "sand",
-   "till"
-  ],
-  "minerals": [],
-  "states": [
-   "WI"
-  ],
   "relations": [
    {
-    "kind": "equivalent_to",
-    "unit": "Ozaukee Member"
-   },
-   {
-    "kind": "equivalent_to",
-    "unit": "Silver Cliff Member"
-   },
-   {
     "kind": "overlies",
-    "unit": "Horicon Formation"
+    "unit": "Whim Creek Group"
    },
    {
     "kind": "underlies",
-    "unit": "Chilton Member"
+    "unit": "Louden Volcanics"
+   },
+   {
+    "kind": "underlies",
+    "unit": "Mount Negri Volcanics"
    }
   ],
-  "_note": "'Silver' from the unit name 'Silver Cliff Member'; gravel belongs to Horicon; MI from the lake name 'Lake Michigan'; two relations missed"
+  "_note": "'Underlain disconformably by' has no rule; second overlying unit missed (comma list)"
  },
  "9": {
-  "unit_name": "Carlile",
-  "states": [
-   "WY"
-  ],
-  "_note": "Carlile is the subject but first appears at char ~155, just past the labeller's 150-char window; 'Weston Co, WY'"
+  "_note": "correct"
  },
  "10": {
-  "rank": "Member",
-  "lithologies": [
-   "coal",
-   "shale"
-  ],
-  "states": [
-   "IL",
-   "IN",
-   "KY"
-  ],
-  "_note": "'Coal Member of Linton Formation' (parenthetical '(No. 2)' broke the rank regex); limestone refers to the Velpen unit; OH is from 'Ohio River', a river not the state"
+  "_note": "correct"
  },
  "11": {
-  "rank": "Formation",
   "relations": [
    {
-    "kind": "intertongues_with",
-    "unit": "Jasper Creek Formation"
+    "kind": "intrudes",
+    "unit": "Culcraigie Granite"
    },
    {
-    "kind": "overlies",
-    "unit": "Jasper Creek Formation"
-   },
-   {
-    "kind": "overlies",
-    "unit": "Willow Point Formation"
-   },
-   {
-    "kind": "underlies",
-    "unit": "Ventioner Formation"
+    "kind": "intrudes",
+    "unit": "Tandora Granodiorite"
    }
   ],
-  "_note": "Chico Ridge Limestone is formation-rank within Canyon Group; 'Member' came from the contained Devils Den Limestone Member; two relations missed"
+  "_note": "'Interpreted as intruding' has no rule"
  },
  "12": {
-  "_note": "correct as labelled"
+  "lithologies": [
+   "conglomerate",
+   "granite",
+   "limestone",
+   "marble",
+   "sandstone",
+   "volcanic"
+  ],
+  "minerals": [
+   "Biotite",
+   "Plagioclase",
+   "Pyroxene",
+   "Quartz"
+  ],
+  "_note": "house abbreviations conglom., limest., sst., qtz. are stated rock and mineral names the gazetteer cannot see"
  },
  "13": {
   "relations": [
    {
-    "kind": "underlies",
-    "unit": "Elma"
+    "kind": "equivalent_to",
+    "unit": "Gum Vale Beds"
+   },
+   {
+    "kind": "equivalent_to",
+    "unit": "Mokely Creek Sandstone member"
    }
   ],
-  "_note": "rule produced a SELF-relation (Athol Springs overlies Athol Springs) from 'Above the Athol Springs is ... Elma'; the true relation is the inverse"
+  "_note": "'Equivalent to the informal ...' defeated by the adjective"
  },
  "14": {
-  "thickness": null,
-  "states": [
-   "WY"
-  ],
-  "_note": "20-100 ft is the thickness of the 'rusty beds' in the Thermopolis, not Cloverly; CO came from the unit name 'Colorado formation', not the state"
+  "_note": "correct"
  },
  "15": {
-  "rank": "Formation",
-  "states": [
-   "NC"
-  ],
-  "relations": [
-   {
-    "kind": "overlies",
-    "unit": "Tillery Formation"
-   }
-  ],
-  "_note": "'Named as a formation in Albemarle Group'; the Albemarle 'underlies' relation was a containment misread - Cid is IN that group; 'Davidson Co., central NC'"
- },
- "16": {
-  "relations": [
-   {
-    "kind": "overlies",
-    "unit": "Drum Limestone"
-   },
-   {
-    "kind": "underlies",
-    "unit": "Iola Limestone"
-   }
-  ],
-  "_note": "'underlies true Iola limestone' missed"
- },
- "17": {
-  "unit_name": "Brandywine",
-  "states": [
-   "DC",
-   "MD"
-  ],
-  "relations": [
-   {
-    "kind": "overlies",
-    "unit": "Patuxent Formation"
-   },
-   {
-    "kind": "unconformable_on",
-    "unit": "Chesapeake Group"
-   }
-  ],
-  "_note": "name first appears ~380 chars in, past the labeller's window; 'Prince Georges Co., MD, and DC'; two relations missed"
- },
- "18": {
-  "lithologies": [
-   "clay",
-   "sandstone",
-   "siltstone"
-  ],
-  "states": [
-   "TX"
-  ],
-  "_note": "'soil' is a weathering product, not a lithology of the unit; 'Wilson-Karnes Co. line, southern TX'"
- },
- "19": {
-  "states": [
-   "NC"
-  ],
-  "_note": "'Aurora district, NC'; quartz kept - 'coarse quartz sand' is compositional, not a proper name"
- },
- "20": {
-  "_note": "correct as labelled"
- },
- "21": {
-  "rank": "Member",
-  "states": [
-   "AK"
-  ],
-  "relations": [
-   {
-    "kind": "intertongues_with",
-    "unit": "Chute Creek Member"
-   },
-   {
-    "kind": "overlies",
-    "unit": "Moose Creek Member"
-   },
-   {
-    "kind": "underlies",
-    "unit": "Chute Creek Member"
-   }
-  ],
-  "_note": "'second from lowest member (of 5)'; CA came from the unit's OWN name 'California Creek'; 'Underlies and interfingers Chute Creek' missed"
- },
- "22": {
-  "chronostrat": [
-   "Eocene",
-   "Late Eocene"
-  ],
-  "states": [
-   "WY"
-  ],
-  "_note": "'early, middle and late Eocene' - the non-contiguous list defeated the n-gram matcher; 'Sweetwater Co, WY'"
- },
- "23": {
-  "states": [
-   "PA"
-  ],
-  "relations": [
-   {
-    "kind": "overlies",
-    "unit": "Social Island Limestone Member"
-   },
-   {
-    "kind": "underlies",
-    "unit": "New Market Limestone"
-   }
-  ],
-  "_note": "'central southern PA'; both relations explicitly stated and missed"
- },
- "24": {
-  "relations": [
-   {
-    "kind": "overlies",
-    "unit": "Bluebird Mountain Formation"
-   }
-  ],
-  "_note": "'the underlying Bluebird Mountain Formation' missed"
- },
- "25": {
-  "rank": "Formation",
-  "thickness": {
-   "min_m": 200.0,
-   "max_m": 300.0
-  },
-  "states": [],
-  "relations": [
-   {
-    "kind": "unconformable_on",
-    "unit": "Bouse Formation"
-   },
-   {
-    "kind": "unconformable_on",
-    "unit": "Hualapai Formation"
-   }
-  ],
-  "_note": "'lower part of formation'/'top of the formation'; max thickness 250-300 m also stated; NV came from a bibliographic citation (Nevada Bur. Mines), not the unit's locality"
- },
- "26": {
-  "minerals": [],
-  "thickness": {
-   "min_m": 22.86,
-   "max_m": 45.72
-  },
-  "_note": "dolomite is the rock, not a separate mineral; 'elsewhere thickness is about 150 feet' extends the range"
- },
- "27": {
-  "lithologies": [
-   "granite"
-  ],
-  "_note": "diabase and granodiorite belong to other units (diabase dikes, Newingham Granodiorite)"
- },
- "28": {
-  "_note": "correct as labelled"
- },
- "29": {
-  "lithologies": [],
-  "_note": "'region of completely igneous rock' describes the surroundings - the unit is called unusual precisely because it is not igneous"
- },
- "30": {
-  "lithologies": [],
-  "relations": [
-   {
-    "kind": "equivalent_to",
-    "unit": "Kevin Member"
-   },
-   {
-    "kind": "equivalent_to",
-    "unit": "Telegraph Creek Formation"
-   },
-   {
-    "kind": "equivalent_to",
-    "unit": "Two Medicine Formation"
-   },
-   {
-    "kind": "equivalent_to",
-    "unit": "Virgelle Sandstone"
-   },
-   {
-    "kind": "overlies",
-    "unit": "Jens Formation"
-   },
-   {
-    "kind": "underlies",
-    "unit": "Golden Spike Formation"
-   }
-  ],
-  "_note": "ALL FOUR lithologies were proper-noun false positives: granite from 'Granite County', sandstone from 'Virgelle Sandstone', shale from 'Marias River Shale', volcanic from 'Elkhorn Mountains Volcanics'. Carten Creek's own lithology is never described. 'Correlates with' is not in the relation patterns (only 'correlated with')"
- },
- "31": {
-  "_note": "correct as labelled"
- },
- "32": {
-  "minerals": [
-   "Biotite",
-   "Clinopyroxene",
-   "Oligoclase",
-   "Quartz",
-   "Zircon"
-  ],
-  "thickness": {
-   "min_m": 200.0,
-   "max_m": 500.0
-  },
-  "_note": "oligoclase and clinopyroxene are named in the phenocryst list but absent from the label; 'about 200 m thick in Cooney Canyon' extends the range downward"
- },
- "33": {
-  "rank": "Member",
-  "relations": [
-   {
-    "kind": "overlies",
-    "unit": "Mingus Shale Member"
-   },
-   {
-    "kind": "underlies",
-    "unit": "East Mountain Shale Member"
-   }
-  ],
-  "_note": "'sandstone and conglomerate member of Mineral Wells formation'; 'Underlies East Mountain shale member' missed"
- },
- "34": {
-  "rank": "Member",
-  "lithologies": [
-   "limestone"
-  ],
-  "thickness": {
-   "min_m": 0.91,
-   "max_m": 0.91
-  },
-  "_note": "'lowest member of Howard limestone'; coal and shale belong to the overlying Aarde shale member; 'up to 3+/- feet' defeated the thickness regex"
- },
- "35": {
-  "_note": "correct as labelled"
- },
- "36": {
-  "_note": "correct as labelled"
- },
- "37": {
-  "_note": "correct as labelled; rank Unknown is right - the passage says 'unranked'"
- },
- "38": {
-  "relations": [
-   {
-    "kind": "overlies",
-    "unit": "Paso Robles Formation"
-   },
-   {
-    "kind": "unconformable_on",
-    "unit": "Paso Robles Formation"
-   }
-  ],
-  "_note": "contact explicitly unconformable"
- },
- "39": {
-  "states": [
-   "KY"
-  ],
-  "_note": "KY named four times but the gazetteer only matches full state names, not postal abbreviations"
- },
- "40": {
-  "lithologies": [],
-  "states": [
-   "AL",
-   "NC",
-   "SC"
-  ],
-  "relations": [
-   {
-    "kind": "equivalent_to",
-    "unit": "Blufftown Formation"
-   },
-   {
-    "kind": "equivalent_to",
-    "unit": "Ripley Formation"
-   }
-  ],
-  "_note": "'tar' came from the unit name 'Tar Heel(?) Formation'; three state abbreviations missed; 'Correlates with' not in the relation patterns"
- },
- "41": {
-  "chronostrat": [
-   "Early Triassic",
-   "Ladinian",
-   "Late Triassic",
-   "Middle Triassic"
-  ],
-  "relations": [
-   {
-    "kind": "overlies",
-    "unit": "Favert Formation"
-   },
-   {
-    "kind": "overlies",
-    "unit": "Panther Canyon Formation"
-   },
-   {
-    "kind": "underlies",
-    "unit": "Cane Spring Formation"
-   }
-  ],
-  "_note": "'Middle and Late Triassic' - Middle missed; two overlies relations missed"
- },
- "42": {
-  "lithologies": [
-   "sandstone"
-  ],
-  "thickness": {
-   "min_m": 3.05,
-   "max_m": 18.29
-  },
-  "states": [
-   "TN"
-  ],
-  "_note": "shale belongs to the bounding Glenmary and Burnt Mill units; 'thins to 10 or 15 feet' extends the range down; 'Morgan Co., eastern TN'"
- },
- "43": {
-  "states": [],
-  "_note": "KS came only from the citation 'Kansas Geol. Survey', not from a stated locality"
- },
- "44": {
-  "minerals": [],
-  "states": [
-   "NV"
-  ],
-  "_note": "dolomite is the rock, not a separate mineral; 'Pershing Co., NV' and 'Humboldt Co., NV'"
- },
- "45": {
-  "minerals": [],
-  "thickness": null,
-  "_note": "'Copper' came from the place name 'Copper Basin area'; 258 ft is the thickness of the upper part only, not of the formation"
- },
- "46": {
-  "_note": "correct as labelled"
- },
- "47": {
-  "rank": "Member",
-  "lithologies": [
-   "biosparite",
-   "limestone",
-   "mudstone",
-   "silt"
-  ],
-  "states": [
-   "AK"
-  ],
-  "_note": "'Is middle member (of 3) of Nasorak Formation'; shale belongs to the underlying unnamed shale member; 'northwestern AK'"
- },
- "48": {
-  "lithologies": [
-   "conglomerate",
-   "tuff",
-   "volcanic"
-  ],
-  "relations": [
-   {
-    "kind": "underlies",
-    "unit": "Eagle Creek Formation"
-   }
-  ],
-  "_note": "basalt came from the unit name 'Columbia River Basalt'; 'Separated from overlying Eagle Creek Formation' missed"
- },
- "49": {
-  "unit_name": "Aldrich Mountains",
-  "rank": "Group",
-  "lithologies": [
-   "sedimentary"
-  ],
-  "relations": [
-   {
-    "kind": "equivalent_to",
-    "unit": "Graylock Formation"
-   },
-   {
-    "kind": "overlies",
-    "unit": "Brisbois"
-   }
-  ],
-  "_note": "the bracketed spelling 'Aldrich Mountain[s] Group' defeated both the name match and the rank regex; graywacke and shale come from the contained units' names"
- },
- "50": {
-  "lithologies": [],
-  "_note": "limestone from 'Madison limestone' and sandstone from 'Darwin sandstone' - both other units; Amsden's own lithology is never described here"
- },
- "51": {
-  "_note": "correct as labelled"
- },
- "52": {
-  "unit_name": "Albany",
-  "lithologies": [
-   "syenite"
-  ],
-  "minerals": [],
-  "_note": "name first appears ~390 chars in; granite belongs to the Conway/Osceola/Lafayette units; quartz only inside the proper name 'Albany Quartz Syenite'"
- },
- "53": {
-  "lithologies": [],
-  "states": [
-   "OH"
-  ],
-  "relations": [
-   {
-    "kind": "underlies",
-    "unit": "Ames Limestone"
-   },
-   {
-    "kind": "underlies",
-    "unit": "Pomeroy Coal"
-   }
-  ],
-  "_note": "every lithology belonged to another unit or to the separating interval; 'Guernsey Co., eastern OH'; Ames relation missed"
- },
- "54": {
-  "thickness": null,
-  "states": [
-   "CA"
-  ],
-  "_note": "2 m is the turbidite BED thickness; the passage says maximum thickness is unknown; 'Placer Co, CA'"
- },
- "55": {
-  "lithologies": [],
-  "chronostrat": [
-   "Eocene",
-   "Late Eocene",
-   "Middle Eocene"
-  ],
-  "states": [],
-  "_note": "limestone only from the contained 'Utley Limestone Member' name; 'earliest late ... Eocene' missed; GA came only from the citation 'Georgia Geol. Survey'"
- },
- "56": {
-  "rank": "Formation",
-  "relations": [
-   {
-    "kind": "overlies",
-    "unit": "ATURIA Bed"
-   }
-  ],
-  "_note": "the subject is Astoria shale(s), not the discarded Astoria group; the ATURIA relation was missed because the all-caps name does not match the [A-Z][a-z]+ name pattern"
- },
- "57": {
-  "lithologies": [
-   "silt"
-  ],
-  "chronostrat": [
-   "Illinoian"
-  ],
-  "states": [],
-  "_note": "till belongs to the bounding Centerville and Richmond units; WI came from the AGE term 'Age is Wisconsin (Illinoian)', not the state"
- },
- "58": {
-  "lithologies": [
-   "sandstone"
-  ],
-  "states": [
-   "CO"
-  ],
-  "_note": "shale from 'Mancos Shale'/'Mowry Shale'; 'Rio Blanco Co, CO'"
- },
- "59": {
-  "unit_name": "Clinchfield",
-  "rank": "Formation",
-  "states": [
-   "GA",
-   "SC"
-  ],
-  "_note": "name first appears ~200 chars in; 'name changed from Sand to Formation'; 'central GA' and 'also in SC'"
- },
- "60": {
-  "thickness": {
-   "min_m": 457.2,
-   "max_m": 3657.6
-  },
-  "_note": "'varies from 1,500 to as much as 12,000 feet' - only the upper bound was captured"
- },
- "61": {
-  "rank": "Group",
-  "lithologies": [],
-  "states": [],
-  "_note": "'Chase adopted as group term'; flint/limestone/shale all come from the names of contained formations; KS only from the citation 'Kansas Geol. Survey'"
- },
- "62": {
-  "_note": "correct as labelled"
- },
- "63": {
-  "states": [],
-  "relations": [
-   {
-    "kind": "overlies",
-    "unit": "Lares Limestone"
-   },
-   {
-    "kind": "unconformable_on",
-    "unit": "Lares Limestone"
-   }
-  ],
-  "_note": "FL came from 'the Florida quad.' - a quadrangle name, and this unit is in Puerto Rico; the Lares contact was missed"
- },
- "64": {
-  "unit_name": "Antlers",
-  "rank": "Formation",
-  "_note": "name first appears ~155 chars in, just past the window, which also blocked rank inference from 'Antlers sand'"
- },
- "65": {
-  "rank": "Member",
-  "relations": [
-   {
-    "kind": "overlies",
-    "unit": "Belt"
-   },
-   {
-    "kind": "overlies",
-    "unit": "Boulder Batholith"
-   },
-   {
-    "kind": "underlies",
-    "unit": "Sixmile Creek Formation"
-   }
-  ],
-  "_note": "'Rank reduced to member of Renova Formation'; 'nonconformably overlies granitic rocks of Boulder batholith' missed"
- },
- "66": {
-  "minerals": [
-   "Zircon"
-  ],
-  "states": [
-   "CA"
-  ],
-  "relations": [],
-  "_note": "quartz appears only inside compound rock names (quartz monzonite/monzodiorite); the 'overlies Sheep Creek Spring' relation was an ELEVATION reference ('above Sheep Creek Spring between 2000 and 2800 ft elev.'), not stratigraphy; 'San Bernardino Co, CA'"
- },
- "67": {
-  "unit_name": "Clough",
-  "rank": "Formation",
-  "lithologies": [
-   "quartzite"
-  ],
-  "chronostrat": [
-   "Silurian"
-  ],
-  "_note": "name appears ~240 chars in; volcanic and the other ages belong to the co-listed Ammonoosuc/Partridge/Fitch/Littleton units, not to Clough (Lower Silurian)"
- },
- "68": {
-  "unit_name": "Berne",
-  "rank": "Member",
-  "relations": [],
-  "_note": "name appears ~165 chars in; 'Berne member was proposed'; the Stony Hollow relation was spurious - that bracket defines the Cherry Valley equivalent, not a contact"
- },
- "69": {
-  "lithologies": [
-   "clay",
-   "gravel",
-   "sand",
-   "silt"
-  ],
-  "states": [
-   "WA"
-  ],
-  "_note": "drift from the unit name 'Vashon drift'; 'Snohomish Co., WA'"
- },
- "70": {
-  "_note": "correct as labelled"
- },
- "71": {
-  "lithologies": [
-   "quartzite",
-   "sandstone",
-   "siltstone"
-  ],
-  "_note": "phyllite and schist come from the bounding Heflin Phyllite and Chulafinnee Schist; 'phyllitic' here is an adjective on the quartzite"
- },
- "72": {
-  "unit_name": "Citronelle",
-  "minerals": [
-   "Hematite"
-  ],
-  "states": [
-   "MS"
-  ],
-  "_note": "name sits right at the 150-char boundary; 'hematite-coated' missed because the gazetteer does not match adjectival forms; 'southern MS'"
- },
- "73": {
-  "lithologies": [
-   "latite",
-   "volcanic"
-  ],
-  "minerals": [],
-  "states": [
-   "NM"
-  ],
-  "_note": "rhyolite and tuff belong to Cerro Toledo Rhyolite and Bandelier Tuff; quartz only inside the proper name 'Quartz Latite'; 'north-central NM'"
- },
- "74": {
-  "states": [],
-  "_note": "NJ came from 'New Jersey Creek' - a creek in the Aleutians. The unit is Alaskan"
- },
- "75": {
-  "minerals": [
-   "Biotite",
-   "Feldspar",
-   "Hornblende"
-  ],
-  "states": [
-   "AK"
-  ],
-  "_note": "hornblende and biotite are named in 'hornblende-biotite quartz monzonite' but were missed; quartz appears only in the compound rock name; 'southeast AK'"
- },
- "76": {
-  "relations": [
-   {
-    "kind": "overlies",
-    "unit": "North Keys Sand"
-   }
-  ],
-  "_note": "'Overlies North Keys sand (new)' missed"
- },
- "77": {
-  "lithologies": [
-   "limestone"
-  ],
-  "minerals": [],
-  "states": [
-   "KY"
-  ],
-  "_note": "dolomite only from the overlying 'Saluda Dolomite Member'; 'south-central KY'"
- },
- "78": {
-  "lithologies": [
-   "limestone"
-  ],
-  "thickness": {
-   "min_m": 4.57,
-   "max_m": 13.72
-  },
-  "relations": [
-   {
-    "kind": "overlies",
-    "unit": "New Scotland"
-   },
-   {
-    "kind": "underlies",
-    "unit": "Alsen Limestone"
-   }
-  ],
-  "_note": "shale from 'Mandata shale'; thickness varies 15-45 ft along strike, only 45 ft captured; both contacts missed"
- },
- "79": {
-  "lithologies": [
-   "tuff"
-  ],
-  "chronostrat": [
-   "Eocene",
-   "Oligocene"
-  ],
-  "_note": "andesite from 'Buffalo Peaks Andesite'; 'andesitic' is an adjective on the tuff; the Eocene-Oligocene boundary age was missed"
- },
- "80": {
-  "lithologies": [
-   "conglomerate",
-   "graywacke",
-   "sandstone",
-   "shale",
-   "siltstone"
-  ],
-  "_note": "limestone from the underlying 'Mural Limestone'"
- },
- "81": {
-  "rank": "Member",
-  "lithologies": [
-   "limestone"
-  ],
-  "states": [
-   "TX"
-  ],
-  "relations": [
-   {
-    "kind": "underlies",
-    "unit": "Bluff Bone Bed"
-   }
-  ],
-  "_note": "'Is member of Wichita formation'; the 'overlies Cisco' relation belongs to the Wichita, not Beaverburk; shale is the separating interval"
- },
- "82": {
-  "minerals": [],
-  "_note": "quartz only inside the proper name 'Amberg Quartz Monzonite'"
- },
- "83": {
-  "_note": "correct as labelled; the 5-30/25-42/15 ft figures are zone thicknesses, correctly not taken as the unit thickness"
- },
- "84": {
-  "_note": "correct as labelled"
- },
- "85": {
-  "minerals": [],
-  "states": [
-   "IL",
-   "KY"
-  ],
-  "_note": "dolomite is the rock; 'equivalent to Shakopee Dolomite in IL and KY'"
- },
- "86": {
-  "lithologies": [],
-  "states": [
-   "WY"
-  ],
-  "relations": [
-   {
-    "kind": "overlies",
-    "unit": "Madison Limestone"
-   },
-   {
-    "kind": "underlies",
-    "unit": "Darwin Sandstone Member"
-   }
-  ],
-  "_note": "every lithology came from another unit's name (Madison/Mission Canyon/Brazer Limestone, Darwin Sandstone); 'Overlies main part of Madison' missed; 'Teton Co., WY'"
- },
- "87": {
-  "relations": [
-   {
-    "kind": "overlies",
-    "unit": "Walcksville Sandstone Member"
-   },
-   {
-    "kind": "underlies",
-    "unit": "Damascus Redbed Member"
-   }
-  ],
-  "_note": "relation unit names were truncated mid-name by the capture pattern"
- },
- "88": {
-  "minerals": [
-   "Biotite",
-   "Feldspar",
-   "Quartz",
-   "Sillimanite",
-   "Zircon"
-  ],
-  "_note": "quartz, feldspar, sillimanite and biotite are all named in the rock descriptions but absent from the label"
- },
- "89": {
-  "relations": [
-   {
-    "kind": "overlies",
-    "unit": "Turtle Lake Sand"
-   },
-   {
-    "kind": "underlies",
-    "unit": "New Brighton Formation"
-   }
-  ],
-  "_note": "'underlies New Brighton Formation' missed"
- },
- "90": {
-  "lithologies": [
-   "sandstone"
-  ],
-  "states": [
-   "AZ",
-   "NM"
-  ],
-  "relations": [
-   {
-    "kind": "equivalent_to",
-    "unit": "Abrigo Formation"
-   },
-   {
-    "kind": "equivalent_to",
-    "unit": "Bliss Sandstone"
-   },
-   {
-    "kind": "equivalent_to",
-    "unit": "Bolsa Quartzite"
-   },
-   {
-    "kind": "overlies",
-    "unit": "Precambrian granodiorite"
-   },
-   {
-    "kind": "underlies",
-    "unit": "El Paso Limestone"
-   }
-  ],
-  "_note": "granodiorite/limestone/quartzite all belong to adjacent or correlative units; BOTH contacts were missed despite being stated plainly; counties in NM and AZ"
- },
- "91": {
-  "unit_name": "Colchester",
-  "rank": "Member",
-  "lithologies": [
-   "coal"
-  ],
-  "states": [
-   "IN"
-  ],
-  "_note": "name appears ~230 chars in; limestone and shale are the co-listed Velpen and Mecca Quarry members; OH again from 'Ohio River'"
- },
- "92": {
-  "rank": "Formation",
-  "thickness": {
-   "min_m": 106.68,
-   "max_m": 106.68
-  },
-  "states": [
-   "WY"
-  ],
-  "_note": "'Formation is as much as 350 ft thick'; the 0-35 ft figure is the basal conglomerate, not the unit; 'Fremont Co, WY'"
- },
- "93": {
-  "lithologies": [
-   "clay",
-   "conglomerate",
-   "sand",
-   "sandstone"
-  ],
-  "thickness": {
-   "min_m": 9.14,
-   "max_m": 9.14
-  },
-  "relations": [
-   {
-    "kind": "overlies",
-    "unit": "Dockum Group"
-   }
-  ],
-  "_note": "limestone from 'Comanche Peak Limestone'; 'Thickness 30+/- feet' defeated the regex; 'Lies above Triassic Dockum Group' missed"
- },
- "94": {
-  "states": [
-   "PR"
-  ],
-  "relations": [
-   {
-    "kind": "overlies",
-    "unit": "Aymamon Limestone"
-   },
-   {
-    "kind": "unconformable_on",
-    "unit": "Aymamon Limestone"
-   }
-  ],
-  "_note": "'town of Camuy, PR'; contact is disconformable"
- },
- "95": {
-  "_note": "correct as labelled"
- },
- "96": {
-  "states": [
-   "IN"
-  ],
-  "relations": [
-   {
-    "kind": "overlies",
-    "unit": "Elwren Formation"
-   }
-  ],
-  "_note": "OH again from 'Ohio River'; IN kept - the passage places the unit in Indiana; 'Conformably underlain by Elwren Formation' missed"
- },
- "97": {
-  "_note": "correct as labelled"
- },
- "98": {
-  "lithologies": [
-   "limestone",
-   "sandstone",
-   "shale"
-  ],
-  "thickness": {
-   "min_m": 30.48,
-   "max_m": 30.48
-  },
-  "relations": [
-   {
-    "kind": "overlies",
-    "unit": "Tar Springs Sandstone"
-   }
-  ],
-  "_note": "'tar' from the unit name 'Tar Springs Sandstone'; 5-10 ft is an internal sandstone bed - the unit is 100+ ft; 'Underlain by Tar Springs' missed"
- },
- "99": {
-  "rank": "Formation",
-  "states": [
-   "SD"
-  ],
-  "_note": "'Is the upper formation of White River group'; two SD counties named"
- },
- "100": {
-  "thickness": {
-   "min_m": 44.81,
-   "max_m": 304.8
-  },
-  "_note": "'147 to a little more than 1,000 feet' - only the upper bound captured"
- },
- "101": {
-  "relations": [
-   {
-    "kind": "overlies",
-    "unit": "Two Medicine Formation"
-   }
-  ],
-  "_note": "'Overlies Two Medicine formation' missed"
- },
- "102": {
-  "_note": "correct as labelled"
- },
- "103": {
-  "minerals": [],
-  "states": [
-   "NV"
-  ],
-  "_note": "'Charcoal' came from the contained unit 'Charcoal Canyon Formation'; 'Toquima Range, NV'"
- },
- "104": {
-  "relations": [],
-  "_note": "the 'overlies Lisbon' relation is about the Yegua ('The Yegua overlies Lisbon formation'), not Cockfield, which is described as the TOP MEMBER of Lisbon"
- },
- "105": {
-  "rank": "Formation",
-  "_note": "'Coffeyville [formation]' - the square brackets defeated the rank regex"
- },
- "106": {
-  "rank": "Member",
-  "relations": [
-   {
-    "kind": "overlies",
-    "unit": "Rusty Zone"
-   }
-  ],
-  "_note": "quotation marks around '\"Canyon Creek\" Member' and '\"Rusty Zone\"' defeated both the rank regex and the relation capture"
- },
- "107": {
-  "rank": "Member",
-  "lithologies": [],
-  "states": [
-   "AZ"
-  ],
-  "_note": "'As a member of Galiuro Volcanics'; 'volcanic' came from that unit name; 'Galiuro Mountains, AZ'"
- },
- "108": {
-  "_note": "correct as labelled"
- },
- "109": {
-  "unit_name": "Bear Swamp",
-  "rank": "Bed",
-  "lithologies": [
-   "shale"
-  ],
-  "thickness": {
-   "min_m": 0.0,
-   "max_m": 14.0
-  },
-  "states": [
-   "NY"
-  ],
-  "_note": "name appears ~400 chars in; the limestone/mudstone and 60 m belong to the enclosing Windom Shale Member - Bear Swamp itself is 0-14 m of Chonetid-rich shale"
- },
- "110": {
-  "lithologies": [],
-  "_note": "the sandstones/shales/limestones are the series SEPARATING Amsden from the Madison, not Amsden itself"
- },
- "111": {
-  "lithologies": [
-   "limestone"
-  ],
-  "minerals": [],
-  "states": [
-   "AL",
-   "GA",
-   "TN"
-  ],
-  "relations": [
-   {
-    "kind": "overlies",
-    "unit": "Knox Dolomite"
-   },
-   {
-    "kind": "underlies",
-    "unit": "Sevier Shale"
-   }
-  ],
-  "_note": "dolomite and shale from the bounding Knox and Sevier units; three states named; 'beneath the Sevier shale' missed"
- },
- "112": {
-  "lithologies": [
-   "alluvium",
-   "sand",
-   "soil"
-  ],
-  "_note": "'drift' came from the physiographic name 'Southern Iowa Drift Plain'"
- },
- "113": {
-  "states": [
-   "NC"
-  ],
-  "_note": "'Beaufort Co., NC'"
- },
- "114": {
-  "relations": [
-   {
-    "kind": "overlies",
-    "unit": "Greenhorn Calcareous Member"
-   },
-   {
-    "kind": "underlies",
-    "unit": "Niobrara Shale Member"
-   }
-  ],
-  "_note": "relation unit names truncated mid-name"
- },
- "115": {
-  "rank": "Member",
-  "lithologies": [
-   "conglomerate",
-   "sandstone"
-  ],
-  "relations": [],
-  "_note": "'sandstone and conglomerate member of Garner formation'; coal from 'Thurber coal'; the relation was SELF-referential (Brazos above Brazos)"
- },
- "116": {
-  "lithologies": [
-   "shale"
-  ],
-  "_note": "limestone refers to the miscorrelated Iola, not to the Chanute shale"
- },
- "117": {
-  "unit_name": "Buck Spring",
-  "lithologies": [
-   "sandstone",
-   "siltstone"
-  ],
-  "states": [
-   "WY"
-  ],
-  "_note": "name appears ~290 chars in; limestone from 'Death Canyon limestone'; 'Carbon Co, WY'"
- },
- "118": {
-  "lithologies": [
-   "clay",
-   "limestone",
-   "shale"
-  ],
-  "relations": [
-   {
-    "kind": "overlies",
-    "unit": "Two Medicine Formation"
-   },
-   {
-    "kind": "underlies",
-    "unit": "Horsethief Sandstone"
-   }
-  ],
-  "_note": "sandstone from the overlying Horsethief; 'gumbo soil' is a weathering product; 'Overlies Two Medicine formation' missed"
- },
- "119": {
-  "_note": "correct as labelled"
- },
- "120": {
-  "lithologies": [
-   "sandstone",
-   "shale"
-  ],
-  "_note": "limestone belongs to the Iola, Drum and Bronson units used as markers"
- },
- "121": {
-  "lithologies": [],
-  "states": [
-   "CA"
-  ],
-  "relations": [
-   {
-    "kind": "overlies",
-    "unit": "Kinnick Formation"
-   }
-  ],
-  "_note": "the andesite is the OVERLYING unit at the section top; 'underlying Kinnick Formation' missed; 'Kern Co, CA'"
- },
- "122": {
-  "unit_name": "Copper Basin",
-  "minerals": [],
-  "_note": "'Copper' came from the unit's own name / the Copper Basin thrust plate, not a mineral occurrence; name appears ~300 chars in"
- },
- "123": {
-  "minerals": [
-   "Muscovite"
-  ],
-  "relations": [
-   {
-    "kind": "equivalent_to",
-    "unit": "Rangeley Formation"
-   },
-   {
-    "kind": "underlies",
-    "unit": "Fitch Formation"
-   }
-  ],
-  "_note": "quartz only inside 'orthoquartzite' and 'quartz metaconglomerate'; the Rangeley correlation was missed"
- },
- "124": {
-  "states": [
-   "SD",
-   "WY"
-  ],
-  "_note": "CO came from the unit name 'Colorado group'; the real localities are Crook Co, WY and Butte Co, SD"
- },
- "125": {
-  "lithologies": [
-   "sand",
-   "sandstone"
-  ],
-  "thickness": {
-   "min_m": 30.0,
-   "max_m": 30.0
-  },
-  "relations": [
-   {
-    "kind": "overlies",
-    "unit": "Rio Indio Limestone Member"
-   },
-   {
-    "kind": "underlies",
-    "unit": "Quebrada Arenas Limestone"
-   }
-  ],
-  "_note": "limestone from the underlying Rio Indio member; 'about 30 meters of sand' missed by the thickness regex"
- },
- "126": {
-  "lithologies": [],
-  "thickness": {
-   "min_m": 15.24,
-   "max_m": 222.5
-  },
-  "relations": [
-   {
-    "kind": "overlies",
-    "unit": "Harmony Formation"
-   },
-   {
-    "kind": "overlies",
-    "unit": "Scott Canyon"
-   },
-   {
-    "kind": "overlies",
-    "unit": "Valmy"
-   },
-   {
-    "kind": "underlies",
-    "unit": "Antler Peak Limestone"
-   }
-  ],
-  "_note": "limestone from the overlying Antler Peak Limestone; 'to about 730 ft' extends the range; three overlies relations missed"
- },
- "127": {
-  "_note": "correct as labelled"
- },
- "128": {
-  "lithologies": [
-   "limestone"
-  ],
-  "relations": [
-   {
-    "kind": "overlies",
-    "unit": "Elwren Sandstone"
-   },
-   {
-    "kind": "underlies",
-    "unit": "Cypress Sandstone"
-   }
-  ],
-  "_note": "sandstone from the bounding Cypress and Elwren units; relation names were truncated"
- },
- "129": {
-  "lithologies": [
-   "sand",
-   "sandstone"
-  ],
-  "thickness": {
-   "min_m": 54.86,
-   "max_m": 243.84
-  },
-  "relations": [
-   {
-    "kind": "unconformable_on",
-    "unit": "Merced Formation"
-   },
-   {
-    "kind": "unconformable_on",
-    "unit": "Monterey Shale"
-   },
-   {
-    "kind": "unconformable_on",
-    "unit": "Purisima Formation"
-   },
-   {
-    "kind": "unconformable_on",
-    "unit": "Santa Lucia Granite"
-   }
-  ],
-  "_note": "alluvium/gravel are the overlying terrace deposits; granite/shale/volcanics are the units it overlaps; '180 feet at type section' extends the range; four unconformable contacts missed"
- },
- "130": {
-  "rank": "Formation",
-  "_note": "'Austell Gneiss' - gneiss should have triggered the lithology-as-rank fallback"
- },
- "131": {
-  "lithologies": [],
-  "minerals": [],
-  "thickness": {
-   "min_m": 15.24,
-   "max_m": 137.16
-  },
-  "_note": "dolomite and sandstone come from the names of the contained St. Peter and Joachim units; 'to 450+ feet in southern Indiana' extends the range"
- },
- "132": {
-  "lithologies": [
-   "limestone"
-  ],
-  "minerals": [],
-  "relations": [
-   {
-    "kind": "overlies",
-    "unit": "Poos Brook Limestone"
-   },
-   {
-    "kind": "unconformable_on",
-    "unit": "Poos Brook Limestone"
-   },
-   {
-    "kind": "underlies",
-    "unit": "Onondaga"
-   }
-  ],
-  "_note": "sand and quartz both from 'basal quartz sands of the Onondaga'; both contacts missed"
- },
- "133": {
-  "states": [
-   "WY"
-  ],
-  "relations": [
-   {
-    "kind": "overlies",
-    "unit": "Rusty Zone"
-   },
-   {
-    "kind": "underlies",
-    "unit": "Almond Formation"
-   }
-  ],
-  "_note": "'southwestern WY'; 'Overlies middle unit (Rusty Zone)' missed"
- },
- "134": {
-  "lithologies": [
-   "conglomerate",
-   "dolomite",
-   "limestone",
-   "marble"
-  ],
-  "states": [
-   "VT"
-  ],
-  "relations": [
-   {
-    "kind": "overlies",
-    "unit": "Highgate Slate"
-   },
-   {
-    "kind": "overlies",
-    "unit": "Williston Limestone"
-   },
-   {
-    "kind": "underlies",
-    "unit": "Georgia Slate"
-   }
-  ],
-  "_note": "GA came from the unit name 'Georgia slate' - the unit is in VERMONT ('Franklin Co., northwestern VT'); the label also had Corliss both overlying AND underlying the Highgate, a contradiction"
- },
- "135": {
-  "states": [
-   "CA"
-  ],
-  "_note": "'Inyo Co, CA'"
- },
- "136": {
-  "minerals": [],
-  "states": [
-   "IL"
-  ],
-  "relations": [
-   {
-    "kind": "overlies",
-    "unit": "St. James Member"
-   },
-   {
-    "kind": "underlies",
-    "unit": "Eagle Point Member"
-   }
-  ],
-  "_note": "dolomite is the rock; 'northern IL'; both relations stated on the columnar section and missed"
- },
- "137": {
-  "minerals": [
-   "Gibbsite",
-   "Hematite",
-   "Kaolinite"
-  ],
-  "states": [
-   "MS"
-  ],
-  "relations": [
-   {
-    "kind": "overlies",
-    "unit": "Graham Ferry Member"
-   },
-   {
-    "kind": "unconformable_on",
-    "unit": "Graham Ferry Member"
-   }
-  ],
-  "_note": "the 'hematite-gibbsite-kaolinite film' names three minerals, none captured (hyphenated compound); 'southern MS'"
- },
- "138": {
-  "states": [
-   "VA"
-  ],
-  "_note": "'Lee Co., VA'"
- },
- "139": {
-  "_note": "correct as labelled"
- },
- "140": {
-  "relations": [
-   {
-    "kind": "intertongues_with",
-    "unit": "Morrison Formation"
-   },
-   {
-    "kind": "intertongues_with",
-    "unit": "Summerville Formation"
-   }
-  ],
-  "_note": "'intertonguing relationships with Summerville formation and lower members of Morrison formation' missed"
- },
- "141": {
-  "_note": "correct as labelled"
- },
- "142": {
-  "_needs_expert": true,
-  "_note": "lithologies, thickness and rank all check out. 'Galena' is not visible in the opening 560 chars - it may come from later text about the ore bodies, or be another proper-noun false positive. Flagged for a geologist to confirm"
- },
- "143": {
-  "lithologies": [
-   "sedimentary"
-  ],
-  "_note": "basalt is the OVERLYING 'basalt of Devils Garden', not part of the Alturas"
- },
- "144": {
-  "lithologies": [
-   "sandstone"
-  ],
-  "relations": [
-   {
-    "kind": "overlies",
-    "unit": "Lower Uniontown Coal"
-   },
-   {
-    "kind": "underlies",
-    "unit": "Uniontown Limestone"
-   }
-  ],
-  "_note": "coal and limestone are the bounding Uniontown units; 'overlies Lower Uniontown coal' missed"
- },
- "145": {
-  "states": [
-   "VA",
-   "WV"
-  ],
-  "_note": "OH is not supported anywhere in the passage; the stated localities are central WV and western VA"
- },
- "146": {
-  "_note": "correct as labelled"
- },
- "147": {
-  "unit_name": "Black River",
-  "rank": "Group",
-  "lithologies": [],
-  "states": [],
-  "_note": "name appears ~430 chars in; limestone from 'Trenton Limestone'; OH unsupported by the passage"
- },
- "148": {
-  "states": [
-   "CO"
-  ],
-  "_note": "'northwestern CO'"
- },
- "149": {
   "lithologies": [
    "chert",
    "sandstone",
    "shale"
   ],
   "minerals": [
-   "Pyrite"
+   "Baryte",
+   "Hematite"
   ],
-  "states": [
-   "PA"
+  "_note": "'shaley unit' and barite-hematite mineralisation missed (barite spelling not in the Baryte vocabulary)"
+ },
+ "16": {
+  "_note": "correct"
+ },
+ "17": {
+  "_note": "correct; quartz kept as compositional (quartz sandstone), per the Geolex-era convention"
+ },
+ "18": {
+  "chronostrat": [],
+  "_note": "Silurian is the age of the Benambran Orogeny that deformed the unit, not the unit's age"
+ },
+ "19": {
+  "_note": "correct"
+ },
+ "20": {
+  "_note": "correct"
+ },
+ "21": {
+  "_note": "correct"
+ },
+ "22": {
+  "lithologies": [
+   "coal"
+  ],
+  "_note": "'ash content' is a coal-quality measure, not a lithology"
+ },
+ "23": {
+  "lithologies": [
+   "granodiorite",
+   "monzodiorite"
+  ],
+  "_note": "'igneous crystallisation age' is not a lithology; monzodiorite and the all-caps GRANODIORITES list were missed"
+ },
+ "24": {
+  "_note": "correct"
+ },
+ "25": {
+  "rank": "Formation",
+  "relations": [
+   {
+    "kind": "overlies",
+    "unit": "Ragged Range Conglomerate"
+   },
+   {
+    "kind": "unconformable_on",
+    "unit": "Halls Creek Group"
+   },
+   {
+    "kind": "unconformable_on",
+    "unit": "Whitewater Volcanics"
+   }
+  ],
+  "_note": "Member came from the FORMER name 'Kellys Knob Sandstone Member'; second unconformable unit missed"
+ },
+ "26": {
+  "_note": "correct ('probably overlies'); thrust contacts are not in the schema"
+ },
+ "27": {
+  "relations": [
+   {
+    "kind": "intertongues_with",
+    "unit": "Captains Flat Formation"
+   },
+   {
+    "kind": "overlies",
+    "unit": "Copper Creek Shale"
+   },
+   {
+    "kind": "overlies",
+    "unit": "Kohinoor Volcanics"
+   }
+  ],
+  "_note": "second overlain unit missed (coordination)"
+ },
+ "28": {
+  "minerals": [],
+  "_note": "Dolomite here is the reservoir rock, not a mineral occurrence"
+ },
+ "29": {
+  "lithologies": [],
+  "_note": "'volcanic units' belong to the overlying Tollu Group"
+ },
+ "30": {
+  "_note": "correct"
+ },
+ "31": {
+  "_note": "correct ('Over 135m' taken as 135)"
+ },
+ "32": {
+  "lithologies": [],
+  "_note": "'plutonic units' are the ungrouped Siluro-Devonian units mapped with it, not a description of this supersuite"
+ },
+ "33": {
+  "_note": "correct"
+ },
+ "34": {
+  "relations": [
+   {
+    "kind": "intruded_by",
+    "unit": "Gawler Range Volcanics"
+   },
+   {
+    "kind": "underlies",
+    "unit": "Gawler Range Volcanics"
+   }
+  ],
+  "_note": "'Intruded, and overlain by' -- the intrusive relation was missed"
+ },
+ "35": {
+  "lithologies": [],
+  "_note": "as row 32: 'plutonic units' are other units"
+ },
+ "36": {
+  "_note": "correct"
+ },
+ "37": {
+  "relations": [
+   {
+    "kind": "intruded_by",
+    "unit": "Eskdale Granodiorite"
+   }
+  ],
+  "_note": "'the Eskdale Granodiorite intrudes the lower part of the formation' is active voice with the subject as object; mylonite kept (developed within the unit at the fault contact)"
+ },
+ "38": {
+  "chronostrat": [],
+  "relations": [],
+  "_note": "'See Proterozoic Chapter' is a cross-reference, not an age statement; 'Correlated with Luina Group in past' is a superseded correlation"
+ },
+ "39": {
+  "_note": "correct"
+ },
+ "40": {
+  "lithologies": [
+   "carbonate",
+   "dolomite",
+   "limestone",
+   "quartzite",
+   "sandstone",
+   "shale",
+   "siltstone"
+  ],
+  "minerals": [],
+  "thickness": {
+   "min_m": 2242.0,
+   "max_m": 2242.0
+  },
+  "relations": [
+   {
+    "kind": "equivalent_to",
+    "unit": "Fountain Spring Beds"
+   },
+   {
+    "kind": "equivalent_to",
+    "unit": "Opaminda Formation"
+   },
+   {
+    "kind": "equivalent_to",
+    "unit": "River Wakefield Subgroup"
+   },
+   {
+    "kind": "overlies",
+    "unit": "Top Mount Sandstone Beds"
+   },
+   {
+    "kind": "underlies",
+    "unit": "Witchelina Quartzite"
+   }
+  ],
+  "_note": "'mud' (mud cracks) and 'sand' (sand:shale ratio) are not lithologies; dolomite is the rock; '2 242 in type section' has no unit; 'Lies conformably between X and Y' has no rule"
+ },
+ "41": {
+  "_note": "correct"
+ },
+ "42": {
+  "_note": "correct"
+ },
+ "43": {
+  "lithologies": [],
+  "relations": [
+   {
+    "kind": "equivalent_to",
+    "unit": "Katipiri Sand"
+   },
+   {
+    "kind": "equivalent_to",
+    "unit": "Kutjitara Formation"
+   },
+   {
+    "kind": "equivalent_to",
+    "unit": "Tirari Formation"
+   }
+  ],
+  "_note": "alluvium is the younger cover, not the unit; coordinated equivalents missed"
+ },
+ "44": {
+  "_note": "correct; the correlation is of a sequence boundary, not of the unit"
+ },
+ "45": {
+  "_note": "correct"
+ },
+ "46": {
+  "relations": [
+   {
+    "kind": "equivalent_to",
+    "unit": "Balaclava Formation"
+   },
+   {
+    "kind": "equivalent_to",
+    "unit": "Channer Creek Beds"
+   },
+   {
+    "kind": "equivalent_to",
+    "unit": "Mount Alma Formation"
+   },
+   {
+    "kind": "equivalent_to",
+    "unit": "Mount Hoopbound Formation"
+   },
+   {
+    "kind": "equivalent_to",
+    "unit": "Three Moon Conglomerate"
+   }
+  ],
+  "_note": "'Mount Hoopbound, Balaclava, Mount Alma Formations' is a shared-rank list; the rule captured only 'Mount Hoopbound'"
+ },
+ "47": {
+  "relations": [
+   {
+    "kind": "intertongues_with",
+    "unit": "Montys Hut Formation"
+   },
+   {
+    "kind": "intertongues_with",
+    "unit": "Wilson Creek Shale"
+   },
+   {
+    "kind": "overlies",
+    "unit": "Wilson Creek Shale"
+   },
+   {
+    "kind": "underlies",
+    "unit": "Montys Hut Formation"
+   }
+  ],
+  "_note": "'Interbedded with' has no rule"
+ },
+ "48": {
+  "lithologies": [
+   "iron formation",
+   "mafic",
+   "sandstone",
+   "schist",
+   "siltstone"
+  ],
+  "relations": [
+   {
+    "kind": "underlies",
+    "unit": "Killi Killi Formation"
+   },
+   {
+    "kind": "underlies",
+    "unit": "Lucas Formation"
+   },
+   {
+    "kind": "underlies",
+    "unit": "Muriel Range Sandstone"
+   },
+   {
+    "kind": "underlies",
+    "unit": "Pargee Sandstone"
+   },
+   {
+    "kind": "underlies",
+    "unit": "Pedestal Beds"
+   }
+  ],
+  "_note": "sandstone missed at the start of the list; four of five overlying units missed (coordination)"
+ },
+ "49": {
+  "relations": [
+   {
+    "kind": "overlies",
+    "unit": "Oolloo Dolostone"
+   }
+  ],
+  "_note": "DIRECTION ERROR: 'an interval overlying Oolloo Dolostone' means the subject overlies it; the 'overlying X' rule assumes 'the overlying X'"
+ },
+ "50": {
+  "relations": [
+   {
+    "kind": "intertongues_with",
+    "unit": "Toggannoggra Rhyolite Member"
+   }
+  ],
+  "_note": "'interdigitates within' has no rule; Late Silurian kept as Silurian (no Late Silurian interval in the vocabulary)"
+ },
+ "51": {
+  "lithologies": [],
+  "minerals": [],
+  "_note": "zeolite and greenschist are metamorphic FACIES names here, not reported rock or mineral occurrences"
+ },
+ "52": {
+  "relations": [
+   {
+    "kind": "overlies",
+    "unit": "Pipers Flat Formation"
+   }
+  ],
+  "_note": "'Underlain by' has no rule"
+ },
+ "53": {
+  "_note": "correct"
+ },
+ "54": {
+  "minerals": [
+   "Biotite",
+   "Muscovite"
+  ],
+  "relations": [
+   {
+    "kind": "intrudes",
+    "unit": "Morehead Granite"
+   },
+   {
+    "kind": "intrudes",
+    "unit": "Sugarbag Creek Quartzite"
+   }
+  ],
+  "_note": "hyphenated 'muscovite-biotite' minerals missed; second intruded unit missed"
+ },
+ "55": {
+  "chronostrat": [],
+  "relations": [
+   {
+    "kind": "intrudes",
+    "unit": "Mulgathing Complex"
+   }
+  ],
+  "_note": "Archaean is the age of the intruded Mulgathing Complex; the relation was lost because the age prefix 'Archaean' is capitalised"
+ },
+ "56": {
+  "rank": "Formation",
+  "thickness": {
+   "min_m": 30.0,
+   "max_m": 160.0
+  },
+  "_note": "'Pyroclastics' is a lithology-as-rank name (ASUD: Formation); '30 m in type area but greater than 160 m' is a range"
+ },
+ "57": {
+  "_note": "correct"
+ },
+ "58": {
+  "rank": "Formation",
+  "relations": [
+   {
+    "kind": "equivalent_to",
+    "unit": "Ragged Range Conglomerate"
+   }
+  ],
+  "_note": "Member came from the former name; 'distal facies equivalent of' missed"
+ },
+ "59": {
+  "lithologies": [],
+  "thickness": null,
+  "_note": "amphibolite is a facies name; 300 m is the thickness of the Cowerdup Sill it hosts"
+ },
+ "60": {
+  "_note": "correct ('Victoria Basin' correctly not read as the state)"
+ },
+ "61": {
+  "_note": "correct"
+ },
+ "62": {
+  "relations": [
+   {
+    "kind": "equivalent_to",
+    "unit": "Skeletar Formation"
+   },
+   {
+    "kind": "unconformable_on",
+    "unit": "Boggabri Volcanics"
+   },
+   {
+    "kind": "unconformable_on",
+    "unit": "Werrie Basalt"
+   },
+   {
+    "kind": "underlies",
+    "unit": "Maules Creek Formation"
+   }
+  ],
+  "_note": "'and possibly Werrie Basalt' coordinated unit missed"
+ },
+ "63": {
+  "minerals": [],
+  "_note": "olivine only inside the igneous rock name 'olivine basalt'"
+ },
+ "64": {
+  "_note": "correct"
+ },
+ "65": {
+  "lithologies": [],
+  "_note": "'sedimentary logs' describes the report, not the rock"
+ },
+ "66": {
+  "_note": "correct"
+ },
+ "67": {
+  "thickness": {
+   "min_m": 1000.0,
+   "max_m": 2000.0
+  },
+  "_note": "'from 1000m to possibly more than 2000m' is a range the range regex cannot see"
+ },
+ "68": {
+  "chronostrat": [
+   "Carnian",
+   "Norian"
+  ],
+  "relations": [],
+  "_note": "hyphenated 'Carnian-Norian' is one token to the gazetteer; the Nymboida equivalence is explicitly contradicted"
+ },
+ "69": {
+  "chronostrat": [],
+  "_note": "Devonian/Ordovician are the re-designated age of the marginal skarn mineralisation, not a statement of the granite's age"
+ },
+ "70": {
+  "thickness": {
+   "min_m": 200.0,
+   "max_m": 390.0
+  },
+  "_note": "two ranges in two troughs: 200-350 m and 380-390 m"
+ },
+ "71": {
+  "lithologies": [],
+  "_note": "sandstone only in the former informal name 'Jerilderie sandstone'"
+ },
+ "72": {
+  "_note": "correct"
+ },
+ "73": {
+  "lithologies": [
+   "chert",
+   "ironstone",
+   "sandstone",
+   "schist",
+   "sedimentary",
+   "shale",
+   "siliciclastic",
+   "siltstone"
+  ],
+  "minerals": [
+   "Almandine",
+   "Andalusite",
+   "Biotite",
+   "Cummingtonite",
+   "Graphite",
+   "Hornblende",
+   "Magnetite",
+   "Quartz"
+  ],
+  "thickness": {
+   "min_m": 375.0,
+   "max_m": 600.0
+  },
+  "relations": [
+   {
+    "kind": "underlies",
+    "unit": "Killi Killi Formation"
+   }
+  ],
+  "_note": "amphibolite is a facies; hyphenated schist assemblages hide their minerals; thickness estimates span 375-600 m; 'appearing to overlie Dead Bullock Formation' (Killi Killi as subject) missed"
+ },
+ "74": {
+  "lithologies": [
+   "dolerite"
+  ],
+  "_note": "'flint' is the author citation '(Flint et al., 1993)'"
+ },
+ "75": {
+  "chronostrat": [
+   "Namurian",
+   "Visean"
+  ],
+  "relations": [
+   {
+    "kind": "equivalent_to",
+    "unit": "Buckets Gap Formation"
+   },
+   {
+    "kind": "equivalent_to",
+    "unit": "Karuah Formation"
+   },
+   {
+    "kind": "overlies",
+    "unit": "Chichester Formation"
+   },
+   {
+    "kind": "underlies",
+    "unit": "Booral Fm"
+   }
+  ],
+  "_note": "'Late Visean-Namurian' hyphenated; 'Can possibly be correlated to' has no rule"
+ },
+ "76": {
+  "lithologies": [
+   "metasedimentary"
+  ],
+  "_note": "'sedimentary structures' is not a rock; the unit is 'Metasediments' (closest vocabulary term)"
+ },
+ "77": {
+  "lithologies": [
+   "chert",
+   "iron formation",
+   "mudstone",
+   "shale",
+   "siltstone"
+  ],
+  "_note": "abbreviations mudst, siltst and BIF missed"
+ },
+ "78": {
+  "_note": "correct"
+ },
+ "79": {
+  "_note": "correct"
+ },
+ "80": {
+  "_note": "correct"
+ },
+ "81": {
+  "_note": "correct"
+ },
+ "82": {
+  "_note": "correct"
+ },
+ "83": {
+  "_note": "correct"
+ },
+ "84": {
+  "lithologies": [
+   "granite",
+   "granodiorite",
+   "monzogranite"
+  ],
+  "_note": "sentence-initial 'Granites' missed"
+ },
+ "85": {
+  "lithologies": [
+   "limestone"
+  ],
+  "chronostrat": [],
+  "_note": "basalt belongs to the underlying Clermont basalt flows; Miocene is the age of the older silcrete"
+ },
+ "86": {
+  "lithologies": [
+   "sandstone"
+  ],
+  "minerals": [],
+  "relations": [
+   {
+    "kind": "overlies",
+    "unit": "Elkera Formation"
+   }
+  ],
+  "_note": "the archaeocyathan dolomite is explicitly EXCLUDED from the redefined formation; the base overlies the Elkera Formation"
+ },
+ "87": {
+  "lithologies": [
+   "metasiltstone",
+   "quartzite",
+   "schist"
+  ],
+  "minerals": [
+   "Biotite",
+   "Muscovite",
+   "Quartz"
+  ],
+  "relations": [
+   {
+    "kind": "equivalent_to",
+    "unit": "Lena Quartzite Member"
+   },
+   {
+    "kind": "equivalent_to",
+    "unit": "Mount Guide Quartzite"
+   },
+   {
+    "kind": "overlies",
+    "unit": "Jayah Creek Metabasalt"
+   },
+   {
+    "kind": "underlies",
+    "unit": "Jayah Creek Metabasalt"
+   }
+  ],
+  "_note": "mafic metavolcanics belong to the enclosing Jayah Creek Metabasalt; hyphenated schist minerals missed; 'overlain and underlain by' missed"
+ },
+ "88": {
+  "_note": "correct"
+ },
+ "89": {
+  "_note": "correct"
+ },
+ "90": {
+  "_note": "correct"
+ },
+ "91": {
+  "lithologies": [],
+  "minerals": [
+   "Biotite",
+   "Hornblende"
+  ],
+  "_note": "'surrounding granites' are other units; 'Biotite age' opens a sentence but the preceding name mask swallowed the full stop"
+ },
+ "92": {
+  "minerals": [
+   "Biotite",
+   "Feldspar",
+   "Plagioclase",
+   "Quartz"
+  ],
+  "_note": "'K-feldspar' hidden by the hyphen"
+ },
+ "93": {
+  "_note": "correct"
+ },
+ "94": {
+  "_note": "correct"
+ },
+ "95": {
+  "relations": [],
+  "_note": "the subject of 'intrude the Nardoo Granite' is unnamed granitic dykes that only 'may be related' to the supersuite"
+ },
+ "96": {
+  "_note": "correct"
+ },
+ "97": {
+  "minerals": [
+   "Biotite",
+   "Plagioclase"
+  ],
+  "_note": "hyphenated 'orthopyroxene-plagioclase-biotite' assemblage (orthopyroxene is not in the vocabulary)"
+ },
+ "98": {
+  "_note": "correct"
+ },
+ "99": {
+  "lithologies": [
+   "breccia",
+   "siltstone"
+  ],
+  "_note": "diamictite marks the top of the underlying Areyonga Formation"
+ },
+ "100": {
+  "_note": "correct"
+ },
+ "101": {
+  "lithologies": [],
+  "_note": "'volcanic exhalative deposits' is an ore-deposit type and the breccia is a crosscutting dyke"
+ },
+ "102": {
+  "relations": [],
+  "_note": "'Was previously considered equivalent' is a superseded correlation"
+ },
+ "103": {
+  "_note": "correct"
+ },
+ "104": {
+  "lithologies": [
+   "pelite",
+   "quartzite"
+  ],
+  "relations": [],
+  "_note": "amphibolite is a facies; the Nornalup Zone is a tectonic zone, not a unit, and the rule reversed the direction ('cover rocks overlying the Nornalup Zone')"
+ },
+ "105": {
+  "_note": "correct (porphyry and microgranite are not in the vocabulary)"
+ },
+ "106": {
+  "_note": "correct"
+ },
+ "107": {
+  "lithologies": [
+   "conglomerate",
+   "sandstone"
+  ],
+  "_note": "sentence-initial 'Sandstone' lost to the name mask swallowing the full stop"
+ },
+ "108": {
+  "_note": "correct"
+ },
+ "109": {
+  "relations": [
+   {
+    "kind": "overlies",
+    "unit": "Penrhyn Rhyolite Member"
+   }
+  ],
+  "_note": "'Penrhyn' is not the first word of any current ASUD name, so the relation filter rejected it"
+ },
+ "110": {
+  "_note": "correct (mudrock not in the vocabulary)"
+ },
+ "111": {
+  "_note": "correct"
+ },
+ "112": {
+  "relations": [
+   {
+    "kind": "equivalent_to",
+    "unit": "Baiguridji Formation"
+   }
+  ],
+  "_note": "'potentially in part laterally equivalent' with a name BEFORE the phrase"
+ },
+ "113": {
+  "relations": [
+   {
+    "kind": "equivalent_to",
+    "unit": "Boulton Formation"
+   },
+   {
+    "kind": "equivalent_to",
+    "unit": "Peaks Formation"
+   }
+  ],
+  "_note": "'and lower part of Peaks Formation' coordination missed"
+ },
+ "114": {
+  "_note": "correct"
+ },
+ "115": {
+  "lithologies": [
+   "siliciclastic"
+  ],
+  "minerals": [
+   "Sillimanite",
+   "Zircon"
+  ],
+  "_note": "'metamorphic zircon growth' is not a lithology; 'sillimanite-rich' hyphenated"
+ },
+ "116": {
+  "_note": "correct; the 'equivalents' are informal historical synonyms, not other units"
+ },
+ "117": {
+  "lithologies": [
+   "igneous",
+   "mafic"
+  ],
+  "_note": "'affinities to continental flood basalts' is a comparison, not a composition"
+ },
+ "118": {
+  "_note": "correct"
+ },
+ "119": {
+  "lithologies": [
+   "conglomerate",
+   "rhyolite",
+   "sandstone"
+  ],
+  "_note": "'felsic volcanic suite' is the correlated suite, not this unit's rock; rhyolite kept (clasts in the basal beds)"
+ },
+ "120": {
+  "lithologies": [
+   "gabbro"
+  ],
+  "chronostrat": [],
+  "_note": "amphibolite grade is the contact aureole in the intruded rocks; Early Devonian is the intruded rocks' age and Carboniferous a superseded grouping"
+ },
+ "121": {
+  "_note": "correct"
+ },
+ "122": {
+  "_note": "correct"
+ },
+ "123": {
+  "lithologies": [
+   "limestone"
+  ],
+  "_note": "'metamorphic grade' and 'sedimentary structures' are not rocks; 'younger carbonate intervals' may be another unit"
+ },
+ "124": {
+  "_note": "correct"
+ },
+ "125": {
+  "_note": "correct"
+ },
+ "126": {
+  "relations": [
+   {
+    "kind": "overlies",
+    "unit": "Mulbring Sltst"
+   },
+   {
+    "kind": "underlies",
+    "unit": "Wollombi C.M."
+   }
+  ],
+  "_note": "abbreviated 'Wollombi C.M.' not captured (the rank word is 'C.M.')"
+ },
+ "127": {
+  "minerals": [
+   "Feldspar"
+  ],
+  "_note": "'feldspar-phyric' hyphenated"
+ },
+ "128": {
+  "lithologies": [
+   "gneiss",
+   "granodiorite",
+   "granulite",
+   "iron formation",
+   "mafic",
+   "metasedimentary",
+   "orthogneiss",
+   "paragneiss",
+   "sedimentary",
+   "serpentinite",
+   "tonalite"
+  ],
+  "chronostrat": [],
+  "_note": "amphibolite is a facies; 'Proterozoic orogenic events' dates the deformation, not the unit"
+ },
+ "129": {
+  "thickness": {
+   "min_m": 30.0,
+   "max_m": 140.0
+  },
+  "_note": "'Thins from >140m in the N to <30m in the S' has no 'thick' keyword"
+ },
+ "130": {
+  "_note": "correct"
+ },
+ "131": {
+  "lithologies": [],
+  "_note": "the laterite pods developed OVER the unit"
+ },
+ "132": {
+  "lithologies": [],
+  "relations": [
+   {
+    "kind": "grades_into",
+    "unit": "Cleland Sandstone"
+   },
+   {
+    "kind": "underlies",
+    "unit": "Pacoota Sandstone"
+   }
+  ],
+  "_note": "'shale oil'/'shale gas' are resource terms; 'overlain unconformably by' (adverb before 'by') missed"
+ },
+ "133": {
+  "_note": "correct"
+ },
+ "134": {
+  "thickness": {
+   "min_m": 60.0,
+   "max_m": 700.0
+  },
+  "_note": "thickness varies from ~60 m to 600-700 m across localities"
+ },
+ "135": {
+  "_note": "correct"
+ },
+ "136": {
+  "_note": "correct"
+ },
+ "137": {
+  "relations": [
+   {
+    "kind": "overlies",
+    "unit": "Koolpin Formation"
+   },
+   {
+    "kind": "underlies",
+    "unit": "Mount Bonnie Formation"
+   }
+  ],
+  "_note": "'Overlies: X. Underlies: Y.' colon templates have no rule"
+ },
+ "138": {
+  "_note": "correct"
+ },
+ "139": {
+  "lithologies": [
+   "arenite",
+   "conglomerate",
+   "limestone",
+   "mudstone"
+  ],
+  "chronostrat": [
+   "Llandovery",
+   "Ludlow",
+   "Silurian"
+  ],
+  "relations": [
+   {
+    "kind": "unconformable_on",
+    "unit": "Judea Formation"
+   },
+   {
+    "kind": "unconformable_on",
+    "unit": "Netherwood Tonalite"
+   },
+   {
+    "kind": "underlies",
+    "unit": "Jack Formation"
+   }
+  ],
+  "_note": "laterite and Tertiary belong to the plateau and cover; 'and in places the Netherwood Tonalite' coordination missed"
+ },
+ "140": {
+  "lithologies": [
+   "chert",
+   "iron formation",
+   "schist"
+  ],
+  "thickness": {
+   "min_m": 230.0,
+   "max_m": 230.0
+  },
+  "_note": "BIF abbreviation and a bare '<230 m' thickness"
+ },
+ "141": {
+  "_note": "correct"
+ },
+ "142": {
+  "lithologies": [
+   "basalt",
+   "chert",
+   "conglomerate"
   ],
   "relations": [
    {
     "kind": "overlies",
-    "unit": "Ridgeley"
+    "unit": "Marble Bar Chert Member"
    },
    {
     "kind": "underlies",
-    "unit": "Hares Valley Limestone"
+    "unit": "Panorama Formation"
    }
   ],
-  "_note": "limestone from the overlying Hares Valley unit; 'pyritiferous' missed (adjectival form); 'Newton Hamilton, PA'; both contacts missed"
+  "_note": "sentence-initial Basalt lost to the name mask; ASUD shorthand 'Over X; under Y' has no rule"
+ },
+ "143": {
+  "minerals": [
+   "Feldspar",
+   "Quartz"
+  ],
+  "relations": [
+   {
+    "kind": "intruded_by",
+    "unit": "Murchison Granite"
+   },
+   {
+    "kind": "underlies",
+    "unit": "Owen Conglomerate"
+   }
+  ],
+  "_note": "SELF-CHECK ERROR: Murchison Granite shares its core name with the subject and was discarded; 'transgressed by' means overlain"
+ },
+ "144": {
+  "minerals": [],
+  "chronostrat": [
+   "Paleozoic"
+  ],
+  "_note": "Precambrian is the age of the underlying rocks; dolomite is the rock"
+ },
+ "145": {
+  "_note": "correct"
+ },
+ "146": {
+  "states": [],
+  "_note": "'Victoria Bridge' is a bridge in Brisbane, not the state"
+ },
+ "147": {
+  "lithologies": [
+   "quartzite",
+   "sandstone",
+   "siltstone"
+  ],
+  "relations": [
+   {
+    "kind": "overlies",
+    "unit": "Eastern Creek Volcanics"
+   },
+   {
+    "kind": "overlies",
+    "unit": "Pickwick Metabasalt Member"
+   },
+   {
+    "kind": "underlies",
+    "unit": "Bortala Formation"
+   },
+   {
+    "kind": "underlies",
+    "unit": "Mount Isa Group"
+   }
+  ],
+  "_note": "basalt belongs to the underlying Eastern Creek Volcanics; 'Conformably overlies basalt and ... of the X' and 'overlain conformably by' both defeat the rules"
+ },
+ "148": {
+  "_note": "correct"
+ },
+ "149": {
+  "relations": [
+   {
+    "kind": "overlies",
+    "unit": "Pillara Limestone"
+   },
+   {
+    "kind": "overlies",
+    "unit": "Sadler Limestone"
+   },
+   {
+    "kind": "underlies",
+    "unit": "Virgin Hills Formation"
+   }
+  ],
+  "_note": "DIRECTION ERROR: 'shown overlying the Sadler Limestone and underlying the Virgin Hills Formation' -- participles describe the subject"
  }
 }

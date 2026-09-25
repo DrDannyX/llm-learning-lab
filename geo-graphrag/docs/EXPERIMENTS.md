@@ -58,8 +58,8 @@ Microsoft GraphRAG's other half. Neo4j community edition has no GDS, so:
 export `Unit`–`Unit` edges to `networkx`, run Louvain/Leiden
 (`networkx.community.louvain_communities`), LLM-summarise each community's
 unit cards, store `(:Community {summary})<-[:IN_COMMUNITY]-(:Unit)`.
-Add questions like "What are the main Pennsylvanian stratigraphic groups of the
-mid-continent?". This is the question type **none** of the three current systems
+Add questions like "What are the main Permian stratigraphic groups of the
+Sydney Basin?". This is the question type **none** of the three current systems
 handles well, because the answer is a synthesis, not a lookup.
 
 ### 7. Agentic GraphRAG over MCP
@@ -87,5 +87,6 @@ literature: **the hybrid is a routing problem.**
 ### 10. An independent test set
 
 Fix the circularity caveat. Write 20 questions by hand, from a geologist's point
-of view, with answers checked against Geolex web pages rather than the graph.
+of view, with answers checked against the ASUD web pages (asud.ga.gov.au) and the
+cited literature rather than the graph.
 Rerun. If the KG's lead shrinks, that is the measured size of the circularity.

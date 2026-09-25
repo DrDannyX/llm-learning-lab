@@ -1,134 +1,164 @@
-"""Corpus acquisition: the USGS Geologic Names Lexicon (Geolex).
+"""Corpus acquisition: Geoscience Australia's stratigraphic lexicon (ASUD).
 
 Why this source, for a fine-tuning lab:
 
-* It is genuinely **public domain** (a US Government work), so nothing here is
-  licence-encumbered.
-* The passages are **real geologist prose**, much of it written between 1890
-  and 1980. It is abbreviated, inconsistent and full of archaic usage -- which
-  is exactly the kind of text a domain model has to survive, and exactly what a
-  general-purpose instruct model handles badly out of the box.
-* Each passage arrives with **structured metadata** (unit name, age, rank,
-  states, province) that we can use to anchor weak supervision instead of
-  hallucinating labels with a teacher model.
+* It is **open** (CC BY 4.0, attribution required), and it is the national
+  authority on Australian stratigraphic names, maintained by Geoscience
+  Australia.
+* The passages are **real geologist prose**: definition cards written by the
+  units' authors, and thousands of short notes on how each published reference
+  uses a unit. The notes are abbreviated, telegraphic and full of house style
+  ("Conformably overlain by ...", "qtz-rich", "Sample GSWA 178851 yielded ...")
+  -- exactly the kind of text a general-purpose instruct model handles badly.
+* Each passage arrives with **curated metadata** (rank, ages, states,
+  thickness and, unusually, the unit's stratigraphic relations) that we use to
+  audit weak supervision instead of hallucinating labels with a teacher model.
+
+Two kinds of passage come out of ASUD (see asud.py for the tables):
+
+  definition  a unit's definition card: lithology, relationships and
+              boundaries, thickness, extent, age reasons, name source ...
+  article     one reference's comment on the unit ("Briefly described, p45:
+              Conformably overlies Minnie Point Formation ...")
+
+Every passage is rendered as a lexicon ENTRY -- "<Unit Name>. <text>" --
+because that is how ASUD presents it: the note is filed under the unit's name,
+and without the heading "Overlain by Cygnet Coal Measures" has no subject.
 """
 from __future__ import annotations
 
 import json
+import random
 import re
-from concurrent.futures import ThreadPoolExecutor
+from collections import Counter, defaultdict
 from pathlib import Path
-from typing import Iterator
 
 from rich.console import Console
-from rich.progress import Progress, TimeElapsedColumn
 
 from .. import paths
-from .http import CachedClient
+from . import asud
 
 console = Console()
-GEOLEX = "https://ngmdb.usgs.gov/connect/apiv1/geolex/units/"
-PAGE_SIZE = 100  # server-fixed
 
+#: Definition-card sections that are administration, not geology.
+ADMIN_SECTIONS = {
+    "Proposer", "Defn author", "Defn approved by", "Reserved? Yes/No",
+    "Proposed publication", "Defn Reference", "References", "Name first published by",
+    "Reference", "Approved by", "Date approved", "Reserved by", "Reserved date",
+}
 
-def fetch_index(client: CachedClient, max_units: int) -> list[dict]:
-    """Page the Geolex unit index until we have at least `max_units` entries."""
-    n_pages = -(-max_units // PAGE_SIZE)
-    rows: list[dict] = []
-    with Progress(*Progress.get_default_columns(), TimeElapsedColumn(),
-                  console=console) as prog:
-        task = prog.add_task("geolex index", total=n_pages)
-        for page in range(1, n_pages + 1):
-            payload = client.get_json(GEOLEX, {"page": page})
-            results = payload.get("results") or []
-            rows.extend(results)
-            prog.advance(task)
-            if not payload.get("next"):
-                break
-    return rows[:max_units]
+#: ASUD relation wording -> schema relation kind. Used for AUDIT ONLY.
+CURATED_KIND = {
+    "overlies": "overlies", "underlies": "underlies", "is equivalent to": "equivalent_to",
+    "grades into": "grades_into", "intrudes": "intrudes", "is intruded by": "intruded_by",
+    "is interbedded with": "intertongues_with", "intermingles with": "intertongues_with",
+}
 
-
-def fetch_details(client: CachedClient, index_rows: list[dict],
-                  workers: int = 6) -> Iterator[dict]:
-    """Fetch the full record (including reference summaries) for each unit.
-
-    Serially this is ~1.7s per unit -- nearly two hours for 4,000 units, almost
-    all of it spent waiting on the network. A small thread pool fixes that.
-    `workers` is deliberately modest: this is a free public API run by a
-    government agency, and the per-request delay in CachedClient still applies
-    inside each worker, so the aggregate rate stays civil.
-    """
-    uids = [row["id"] for row in index_rows if row.get("id") is not None]
-
-    def one(uid: int):
-        try:
-            return client.get_json(f"{GEOLEX}{uid}/")
-        except Exception as exc:  # a single 500 must not kill a 4,000-unit run
-            console.print(f"[yellow]skip unit {uid}: {exc}[/yellow]")
-            return None
-
-    with Progress(*Progress.get_default_columns(), TimeElapsedColumn(),
-                  console=console) as prog:
-        task = prog.add_task("geolex details", total=len(uids))
-        with ThreadPoolExecutor(max_workers=workers) as pool:
-            for rec in pool.map(one, uids):
-                prog.advance(task)
-                if rec is not None:
-                    yield rec
-
-
-#: Lexicon prose is littered with bracketed editorial asides and page refs.
-#: Stripping them raises the signal-to-noise ratio of the input without
+#: Article comments carry page-location boilerplate that says nothing about the
+#: rock: "Location in text includes p325 Fig.3, p328.", "See also p66 Fig.1.",
+#: "See 100k_geologyp_lut.csv." Stripping them raises signal-to-noise without
 #: removing any fact we ask the model to extract.
-_PGREF = re.compile(r"^\s*Pg\.\s*[\d\-–,\s]+\.?\s*", re.I)
+_SENT = re.compile(r"(?<=[.;])\s+(?=[A-Z])")
+_BOILER = re.compile(r"^(Location in text|See also (pp?\.?\s?\d|Fig|Table|Plate)|Page\s)|\.csv\b", re.I)
 _WS = re.compile(r"\s+")
 
 
 def clean_passage(text: str) -> str:
-    text = _PGREF.sub("", text or "")
-    return _WS.sub(" ", text).strip()
+    sents = [s for s in _SENT.split(_WS.sub(" ", text or "").strip()) if not _BOILER.search(s)]
+    return " ".join(sents).strip()
 
 
-def extract_passages(details: Iterator[dict], cfg_min: int, cfg_max: int) -> list[dict]:
-    """Flatten unit records into one passage per reference summary.
+def _curated(unit: asud.Unit, related: dict[int, list[asud.Related]],
+             units: dict[int, asud.Unit]) -> dict:
+    """The unit's curated facts, attached to every passage as audit anchors.
 
-    `unit_id` is carried through so the splitter can keep every passage about a
-    given unit inside a single split (see data/build.py -- leakage control).
+    NEVER shown to the model and never written into a label (see label.py).
     """
-    out: list[dict] = []
-    for rec in details:
-        uid = rec.get("id")
-        unit_name = (rec.get("name") or "").strip()
-        ages = rec.get("age_description") or []
-        usages = rec.get("usages") or []
-        states = sorted({
-            s for u in usages for s in (u.get("states") or []) if isinstance(s, str)
-        })
-        usage_strings = [u.get("usage", "") for u in usages if u.get("usage")]
+    rels = []
+    for r in related.get(unit.stratno, []):
+        kind = CURATED_KIND.get(r.relation)
+        other = units.get(r.dst)
+        if kind and other:
+            if kind == "overlies" and "unconformity" in r.contact:
+                kind = "unconformable_on"
+            rels.append({"kind": kind, "unit": other.name})
+    return {
+        "asud_rank": unit.rank,
+        "age_names": [a for a in (unit.base_age, unit.top_age) if a],
+        "states": unit.states,
+        "curated_relations": rels,
+        "thickness_min_m": unit.thickness_min_m,
+        "thickness_max_m": unit.thickness_max_m,
+        "provinces": unit.provinces,
+        "source_url": unit.url,
+    }
 
-        for ref in rec.get("unit_reference_summaries") or []:
-            body = " ".join(s for s in (ref.get("summary") or []) if s)
-            passage = clean_passage(body)
-            if not (cfg_min <= len(passage) <= cfg_max):
-                continue
-            out.append({
-                "unit_id": uid,
-                "unit_name": unit_name,
-                "passage": passage,
-                # --- anchors for the labeller, never shown to the model ---
-                "age_description": ages,
-                "usages": usage_strings,
-                "states": states,
-                "ref_lithology": ref.get("lithology") or [],
-                "ref_province": ref.get("province") or [],
-                "ref_year": ref.get("reference_year"),
-                "ref_publication": ref.get("publication"),
-                "source_url": rec.get("url") or f"https://ngmdb.usgs.gov/Geolex/Units/{uid}",
-            })
+
+def definition_passages(units: dict[int, asud.Unit], max_chars: int) -> list[dict]:
+    """One passage per definition card, split on section boundaries if long."""
+    sections: dict[int, list[tuple[str, str]]] = defaultdict(list)
+    for r in asud.read_table("definition"):
+        sn = asud._int(r.get("Stratno"))
+        cat, body = r.get("Category", ""), clean_passage(r.get("Contents", ""))
+        if sn in units and body and cat not in ADMIN_SECTIONS:
+            sections[sn].append((cat, body))
+
+    out: list[dict] = []
+    for sn, secs in sections.items():
+        head = f"{units[sn].name}. "
+        chunk = head
+        for cat, body in secs:
+            piece = f"{cat}: {body} "
+            if len(head) + len(piece) > max_chars:
+                continue  # one oversized section: drop it rather than cut mid-sentence
+            if len(chunk) + len(piece) > max_chars:
+                out.append({"unit_id": sn, "kind": "definition", "passage": chunk.strip()})
+                chunk = head
+            chunk += piece
+        if chunk != head:
+            out.append({"unit_id": sn, "kind": "definition", "passage": chunk.strip()})
     return out
 
 
-def run(max_units: int, min_chars: int, max_chars: int, force: bool = False) -> Path:
+def article_passages(units: dict[int, asud.Unit]) -> list[dict]:
+    """One passage per reference comment.
+
+    A comment filed under several units ("Of the Parmeener Supergroup.") is not
+    about any one of them, and would put identical text on both sides of the
+    group split -- so any comment body seen under two different units is
+    dropped entirely.
+    """
+    refs = asud.load_references()
+    rows = []
+    for r in asud.read_table("articles"):
+        sn = asud._int(r.get("Stratno"))
+        body = clean_passage(r.get("Reference Comments", ""))
+        if sn in units and body:
+            rows.append((sn, body, r))
+    owners: dict[str, set[int]] = defaultdict(set)
+    for sn, body, _ in rows:
+        owners[body.lower()].add(sn)
+
+    out, seen = [], set()
+    for sn, body, r in rows:
+        key = (sn, body.lower())
+        if len(owners[body.lower()]) > 1 or key in seen:
+            continue
+        seen.add(key)
+        ref = refs.get(r.get("Reference Id", ""), {})
+        out.append({
+            "unit_id": sn, "kind": "article",
+            "passage": f"{units[sn].name}. {body}",
+            "usage": r.get("Usage") or None,
+            "ref_age_names": [a for a in (r.get("Maximum Age Name"), r.get("Minimum Age Name")) if a],
+            "ref_year": asud._int(ref.get("Year")),
+            "ref_publication": ref.get("Title") or None,
+        })
+    return out
+
+
+def run(max_units: int | None, min_chars: int, max_chars: int,
+        max_per_unit: int | None = None, seed: int = 17, force: bool = False) -> Path:
     paths.ensure()
     out = paths.INTERIM / "passages.jsonl"
     if out.exists() and not force:
@@ -136,20 +166,46 @@ def run(max_units: int, min_chars: int, max_chars: int, force: bool = False) -> 
         console.print(f"[dim]passages cached ({n}) -> {out}[/dim]")
         return out
 
-    client = CachedClient(paths.RAW / "http-cache")
-    try:
-        index = fetch_index(client, max_units)
-        console.print(f"indexed [cyan]{len(index)}[/cyan] Geolex units")
-        passages = extract_passages(fetch_details(client, index), min_chars, max_chars)
-    finally:
-        console.print(f"[dim]http cache: {client.hits} hits / {client.misses} misses[/dim]")
-        client.close()
+    asud.fetch(force=force)
+    units = asud.load_units()
+    related: dict[int, list[asud.Related]] = defaultdict(list)
+    for r in asud.load_related():
+        related[r.src].append(r)
+
+    raw = definition_passages(units, max_chars) + article_passages(units)
+    raw = [p for p in raw if min_chars <= len(p["passage"]) <= max_chars]
+
+    by_unit: dict[int, list[dict]] = defaultdict(list)
+    for p in raw:
+        by_unit[p["unit_id"]].append(p)
+    rng = random.Random(seed)
+    unit_ids = sorted(by_unit)
+    if max_units and len(unit_ids) > max_units:
+        unit_ids = sorted(rng.sample(unit_ids, max_units))
+
+    passages: list[dict] = []
+    for sn in unit_ids:
+        ps = by_unit[sn]
+        if max_per_unit and len(ps) > max_per_unit:
+            # A few famous units carry 100+ reference notes. Capping them keeps
+            # one unit from dominating the loss; definitions are kept first.
+            defs = [p for p in ps if p["kind"] == "definition"]
+            arts = [p for p in ps if p["kind"] != "definition"]
+            rng.shuffle(arts)
+            ps = (defs + arts)[:max_per_unit]
+        u = units[sn]
+        for p in ps:
+            age_names = p.pop("ref_age_names", [])
+            cur = _curated(u, related, units)
+            cur["age_names"] = cur["age_names"] + age_names
+            passages.append({"unit_id": sn, "unit_name": u.name, **p, **cur})
 
     with out.open("w") as fh:
         for p in passages:
             fh.write(json.dumps(p, ensure_ascii=False) + "\n")
+    kinds = Counter(p["kind"] for p in passages)
     console.print(
-        f"[green]passages[/green] {len(passages)} from "
-        f"{len({p['unit_id'] for p in passages})} units -> {out}"
+        f"[green]passages[/green] {len(passages)} from {len({p['unit_id'] for p in passages})} "
+        f"units ({dict(kinds)}) -> {out}"
     )
     return out

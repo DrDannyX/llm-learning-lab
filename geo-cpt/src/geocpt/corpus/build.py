@@ -40,8 +40,13 @@ def gather(cfg: CorpusCfg) -> list[dict]:
     """Collect raw documents according to the configured stage."""
     docs: list[dict] = []
     if cfg.stage in ("dapt", "dapt_tapt"):
-        docs += sources.fetch_usgs(cfg.usgs_queries, cfg.usgs_max_per_query)
-        docs += sources.fetch_geolex_full(cfg.geolex_max_units)
+        docs += sources.fetch_ecat(cfg.ecat_resource_types, cfg.ecat_max_docs)
+        held = sources.heldout_units()
+        lexicon = sources.fetch_asud_full(cfg.asud_not_current)
+        kept = [d for d in lexicon if d.get("unit_id") not in held]
+        console.print(f"[dim]asud: dropped {len(lexicon) - len(kept)} documents about "
+                      f"geo-sft's {len(held)} held-out units[/dim]")
+        docs += kept
     if cfg.stage in ("tapt", "dapt_tapt"):
         docs += sources.load_task_text()
     if not docs:

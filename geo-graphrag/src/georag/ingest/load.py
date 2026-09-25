@@ -20,7 +20,9 @@ from .. import db
 from ..config import Config
 from ..llm import Embedder
 from ..paths import EMBED_CACHE, EMBED_IDS
-from .extract import STATE_NAMES, Graph
+from geosft.data.states import STATE_NAMES
+
+from .extract import Graph
 
 BATCH = 2000
 
@@ -39,7 +41,7 @@ SCHEMA = [
 
 #: node key prefix in graph.json -> (label, key property)
 LABELS = {
-    "geolex": ("Unit", "key"), "name": ("Unit", "key"), "passage": ("Passage", "id"),
+    "asud": ("Unit", "key"), "name": ("Unit", "key"), "passage": ("Passage", "id"),
     "interval": ("Interval", "name"), "lithology": ("Lithology", "name"),
     "mineral": ("Mineral", "name"), "state": ("State", "code"), "province": ("Province", "name"),
 }
@@ -76,7 +78,7 @@ def load_graph(cfg: Config, g: Graph) -> None:
             UNWIND $rows AS r
             MERGE (u:Unit {key: r.key})
             SET u.name = r.name, u.full_name = r.full_name, u.rank = r.rank,
-                u.geolex = r.geolex, u.unit_id = r.unit_id, u.url = r.url,
+                u.asud = r.asud, u.has_text = r.has_text, u.unit_id = r.unit_id, u.url = r.url,
                 u.aliases = r.aliases, u.age_text = r.age_text,
                 u.thickness_min_m = r.thickness_min_m, u.thickness_max_m = r.thickness_max_m
         """, rows=rows)
@@ -122,10 +124,11 @@ def load_graph(cfg: Config, g: Graph) -> None:
 def embed_passages(cfg: Config, g: Graph) -> np.ndarray:
     """Embed every passage, reusing the on-disk cache when ids and model match.
 
-    Each passage is embedded with its unit's name prepended ("contextual chunk
-    headers"). Plenty of Geolex passages never name their own unit -- "Consists
-    of erratic development of sandstones..." -- so without the header the
-    vector has no idea what the passage is about.
+    Each passage is embedded with its unit's name at the front ("contextual
+    chunk headers"): an ASUD reference note like "Conformably overlain by the
+    Cygnet Coal Measures." never names its own unit, so without the header the
+    vector has no idea what the passage is about. geo-sft already renders
+    passages as "<Unit>. <note>", so the header is only added when missing.
     """
     ids = [p["id"] for p in g.passages]
     meta = {"model": cfg.llm.embed_model, "ids": ids}
@@ -133,7 +136,8 @@ def embed_passages(cfg: Config, g: Graph) -> np.ndarray:
         return np.load(EMBED_CACHE)
 
     emb = Embedder(cfg.llm)
-    texts = [f"{p['unit_name']}. {p['text']}" for p in g.passages]
+    texts = [p["text"] if p["text"].startswith(p["unit_name"]) else f"{p['unit_name']}. {p['text']}"
+             for p in g.passages]
     b = cfg.ingest.embed_batch
     out = [emb.documents(texts[i:i + b])
            for i in track(range(0, len(texts), b), description="embedding")]

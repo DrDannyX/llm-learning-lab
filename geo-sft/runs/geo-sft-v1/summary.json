@@ -1,14 +1,16 @@
 {
-  "run": "geo-sft-v1",
+  "run": "geo-sft-v1-20260925-114850",
   "iters_done": 900,
-  "final_train_loss": 0.07554271221160888,
-  "final_val_loss": 0.07170266658067703,
-  "best_val_loss": 0.07028160989284515,
-  "best_val_iter": 749,
-  "wall_minutes": 117.17,
-  "alerts": [],
-  "test_loss": 0.07087435573339462,
-  "test_perplexity": 1.073446273803711,
-  "adapter_path": "/Users/daniel/git/llm-scratchpad/geo-sft/runs/geo-sft-v1",
+  "final_train_loss": 0.049360382556915286,
+  "final_val_loss": 0.061837565153837204,
+  "best_val_loss": 0.047730643302202225,
+  "best_val_iter": 824,
+  "wall_minutes": 167.27,
+  "alerts": [
+    "iter 674: val loss has not improved for 3 evals (best 0.059 @ 449). Overfitting -- stop here and use the best checkpoint."
+  ],
+  "test_loss": 0.04968884959816933,
+  "test_perplexity": 1.0509440898895264,
+  "adapter_path": "/Users/daniel/git/llm-learning-lab/geo-sft/runs/geo-sft-v1",
   "model_path": "mlx-community/Qwen3-4B-Instruct-2507-4bit"
 }

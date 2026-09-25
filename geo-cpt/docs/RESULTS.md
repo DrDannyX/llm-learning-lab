@@ -1,8 +1,10 @@
 # Results
 
-Everything this project measured, including the two methodology errors it
-made and what they taught. Reproducible via `make all` then
-`geocpt transfer`.
+Everything this project measured on Geoscience Australia data. The earlier
+USGS Geolex version — including the two methodology errors it made and what
+they taught — is archived in
+[`runs/geolex-archive/RESULTS-geolex.md`](../runs/geolex-archive/RESULTS-geolex.md)
+and compared against here: same code, same schedule, different corpus.
 
 ---
 
@@ -11,67 +13,60 @@ made and what they taught. Reproducible via `make all` then
 | | |
 |---|---|
 | Hardware | Apple M4 Pro, 48 GB unified memory |
-| Base model | `Qwen/Qwen3-1.7B` (bf16, **post-trained** — see §7) |
+| Base model | `Qwen/Qwen3-1.7B` (bf16, post-trained) |
 | Method | full fine-tune, all 1.72B parameters |
-| Stage | TAPT — CPT on geo-sft's unlabelled task text |
-| Corpus | 1.57M tokens (6,318 domain docs + 1,114 replay, 15%) |
-| Schedule | 600 iters, batch 1 × accum 16, LR 1e-5 cosine, warmup 40 |
-| Wall time | 55 min |
+| Stage | TAPT — CPT on geo-sft's unlabelled train passages |
+| Schedule | 600 iters, batch 1 × accum 16, LR 1e-5 cosine (identical to Geolex) |
+| Wall time | 72 min (57 on Geolex; see §4 memory) |
 
-## 2. Corpus
+## 2. Corpora
 
-| stage | count |
-|---|---|
-| Raw documents (geo-sft train passages) | 6,635 |
-| Quality filter | **skipped** — task text is the target distribution (§6) |
-| Near-duplicates removed (MinHash/LSH) | 17 |
-| Domain train | 6,318 |
-| Replay (wikitext, 15%) | 1,114 |
-| Domain val / forgetting probe | 300 / 300 |
-| **Approx. train tokens** | **1.57M** |
-
-## 3. Packing
-
-| mode | retention | efficiency |
-|---|---|---|
-| packed | 99.98% | **100%** |
-| `no_cross_document` | 100% | **61.8%** |
-
-Avoiding cross-document attention would cost 38% of the compute budget on
-this corpus.
-
-## 4. Training
-
-| | before | after | change |
+| | TAPT (trained) | DAPT (built, **not trained**) | Geolex TAPT |
 |---|---|---|---|
-| **Domain perplexity** | 33.27 | **13.87** | **−58.3%** |
+| source | geo-sft train passages | GA eCat abstracts + all of ASUD | geo-sft train passages |
+| raw documents | 14,691 | 57,045 | 6,635 |
+| quality filter | skipped (task text is the target) | 32.6% kept | skipped |
+| near-/exact duplicates removed | 20 | ~3,560 | 17 |
+| domain train | 14,371 | 14,650 | 6,318 |
+| replay (wikitext, 15%) | 2,536 | 2,585 | 1,114 |
+| **approx. train tokens** | **3.26M** | **7.37M** | 1.57M |
 
-```
-iter   0   33.27
-iter  75   22.42
-iter 150   17.05
-iter 300   14.65
-iter 450   13.95
-iter 600   13.87     <- flattening
-```
+The TAPT corpus is **2.1× the Geolex one**. With the schedule held fixed, the
+run sees the same ~614k tokens, so it covers 0.19 of an epoch rather than
+0.4. More text, same compute.
 
-The model roughly halved its uncertainty about the next token in geological
-prose, and had largely converged by iteration 450 on 1.57M tokens.
+The DAPT corpus drops every document about geo-sft's 1,442 held-out
+(valid/test/gold) units: the whole lexicon contains the test passages, and
+pretraining on them before scoring SFT on them is invisible leakage.
 
-### Memory: peak is set by the optimizer, not the batch
+Packing: 3,292 blocks of 1,024 tokens, **100% efficiency**, 99.99% retention.
 
-| iteration | peak |
-|---|---|
-| 10 (before first optimizer step) | 12.3 GB |
-| 20 (after it) | **49.0 GB** |
+## 3. Training
 
-The optimizer step lands at iteration 16. Everything under 12 GB is
-activations and gradients; the remaining ~37 GB appears when AdamW allocates
-its moments. Dropping batch 2 → 1 barely moved peak (48.7 → 49.0 GB) but
-stopped the machine swapping: **9.1 → 3.4 s/iter**.
+| iter | domain ppl | general ppl (ag_news) |
+|---|---|---|
+| 0 | 29.24 | 40.12 |
+| 75 | 21.69 | 25.65 |
+| 150 | 16.22 | 25.61 |
+| 300 | 13.98 | 26.89 |
+| 450 | 13.35 | 26.99 |
+| 600 | **13.27** | 26.96 |
 
-Compare geo-sft: **8.5 GB for a 4B model**, because LoRA's gradients and
-optimizer state scale with the adapter, not the model.
+**Domain perplexity −54.6%** (Geolex: −58.3%), largely converged by
+iteration 450 — the same curve on a corpus twice the size.
+
+General perplexity on the independent forgetting probe improved **−32.8%**
+(Geolex: −32.9%). As the archived results explain (Error 2), that is not
+"no forgetting": next-token perplexity on plain prose cannot detect the loss
+of a behaviour, which is why the downstream arms below exist.
+
+## 4. Memory
+
+Peak **53.4 GB** on a 48 GB machine (Geolex: 49.0). The run was meant to
+start with LM Studio's models unloaded; `lms unload --all` timed out waiting
+for the LM Studio daemon, so the graph lab's 12B chat model stayed resident
+and the run swapped. It completed, 26% slower. Unload by hand before a CPT
+run.
 
 ## 5. Evaluation
 
@@ -79,177 +74,75 @@ optimizer state scale with the adapter, not the model.
 
 | model | accuracy | mean margin |
 |---|---|---|
-| base | 0.815 | +2.130 |
-| adapted | 0.833 | +2.330 |
+| base | 0.720 | +1.38 |
+| TAPT | 0.720 | +1.26 |
 
-54 probes, chance 0.25. **0.815 → 0.833 is one extra probe correct.** Not
-significant. Large fluency gain, no detectable knowledge gain — exactly what
-the probe exists to separate, and the expected outcome at 1.57M tokens.
+No change. Only **25 probes** could be built from the held-out text (a
+domain term the probe vocabulary recognises, in a usable sentence), so this is
+weak evidence — but it matches the Geolex result (0.815 → 0.833 on 54
+probes, one extra probe correct): a large fluency gain with no detectable
+knowledge gain.
 
 ### Downstream transfer — the number that matters
 
-Three arms, all scored by geo-sft's own trainer and evaluator on identical
-data, 200 held-out examples:
+Two arms, both trained and scored by geo-sft's own trainer and evaluator on
+identical data (200 held-out test rows, rule labels), with model size held
+constant:
 
 | arm | zero-shot | after SFT |
 |---|---|---|
-| 1.7B + SFT (no CPT) | 0.001 | **0.823** |
-| **1.7B + TAPT + SFT** | 0.002 | **0.842** |
-| 4B + SFT (geo-sft baseline) | 0.314 | 0.831 |
+| 1.7B + SFT (no CPT) | 0.000 | **0.778** |
+| **1.7B + TAPT + SFT** | 0.000 | **0.801** |
+| *4B + SFT (geo-sft)* | *0.311* | *0.806* |
 
-**TAPT contributed +0.019 macro F1** with model size held constant.
+**TAPT contributed +0.023 macro F1.** On Geolex the same comparison gave
++0.019 at one seed and **+0.025 mean across three seeds** (95% CI
+[+0.012, +0.039]). The effect replicates on a different corpus.
 
-Per field, the gains land on the hardest, most domain-dependent ones:
+Per field:
 
 | field | no CPT | + TAPT | Δ |
 |---|---|---|---|
-| minerals | 0.677 | 0.713 | **+0.037** |
-| relations | 0.674 | 0.703 | **+0.030** |
-| rank | 0.845 | 0.860 | +0.015 |
-| thickness | 0.905 | 0.920 | +0.015 |
-| lithologies | 0.915 | 0.928 | +0.013 |
-| chronostrat | 0.907 | 0.920 | +0.013 |
-| states | 0.942 | 0.946 | +0.004 |
-| unit_name | 0.905 | 0.899 | −0.006 |
+| chronostrat | 0.759 | 0.811 | **+0.052** |
+| minerals | 0.798 | 0.833 | **+0.035** |
+| lithologies | 0.836 | 0.855 | +0.019 |
+| relations | 0.534 | 0.544 | +0.010 |
+| unit_name | 0.985 | 0.995 | +0.010 |
+| rank | 0.970 | 0.975 | +0.005 |
+| states | 0.963 | 0.963 | 0.000 |
+| thickness | 0.965 | 0.965 | 0.000 |
 
-The two weakest fields improved most; the near-saturated ones barely moved.
-A coherent pattern rather than scattered noise.
+The gains land on the vocabulary-heavy fields — ages and minerals, the
+fields whose correctness depends on recognising domain terms — and the
+near-saturated fields do not move. On Geolex the largest gains were minerals
+and relations; here relations barely moves, and it remains the weakest field
+in every arm.
 
-### Replicated across three seeds
+**1.7B + TAPT (0.801) nearly matches 4B without CPT (0.806).** The Geolex
+version found the same: the task is not capacity-limited at this scale.
 
-The single-seed result was later repeated at seeds 23 and 41, retraining both
-arms from scratch each time:
+Neither 1.7B model can do the task zero-shot (0.000 — it does not emit JSON),
+so the zero-shot column says nothing about what CPT did to instruction
+following; the SFT arms are the only valid comparison.
 
-| seed | no CPT | + TAPT | delta |
+## 6. What these numbers do not establish
+
+- **One seed.** The Geolex effect needed three to be convincing; this is its
+  single-seed replication, consistent with it but not independently
+  significant.
+- **Scored against rule labels, not gold.** The 1.7B arms were not scored on
+  geo-sft's reviewed gold set. Relative comparisons between arms are sound;
+  the absolute numbers carry the rule-label caveats in geo-sft's RESULTS §3.
+- **DAPT was built but not trained.** The 7.4M-token corpus is ready
+  (`configs/dapt.yaml`, ~4 h). Whether broad domain text beats the task's own
+  text is the lab's most interesting open question.
+- **Forgetting was barely tested**: LR 1e-5 and 15% replay are gentle.
+  Experiments 3 and 5 in LEARNING.md find the cliff deliberately.
+
+## 7. Run summary
+
+| run | what | wall | result |
 |---|---|---|---|
-| 17 | 0.823 | 0.842 | +0.019 |
-| 23 | 0.819 | 0.847 | +0.029 |
-| 41 | 0.816 | 0.844 | +0.028 |
-
-**mean +0.025, sd 0.005, 95% CI [+0.012, +0.039]** — excludes zero. The two
-arms do not overlap at all: no-CPT spans 0.816-0.823, TAPT spans 0.842-0.847.
-
-This is **better than this project predicted.** The README originally warned to
-expect no downstream gain at 1.5M tokens, citing the literature's scale
-guidance. That was too pessimistic: TAPT delivers a small but real and
-reproducible gain well below the scale at which CPT is usually considered
-worthwhile.
-
-## 5a. Experiment 8 — vocabulary extension + CPT
-
-The question [geo-sft](../../geo-sft/docs/RESULTS.md) left open. It grafted 512
-geoscience tokens onto the base vocabulary for a 4.89% context saving, but MLX
-LoRA never touches embeddings, so those rows kept their mean-of-subwords
-initialisation for ever. **CPT is the only stage that can train them**, because
-a full fine-tune updates the embedding matrix.
-
-Qwen3-1.7B was vocabulary-extended with the same 512 tokens, then put through
-the identical TAPT + SFT pipeline.
-
-| arm | macro F1 |
-|---|---|
-| stock vocabulary + TAPT + SFT | **0.842** |
-| **vocabulary-extended + TAPT + SFT** | **0.758** |
-
-**Extension made it worse by 0.084** — three times the size of TAPT's gain, in
-the opposite direction.
-
-That is not the null result predicted, and the mechanism is instructive.
-Fragmentation is not pure loss: `Penn|s|ylv|anian` uses four embeddings trained
-on trillions of tokens, with compositional structure the model exploits. The
-grafted `Pennsylvanian` is one embedding starting at their mean and trained on
-1.2M tokens. At this scale that trade destroys more information than it saves.
-
-**Conclusion: the 4.89% context saving is not free. It costs real quality here,
-and vocabulary extension is not worth it at this scale.** One seed, so treat it
-as strong evidence rather than settled — but the effect is large and the
-direction is unambiguous.
-
-> Note the CPT perplexities are NOT comparable between the two arms (50.02 ->
-> 18.05 extended, 33.27 -> 13.87 stock). Different tokenizers mean different
-> tokens, so per-token perplexity measures different things. Only the
-> downstream macro F1 is a valid comparison.
-
-## 6. Methodology errors, and what they taught
-
-### Error 1 — the forgetting probe overlapped the replay corpus
-
-The first run replayed wikitext into training and measured forgetting on
-*held-out wikitext*: different documents, same distribution. It reported
-**−40.5% forgetting**, i.e. general perplexity improving 40%.
-
-It was measuring "did we also learn wikitext". Fixed with a separate
-`forgetting_dataset` (`ag_news`), never replayed, plus a test asserting the
-two corpora differ.
-
-### Error 2 — perplexity was the wrong instrument
-
-With the independent probe, forgetting still came out **−32.9%**:
-
-| corpus | base | adapted |
-|---|---|---|
-| geoscience (domain) | 33.27 | 13.87 (−58.3%) |
-| general (ag_news, independent) | 40.12 | 26.94 (**−32.9%**) |
-
-Perplexity improved everywhere. Yet the same checkpoint scored **macro F1
-0.002, parse rate 0.015** on the downstream task without SFT.
-
-**Next-token perplexity on plain prose cannot detect the loss of a
-behaviour.** For an instruction-tuned starting model the forgetting probe has
-to be a capability evaluation.
-
-### Error 3 — comparing across model sizes
-
-On seeing 0.002, this project initially concluded "CPT destroyed
-instruction-following, 0.314 → 0.002". **That was wrong**: 0.314 was the *4B*
-model. The control shows the untouched 1.7B scores **0.001** zero-shot. CPT
-went 0.001 → 0.002 and destroyed nothing; the 1.7B model never had the
-capability.
-
-The error was comparing across model sizes — the same confound flagged one
-paragraph earlier in the project's own notes, then walked into anyway. It is
-why the control arms exist, and why `geocpt transfer` no longer claims its
-comparison is apples-to-apples without them.
-
-## 7. What these numbers do not establish
-
-**No forgetting was observed, but it was barely tested.** LR 1e-5, 15%
-replay, 1.2M tokens seen — too gentle to do damage. Run
-[experiment 3](LEARNING.md#11-the-experiment-grid) (`replay_fraction: 0.0`)
-and [experiment 5](LEARNING.md#11-the-experiment-grid) (LR 1e-4) to find the
-cliff deliberately.
-
-**The base model was the post-trained one**, not `Qwen3-1.7B-Base`. Running
-the pretraining objective over instruction tuning is not the textbook recipe;
-`-Base` would be more principled given SFT follows anyway.
-
-**DAPT was never run.** Only TAPT (1.57M tokens). The ~20M-token DAPT corpus
-and the `dapt_tapt` sequence remain open.
-
-**Vocabulary extension was tested at one seed only** (§5a). The effect is
-large and negative, but a three-seed replication would settle it.
-
-**Seeds:** the headline TAPT result is three seeds; everything else is one.
-
-## 8. Run summary
-
-| run | stage | tokens | domain ppl | downstream F1 | wall |
-|---|---|---|---|---|---|
-| `tapt-v1` | TAPT | 1.57M | 33.27 → 13.87 | 0.842 (with SFT) | 55 min |
-| `sft-1.7b-nocpt` | control | – | – | 0.823 | 41 min |
-| `sft-after-tapt-v1` | transfer | – | – | 0.842 | 44 min |
-
-## 9. Bugs found while building
-
-| bug | symptom | cost |
-|---|---|---|
-| gold/test evals shared a filename, then `tag` defined after first use | `UnboundLocalError` on every eval | **5 completed training runs' evaluations lost** |
-| `mx.utils` does not exist | `AttributeError` on first parameter count | caught pre-run |
-| `save_weights` does not exist | `ImportError` at the first checkpoint | **48-min run lost** |
-| `mlx_lm.utils.save()` needs a complete HF snapshot | `IncompleteSnapshotError` on `.gitattributes` | caught by the new test |
-| forgetting probe drawn from the replay corpus | −40.5% "forgetting" | wrong conclusion |
-| perplexity used as the forgetting metric | missed a capability question entirely | wrong methodology |
-| compared 1.7B against 4B | "CPT destroyed instruction-following" | **wrong published claim** |
-
-The first three were caught by testing. The last three were only caught by
-running controls — which is the argument for controls.
+| `runs/tapt-v1` | TAPT, 600 iters | 72 min | domain ppl 29.24 → 13.27 |
+| `../geo-sft/runs/sft-after-tapt-v1` | SFT on TAPT model | 67 min | macro F1 0.801 |
+| `../geo-sft/runs/sft-1.7b-nocpt` | SFT on plain 1.7B | 67 min | macro F1 0.778 |

@@ -37,6 +37,7 @@ geo-graphrag/
 ```
 geo-sft/data/interim/passages.jsonl ─┐
 geo-sft/data/interim/vocab.json ─────┤
+geo-sft/data/raw/asud (snapshot) ────┤
 geo-sft Labeller (imported) ─────────┴─► extract.build() ─► graph.json ─► load_graph() ─┐
                                                                                         ├─► Neo4j
                           passages ─► LM Studio /v1/embeddings ─► embeddings.npy ───────┘
@@ -64,23 +65,24 @@ use.
 
 | node | key | from |
 |---|---|---|
-| `Unit` | `key` = `geolex:<id>` or `name:<core>` | Geolex units; placeholders for names resolved to nothing |
-| `Passage` | `id` = `<unit_id>:<n>` | one per Geolex passage; carries `text`, `embedding` |
-| `Interval` | `name` | Macrostrat timescale + "Precambrian" |
+| `Unit` | `key` = `asud:<stratno>` or `name:<core>` | every current ASUD unit (18,387, `has_text` marks the 8,094 with passages); placeholders for names resolved to nothing |
+| `Passage` | `id` = `<stratno>:<n>` | one per geo-sft passage (definition card or reference note); carries `text`, `embedding` |
+| `Interval` | `name` | Macrostrat timescale + Precambrian and the unnamed Cambrian series/stages |
 | `Lithology`, `Mineral`, `Province` | `name` | curated + rule-extracted |
-| `State` | `code` | postal codes, with `name` |
+| `State` | `code` | ASUD jurisdiction codes (NSW, QLD, ..., OFF, ATA), with `name` |
 
 | relationship | from | props |
 |---|---|---|
-| `PART_OF` Unit→Unit | Geolex usages | `sources`, `usage` |
-| `OVERLIES` Unit→Unit | rule labeller (overlies/underlies/unconformable_on, canonicalised) | `sources`, `passages`, `unconformable` |
-| `EQUIVALENT_TO`, `GRADES_INTO`, `INTERTONGUES_WITH` | rule labeller | `sources`, `passages` |
-| `HAS_AGE` Unit→Interval | Geolex age description, via gazetteer | `sources` |
+| `PART_OF` Unit→Unit | ASUD parent unit | `sources` |
+| `OVERLIES` Unit→Unit | ASUD curated relations **and** rule labeller (overlies/underlies/unconformable_on, canonicalised) | `sources`, `passages`, `unconformable`, `contact` |
+| `INTRUDES` Unit→Unit | ASUD curated **and** rule labeller (intrudes/intruded_by, canonicalised) | `sources`, `passages` |
+| `EQUIVALENT_TO`, `GRADES_INTO`, `INTERTONGUES_WITH` | ASUD curated **and** rule labeller | `sources`, `passages` |
+| `HAS_AGE` Unit→Interval | ASUD oldest/youngest age names, canonicalised | `sources` |
 | `WITHIN` Interval→Interval | computed from numeric ages | — |
-| `HAS_LITHOLOGY` | Geolex reference lithology **and** rule labeller | `sources` |
+| `HAS_LITHOLOGY` | ASUD lithology description (tagged with the rock vocabulary) **and** rule labeller | `sources` |
 | `HAS_MINERAL` | rule labeller | `sources` |
-| `OCCURS_IN`, `IN_PROVINCE` | Geolex | `sources` |
-| `DESCRIBES` Passage→Unit | Geolex filing | — |
+| `OCCURS_IN`, `IN_PROVINCE` | ASUD | `sources` |
+| `DESCRIBES` Passage→Unit | ASUD filing | — |
 | `MENTIONS` Passage→Unit | relation targets found in the passage | — |
 
 Indexes: uniqueness constraints on every key; `unit_name` (range);
