@@ -21,11 +21,13 @@ model is shown**: knowledge graphs, RAG and GraphRAG, compared side by side.
 
 | | [geo-graphrag](geo-graphrag/) |
 |---|---|
-| Technique | **Retrieval**: knowledge graph vs vector RAG vs GraphRAG |
-| Changes | the context, not the weights |
-| Stack | Neo4j (graph + vectors), Strands agents, MCP, local LLM via LM Studio |
+| Technique | **Retrieval**: knowledge graph vs vector RAG vs GraphRAG, side by side |
+| Changes | the context the model is shown, not its weights |
+| Data | 3,302 Geolex units, 8,757 passages → a 16k-node, 50k-relationship Neo4j graph |
+| Stack | Neo4j (graph + vector index), Strands agents, MCP, local LLM via LM Studio |
+| Signature failure | RAG: confidently counts only what it retrieved. KG: a query that silently returns nothing |
 | The hard part | extraction and entity resolution (graph); recall over many passages (RAG) |
-| Result | each system wins the question types its design predicts; see [RESULTS](geo-graphrag/docs/RESULTS.md) |
+| Result | overall **0.61 / 0.86 / 0.75** (RAG / KG / GraphRAG); each wins the question types its design predicts |
 
 ## The task
 
@@ -50,7 +52,13 @@ Extraction was chosen deliberately over geoscience Q&A because it is
 schema tell you whether the fine-tune worked; a Q&A task would leave you
 grading style with an LLM judge and guessing.
 
-## How the two fit together
+The retrieval lab *does* answer questions, and it inherits that concern. Seven
+of its eight benchmark categories have deterministic gold answers taken from
+curated Geolex metadata ("How many Pennsylvanian units occur in Kansas?" → 41).
+Only the prose-detail category needs an LLM judge, and the judge is calibrated
+against the string matcher (98% agreement).
+
+## How the labs fit together
 
 ```
   pretraining          CPT              SFT            deploy
@@ -79,6 +87,19 @@ rule labeller extracts the knowledge graph's relations, so geo-sft's finding
 that 83% of rule-labelled rows were wrong reappears as a graph-quality problem.
 And the SFT model is a natural next extractor for that graph
 ([experiment #1](geo-graphrag/docs/EXPERIMENTS.md)).
+
+```
+                    ┌──────────────── Neo4j ────────────────┐
+  question ─► RAG ──┤ vector index ─► 8 similar passages    ├─┐
+           ─► KG ───┤ LLM-written Cypher ─► rows            ├─┼─► same model, same prompt ─► 3 answers
+           ─► GraphRAG  passages + graph facts around units ├─┘
+                    └───────────────────────────────────────┘
+```
+
+All three systems send their context to **the same model with the same
+prompt**, so the only thing that differs between the answers is what was
+retrieved. It is the same controlled-comparison discipline as geo-cpt reusing
+geo-sft's scorer.
 
 ---
 
@@ -119,7 +140,8 @@ byte-identical to the inference prompt.
 ### Stage 3 — knowledge graphs, RAG and GraphRAG
 
 Independent of stages 1–2 except for the corpus: needs geo-sft's `make fetch`,
-Docker and LM Studio. Follow the
+Docker and LM Studio. No training: ingest takes minutes and the benchmark about
+40 minutes. Follow the
 [six-session path](geo-graphrag/README.md#how-to-learn-from-this-repo). In outline:
 
 | session | read | run |
@@ -129,26 +151,44 @@ Docker and LM Studio. Follow the
 | 11 | §7–9: measuring retrieval, context recall, LLM judges | `make bench` |
 | 12 | §10: MCP and agents | `make agent` |
 
+Four ways to ask a question, from quickest to most flexible:
+
+| | command | |
+|---|---|---|
+| web UI | `make web` → http://localhost:8000 | three answers side by side, per-system evidence, 33 example questions grouped by what they reveal, and an *About the data* panel |
+| CLI | `make ask Q="..."` | the same, in the terminal |
+| inspection | `make inspect Q="..."` | exactly what each system retrieved, before any answer is written |
+| agent | `make agent` | a Strands agent that calls the three systems through an MCP server and explains which answer is best supported |
+
+The equivalent of `geosft inspect` here is `georag inspect` (or the web UI's
+*Evidence* panels): most wrong answers are decided at retrieval, before any
+text is generated.
+
 ### Stage 4 — your own experiment
 
-Both labs ship an experiment grid ([SFT](geo-sft/docs/EXPERIMENTS.md),
-[CPT](geo-cpt/docs/LEARNING.md#11-the-experiment-grid)). The most instructive
-single run in either is **SFT #1, prompt masking**: the unmasked run reaches
-*lower* training loss and *worse* task scores, which makes "loss is not your
-metric" permanent.
+Every lab ships an experiment grid ([SFT](geo-sft/docs/EXPERIMENTS.md),
+[CPT](geo-cpt/docs/LEARNING.md#11-the-experiment-grid),
+[retrieval](geo-graphrag/docs/EXPERIMENTS.md)). The most instructive single
+training run is **SFT #1, prompt masking**: the unmasked run reaches *lower*
+training loss and *worse* task scores, which makes "loss is not your metric"
+permanent. The most instructive retrieval experiment is **geo-graphrag #1, LLM
+extraction**: rebuild the graph with an LLM instead of regex rules, and watch
+both the edge count and the error rate go up.
 
 ### Reading differently
 
 | document | how to read it |
 |---|---|
-| `LEARNING.md` (both) | concepts — the only part worth reading before running |
-| `ARCHITECTURE.md` (both) | **lookup, not cover to cover** |
-| `RESULTS.md` (both) | what was measured, and what the numbers do *not* establish |
+| `LEARNING.md` (all) | concepts — the only part worth reading before running |
+| `ARCHITECTURE.md` (all) | **lookup, not cover to cover** |
+| `RESULTS.md` (all) | what was measured, and what the numbers do *not* establish |
 | `EXPERIMENTS.md` | what to run next |
 
 ---
 
 ## Results
+
+### Training labs: SFT and CPT
 
 **Against hand-corrected gold labels** — the defensible numbers:
 
@@ -193,6 +233,38 @@ from +0.516 to **+0.312**.
 Also: **the task is not capacity-limited** — a 1.7B model matched a 4B one, so
 the ceiling is label quality, not model size.
 
+### Retrieval lab: KG vs RAG vs GraphRAG
+
+64 questions, 8 categories, `gemma-4-12b` as answerer and judge
+([full report](geo-graphrag/docs/RESULTS.md)):
+
+| category | Vector RAG | Knowledge graph | GraphRAG |
+|---|---|---|---|
+| age, states, parent, relation | 0.75–0.88 | 0.88–1.00 | 0.95–1.00 |
+| members (lists) | 0.58 | **1.00** | **1.00** |
+| multi-hop filters | 0.07 | **1.00** | 0.04 |
+| count | 0.00 | **1.00** | 0.00 |
+| descriptive (prose only) | **1.00** | 0.00 | **1.00** |
+| **overall** | 0.61 | **0.86** | 0.75 |
+
+**1. Each system wins exactly where its design predicts.** The KG is the only
+system that can count or filter the whole corpus, and it cannot answer anything
+stated only in prose. RAG counts the 8 passages it retrieved and reports that
+number confidently: "7 units" when the answer is 41.
+
+**2. GraphRAG's gain over RAG is on entity-centred questions** (members
+0.58 → 1.00), where the graph routes retrieval to the right unit. Its expansion
+is local, so on counts and filters it is as blind as RAG.
+
+**3. Context recall separates retrieval failures from generation failures.**
+Did the retrieved context contain the answer at all? RAG's count failures are
+retrieval failures (context recall 0.25); they cannot be fixed by a better
+prompt.
+
+The practical conclusion matches the GraphRAG literature: **the hybrid is a
+routing problem**. A router sending count and filter questions to the KG and
+everything else to GraphRAG would score ~1.0 on every category here.
+
 ## The honest caveats
 
 **0.705 is the defensible SFT headline**, not 0.831. The gold review was a
@@ -206,6 +278,20 @@ it was being penalised for extracting things the rules had missed.
 
 **Seeds:** the TAPT result is three seeds; everything else is one.
 
+**The retrieval corpus is units A to C only.** geo-sft fetched the first 4,000
+entries of Geolex's alphabetical index: 3,302 of 16,684 units, "A-L Peak" to
+"Cross Creek". Famous units like the Eagle Ford are absent, and every count is a
+count of A–C units. The comparison between systems is unaffected (all three see
+the same slice), but no number there describes US geology as a whole.
+
+**The KG's 0.86 is partly circular.** Seven of eight categories take gold answers
+from the curated metadata the graph was built from, so the KG is reading back
+its own contents. The prose-only category is the counterweight, and an
+independent, hand-written test set is
+[geo-graphrag experiment #10](geo-graphrag/docs/EXPERIMENTS.md). The retrieval
+results are also one run with 8 questions per category: one question moves a
+category by 0.125.
+
 **Nine bugs are documented rather than hidden**, across
 [SFT RESULTS §10](geo-sft/docs/RESULTS.md) and
 [CPT RESULTS §6/§9](geo-cpt/docs/RESULTS.md). The common thread is worth more
@@ -213,6 +299,19 @@ than any result here: **every one produced a plausible loss curve and no error
 message.** Three were caught only by running control arms, and one was masked
 by a regression test that grepped source instead of executing the code — it
 passed while the function was completely broken.
+
+The retrieval lab added four more of the same kind, none of which raised an
+error:
+- a few-shot Cypher example pointed at a unit key that does not exist, silently
+  teaching the model a query that returns nothing;
+- usages joined by "in" ("Bloomfield limestone in Glenshaw Formation") were
+  not split, silently turning two units into one name;
+- the knowledge graph answered "I don't know" from correct rows, because the rows
+  did not say what they were rows *of*;
+- LM Studio's JIT loading swapped the chat and embedding models on every
+  question, making the benchmark 5× slower.
+
+The live test tier, which executes every few-shot example, caught the first.
 
 ## Where to go next
 
@@ -275,7 +374,23 @@ these, so this is the HF/MPS path: slower, and no real 4-bit.
   merges the adapter into one artifact. For Linux/GPU (vLLM) you would retrain
   on the HF path — MLX adapters do not transfer.
 
-### 5. Staying in geoscience
+### 5. Retrieval: from comparison to system
+
+- **Fetch all of Geolex.** 16,684 units instead of the A–C slice. A config
+  change in geo-sft and a longer fetch; it makes the retrieval lab's answers
+  meaningful for real geology.
+- **A router or an agent.** Route count and filter questions to the KG and the
+  rest to GraphRAG, or give the MCP agent only the retrieval primitives and let
+  it choose ([experiments #7 and #9](geo-graphrag/docs/EXPERIMENTS.md)).
+- **The SFT model as the graph's extractor.** Serve the geo-sft adapter with
+  `mlx_lm.server` and use it in place of the regex labeller. This closes the
+  loop across all three labs, and the graph inherits whatever the fine-tune
+  learned, including its errors.
+- **Global GraphRAG.** Community detection plus LLM summaries, for "what are the
+  main Pennsylvanian groups of the mid-continent?": the synthesis questions none
+  of the current three systems handles well.
+
+### 6. Staying in geoscience
 
 - **A harder, messier corpus.** Open-file exploration reports (WAMEX, state
   surveys) and well completion reports are PDFs, not clean API text. Ingest
@@ -294,6 +409,10 @@ measure it against. If 20M tokens moves the needle further than 1.5M did, you
 have located the scaling curve for yourself — which is worth more than any
 single number in this repo.
 
+If your interest is retrieval rather than training: **fetch all of Geolex and
+rerun the benchmark.** It is the cheapest change that turns the retrieval lab
+from a comparison on a 20% slice into a tool you could actually query.
+
 ## Add to the repo
 I would love if you want to contribute and add in a lesson of your own on something related to geoscience and AI. To do this follow these rough steps:
 1. Create a new branch
@@ -309,11 +428,18 @@ Apple Silicon with 32 GB+ (48 GB for CPT full fine-tuning), Python 3.12,
 ```bash
 cd geo-sft && make setup && make doctor && make smoke
 cd ../geo-cpt && make setup && make doctor && make smoke
-cd ../geo-graphrag && make setup && make up && make doctor && make ingest   # + Docker, LM Studio
+cd ../geo-graphrag && make setup && make up && make doctor && make ingest && make web
 ```
 
 Budget ~40 GB of disk for model weights; `make clean-models` / `make clean-ckpt`
 reclaim it.
+
+geo-graphrag also needs **Docker** (for Neo4j, ~1 GB) and **LM Studio** serving
+a chat model and an embedding model on `localhost:1234`. The defaults are
+`google/gemma-4-12b` (~7.5 GB) and `text-embedding-nomic-embed-text-v1.5`. Load
+both explicitly (`lms load ...`); with JIT loading they evict each other on
+every question. The Neo4j browser is at http://localhost:7474 (`neo4j` /
+`geograph-lab`).
 
 ## Licence
 
